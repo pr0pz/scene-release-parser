@@ -1,0 +1,29 @@
+{
+	"name": "scene-release-parser",
+	"version": "0.1.1",
+	"description": "Scene Release Parser",
+	"main": "ReleaseParser.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@bitbucket.org/pr0pz/scene-release-parser.git"
+	},
+	"keywords": [
+		"scene",
+		"warez",
+		"parser",
+		"release",
+		"predb"
+	],
+	"author": "pr0pz",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://bitbucket.org/pr0pz/scene-release-parser/issues"
+	},
+	"homepage": "https://bitbucket.org/pr0pz/scene-release-parser#readme",
+	"devDependencies": {
+		"jest": "^29.3.1"
+	}
+}
