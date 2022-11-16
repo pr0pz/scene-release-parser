@@ -18,7 +18,7 @@ class Release {
 		// Setup vars
 		this.release = release
 		this.information = {
-			'release'		: release, // Original rls name
+			'release'		: this.release, // Original rls name
 			'title'			: null, // First part of title
 			'titleExtra'	: null, // Second part of title (optional) like Name of track/book/xxx etc.
 			'group'			: null,
@@ -252,7 +252,7 @@ class Release {
 		let regex = this.stringToRegex( '/[._\\(-]' + patterns.REGEX_DATE + '[._\\)-]/i' )
 		let matches = this.release.match( regex )
 
-		let [lastResultKey, day, month, year, temp, date] = ''
+		let [day, month, year, temp, date] = ''
 
 		if ( matches ) {
 
@@ -605,7 +605,7 @@ class Release {
 				if ( this.isNumeric( episode ) ) {
 					episode = parseInt( episode )
 				} else {
-					episode = this.sanitize( episode.replace( /[_\\.]/, '-' ) )
+					episode = this.sanitize( episode.replace( /[_\.]/, '-' ) )
 				}
 				this.set( 'episode', episode )
 			}
@@ -894,11 +894,11 @@ class Release {
 			case 'tv':
 
 				// Setup regex pattern
-				regexPattern = patterns.REGEX_TITLE_TV
+				regexPattern = this.stringToRegex( patterns.REGEX_TITLE_TV )
 				regexUsed = 'REGEX_TITLE_TV'
 
 				// Match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern )
 
 				// Check for matches with regex title tv
 				if ( matches ) {
@@ -912,11 +912,12 @@ class Release {
 
 					// Search and replace pattern in regex pattern for better macthing
 					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+					releaseNameCleaned = this.cleanup( releaseNameCleaned, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 					// Match episode title
 					matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
 
-					titleExtra = matches[1] ? matches[1] : ''
+					titleExtra = matches && matches[1] !== '.' ? matches[1] : ''
 
 					break
 
@@ -1325,6 +1326,13 @@ class Release {
 						} )
 						break
 
+					case 'language':
+						// Get first parsed language code
+						for ( let languageCode in informationValue ) {
+							attributes.push( patterns.LANGUAGES[ languageCode ] )
+						}
+						break
+
 					case 'monthname':
 						// Replace all ( with (?: for non capturing
 						let monthname = patterns.REGEX_DATE_MONTHNAME.replace( '/\\((?!\\?)/i', '(?:' )
@@ -1343,10 +1351,21 @@ class Release {
 							attributes.push( patterns.OS[ informationValue ] )
 						}
 						break
+					
+					case 'source':
+						// Check if we need to loop array
+						if ( Array.isArray( informationValue ) ) {
+							informationValue.forEach( ( source ) => {
+								attributes.push( patterns.SOURCE[ source ] )
+							} )
+						} else {
+							attributes.push( patterns.SOURCE[ informationValue ] )
+						}
+						break
 
 					case 'version':
 						attributes.push( patterns.REGEX_VERSION )
-						break
+						break	
 				}
 
 				// Loop attributes if not empty and preg replace to cleanup
@@ -1562,20 +1581,18 @@ class Release {
 		if ( text ) {
 
 			// Trim '-' at the end of the string
-			text = text.replace( /^-|-$/, '' )
+			text = this.trimChar( text, '-' )
 			// Replace every separator char with whitespaces
-			text = text.replace( /[_\.]/g, ' ' )
+			text = text.replace( /[_\.]+/gi, ' ' )
 			// Put extra whitespace between '-', looks better
 			//text = text.replace( '-', ' - ' )
 			// Trim and simplify multiple whitespaces
-			text = text.replace( /^\s{2,}|\s{2,}$/i, '' )
+			text = this.trimChar( text )
 			text = text.replace( /\s{2,}/gi, ' ' )
 
 			// Check if all letters are uppercase:
 			// First, check if we have more then 1 word in title (keep single worded titles uppercase).
-			if ( text.toString().length > 1 ) {
-				// Remove all whitespaces and dashes for uppercase check to work properly.
-				//let textTemp = text.replace( /[\-\s]+/, '' )
+			if ( text.split(' ').length > 1 ) {
 				if ( text === text.toUpperCase() ) {
 					// Transforms into lowercase, for ucwords to work properly.
 					// Ucwords don't do anything if all chars are uppercase.
@@ -1583,15 +1600,15 @@ class Release {
 				}
 			}
 
-			let type = this.get('type') ? this.get('type').toLowerCase() : ''
+			//let type = this.get('type') ? this.get('type').toLowerCase() : ''
 			// Words which should end with a point
 			let specialWordsAfter = [ 'feat', 'ft', 'nr', 'st', 'pt', 'vol' ]
-			if ( type !== 'app' ) {
+			if ( this.get('type') !== 'app' ) {
 				specialWordsAfter.push( 'vs' )
 			}
 			// Words which should have a point before (usualy xxx domains)
 			let specialWordsBefore = ''
-			if ( type === 'xxx' ) {
+			if ( this.get('type') === 'xxx' ) {
 				specialWordsBefore = [ 'com', 'net', 'pl' ]
 			}
 
@@ -1663,7 +1680,22 @@ class Release {
 	 * @param string value  Value to check.
 	 */
 	isNumeric( value ) {
-		return /^\\d+$/.test( value )
+		return /^\d+$/.test( value )
+	}
+
+
+	/**
+	 *
+	 * Check if only numbers in string.
+	 * https://masteringjs.io/tutorials/fundamentals/trim
+	 *
+	 * @param string value  Value to check.
+	 */
+	trimChar( str, char = ' ' ) {
+		if ( str ) {
+			str = str.replace( this.stringToRegex( '/^[' + char + ']+/i' ), '' ).replace( this.stringToRegex( '/[' + char +']+$/i' ), '' )
+		}
+		return str
 	}
 
 
@@ -1677,6 +1709,14 @@ class Release {
 		return str.charAt(0).toUpperCase() + str.slice(1);
 	}
 
+
+	/**
+	 *
+	 * Makes the first char of every wird uppercase.
+	 * https://gist.github.com/rickycheers/4541395?permalink_comment_id=2565472#gistcomment-2565472
+	 *
+	 * @param string str  String to format.
+	 */
 	ucwords( str ) {
 		let string = str.toLowerCase().replace( /\b[a-z]/g, function( char ) {
 			return char.toUpperCase();
@@ -1688,6 +1728,7 @@ class Release {
 	/**
 	 *
 	 * Convert string to regex.
+	 * https://stackoverflow.com/a/55258958/4371770
 	 *
 	 * @param string str  String to convert.
 	 */
@@ -1704,3 +1745,16 @@ class Release {
 }
 
 module.exports = Release
+
+/*const express = require('express');
+const app = express();
+
+app.listen( 9999, () => {
+	console.log( 'Parsed: ' + new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() )
+	console.log( 'Right: Show: Full Metal Panic / Title: 02 / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV')
+})*/
+
+//console.log( 'Parsed: ' + new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() )
+//console.log( 'Right: Show: Full Metal Panic / Title: 02 / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV')
+
+console.log( new Release( 'Otfried_Preussler_-_Der_Hotzenplotz_Geht_Um-F04-(Audiobook)-DE-2001-S8', 'Abook' ).toString() )

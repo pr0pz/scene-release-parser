@@ -46,7 +46,7 @@ test( 'Movies #4', () => {
 
 // TV
 test( 'TV #1 - Multiple episodes: 01-02', () => {
-	expect( new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() ).toBe( 'Show: Full Metal Panic / Title: 02 / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV' )
+	expect( new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() ).toBe( 'Show: Full Metal Panic / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV' )
 })
 
 test( 'TV #2 - Special season + episode pattern: S2.E07', () => {

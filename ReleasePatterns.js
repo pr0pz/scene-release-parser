@@ -56,7 +56,7 @@ const patterns = {
 	REGEX_TITLE_APP : '/^' + regexTitle + '[._\\(-]+(?:' + regexVersionText + '[._\\(-]?\\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/i', // ungreedy
 	// Good for all kind of series (also Anime)
 	REGEX_TITLE_TV : '/^' + regexTitle + '[._-]' + regexEpisodeTv + '/i', // ungreedy
-	REGEX_TITLE_TV_EPISODE : '/' + regexEpisodeTv + '[._-](?:' + regexTitle + '[._\\(-]+)?(?:%language%[._\\)-]|%resolution%|%source%|%flags%|%format%)?/i', // ungreedy
+	REGEX_TITLE_TV_EPISODE : '/' + regexEpisodeTv + '[._-](?:' + regexTitle + '[._\\(-]+)?\\.+/i', // ungreedy
 	REGEX_TITLE_TV_DATE : '/^' + regexTitle + '[._\\(-]+(?:%regex_date%|%year%)[._\\)-]' + regexTitle + '?[._\\(-]?(?:%language%[._\\)-]|%resolution%|%source%|%flags%|%format%)/i', // ungreedy
 	// Good for XXX paysite releases
 	REGEX_TITLE_XXX : '/^' + regexTitle + '[._\\(-]+(?:%year%|%language%[._\\)-]|%flags%)/i', // ungreedy

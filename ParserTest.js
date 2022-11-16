@@ -4,7 +4,8 @@ const Release = require('./ReleaseParser.js')
 
 // https://help.dreamhost.com/hc/en-us/articles/360043547431-Node-js-example-scripts
 app.listen( 9999, () => {
-	console.log( new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() );
+	console.log( 'Parsed: ' + new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() )
+	console.log( 'Right: Show: Full Metal Panic / Title: 02 / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV')
 })
 
 function parserTest() {

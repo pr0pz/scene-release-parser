@@ -4,7 +4,7 @@
 	"description": "Scene Release Parser",
 	"main": "ReleaseParser.js",
 	"scripts": {
-		"start": "nodemon ParserTest.js",
+		"start": "nodemon ReleaseParser.js",
 		"test": "jest"
 	},
 	"repository": {
