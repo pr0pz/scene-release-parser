@@ -177,7 +177,7 @@ class Release {
 				if ( classString ) {
 					classString += ' / '
 				}
-				classString += this.ucfirst( information ) + ': ' + values
+				classString += information.capitalizeFirstLetter() + ': ' + values
 			}
 		}
 
@@ -209,10 +209,10 @@ class Release {
 			languageName.forEach ( (name) => {
 
 				// Insert current lang pattern
-				let newRegexPattern = regexPattern.replace( '%language_pattern%', name )
+				let newRegexPattern = regexPattern.replace( '%language_pattern%', name ).toRegExp()
 
 				// Check for language tag (exclude "grand" for formula1 rls)
-				let matches = this.release.match( this.stringToRegex( newRegexPattern ) )
+				let matches = this.release.match( newRegexPattern )
 				if ( matches ) {
 					languageCodes.push( languageCodeKey )
 				}
@@ -249,7 +249,7 @@ class Release {
 	parseDate() {
 
 		// Check for normal date
-		let regex = this.stringToRegex( '/[._\\(-]' + patterns.REGEX_DATE + '[._\\)-]/i' )
+		let regex = ( '/[._\\(-]' + patterns.REGEX_DATE + '[._\\)-]/i' ).toRegExp()
 		let matches = this.release.match( regex )
 
 		let [day, month, year, temp, date] = ''
@@ -262,7 +262,7 @@ class Release {
 			day = parseInt( matches[3] )
 
 			// On older Mvid releases the format is year last.
-			if ( this.release.match( this.stringToRegex( patterns.REGEX_DATE_MUSIC ) ) ) {
+			if ( this.release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
 				temp = year
 				year = day
 				day = temp
@@ -315,7 +315,7 @@ class Release {
 			// Set regex pattern
 			let regexPattern = patterns.REGEX_DATE_MONTHNAME.replace( '%monthname%', allMonths )
 			// Match day, month and year
-			matches = releaseNameCleaned.match( this.stringToRegex( '/[._-]' + regexPattern + '[._-]/i' ) )
+			matches = releaseNameCleaned.match( ( '/[._-]' + regexPattern + '[._-]/i' ).toRegExp() )
 
 			// If match: get last matched value (should be the right one)
 			// Day is optional, year is a must have.
@@ -341,7 +341,7 @@ class Release {
 				for ( const monthNumber in patterns.MONTHS ) {
 					let monthPattern = patterns.MONTHS[ monthNumber ]
 
-					matches = month.match( this.stringToRegex( '/' + monthPattern + '/i' ) )
+					matches = month.match( ( '/' + monthPattern + '/i' ).toRegExp() )
 
 					if ( matches ) {
 						month = monthNumber
@@ -376,7 +376,7 @@ class Release {
 		let releaseNameCleaned = this.cleanup( this.release, 'version' )
 
 		// Match year
-		let matches = releaseNameCleaned.match( this.stringToRegex( patterns.REGEX_YEAR ) )
+		let matches = releaseNameCleaned.match( patterns.REGEX_YEAR.toRegExp() )
 
 		if ( matches && matches[1] ) {
 
@@ -385,7 +385,7 @@ class Release {
 			// The first number would belong to the title.
 			// Sanitize year if it's not only numeric ("199X"/"200X")
 			let year = Array.isArray( matches[1] ) ? matches[1][ matches[1].length - 1 ] : matches[1]
-			year = this.isNumeric( year ) ? parseInt( year ) : this.sanitize( year )
+			year = year.isNumeric() ? parseInt( year ) : this.sanitize( year )
 			this.set( 'year', year )
 
 		// No Matches? Get year from parsed Date instead.
@@ -422,7 +422,7 @@ class Release {
 			for ( const pattern of devicePattern ) {
 
 				// Match device
-				let matches = releaseNameCleaned.match( this.stringToRegex( '/[._-]' + pattern + '-\\w+$/i' ) )
+				let matches = releaseNameCleaned.match( ( '/[._-]' + pattern + '-\\w+$/i' ).toRegExp() )
 
 				// Match found, set type parent key as type
 				if ( matches ) {
@@ -462,7 +462,7 @@ class Release {
 	 */
 	parseGroup() {
 
-		let matches = this.release.match( this.stringToRegex( patterns.REGEX_GROUP ) )
+		let matches = this.release.match( patterns.REGEX_GROUP.toRegExp() )
 
 		if ( matches && matches[1] ) {
 			this.set( 'group', matches[1] )
@@ -478,7 +478,7 @@ class Release {
 	 * @param string releaseName  Original release name.
 	 */
 	parseVersion() {
-		let matches = this.release.match( this.stringToRegex( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ) )
+		let matches = this.release.match( ( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ).toRegExp() )
 		if ( matches ) this.set( 'version', matches[1] )
 	}
 
@@ -569,7 +569,7 @@ class Release {
 	 */
 	parseSeason() {
 
-		let matches = this.release.match( this.stringToRegex( patterns.REGEX_SEASON ) )
+		let matches = this.release.match( patterns.REGEX_SEASON.toRegExp() )
 
 		if ( matches ) {
 
@@ -590,19 +590,19 @@ class Release {
 	 */
 	parseEpisode() {
 
-		let regexPattern = this.stringToRegex( '/[._-]' + patterns.REGEX_EPISODE + '[._-]/i' )
+		let regexPattern = ( '/[._-]' + patterns.REGEX_EPISODE + '[._-]/i' ).toRegExp()
 		let matches = this.release.match( regexPattern )
 
 		if ( matches ) {
 
 			// key 1 = 1st pattern, key 2 = 2nd pattern
 			// 0 can be a valid value
-			let episode = matches[1] && matches[1] !== '' ? matches[1] : null
-			episode = !episode && matches[2] && matches[2] !== '' ? matches[2] : episode
+			let episode = matches[1] ? matches[1] : null
+			episode = !episode && matches[2] ? matches[2] : episode
 
 			if ( episode ) {
 				// Sanitize episode if it's not only numeric (eg. more then one episode found "1 - 2")
-				if ( this.isNumeric( episode ) ) {
+				if ( episode.isNumeric() ) {
 					episode = parseInt( episode )
 				} else {
 					episode = this.sanitize( episode.replace( /[_\.]/, '-' ) )
@@ -666,12 +666,12 @@ class Release {
 				type = 'XXX'
 
 			// Description with date inside brackets is nearly always music or musicvideo
-			} else if ( this.release.match( this.stringToRegex( patterns.REGEX_DATE_MUSIC ) ) ) {
+			} else if ( this.release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
 				type = 'MusicVideo'
 			}
 
 		// Description with date inside brackets is nearly always music or musicvideo
-		} else if ( this.release.match( this.stringToRegex( patterns.REGEX_DATE_MUSIC ) ) ) {
+		} else if ( this.release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
 
 			if ( this.get( 'resolution' ) ) {
 				type = 'MusicVideo'
@@ -762,7 +762,7 @@ class Release {
 				for ( const value of typeValue ) {
 
 					// Match type
-					let matches = section.match( this.stringToRegex( '/' + value + '/i' ) )
+					let matches = section.match( ( '/' + value + '/i' ).toRegExp() )
 
 					// Match found, set type parent key as type
 					if ( matches ) {
@@ -822,12 +822,12 @@ class Release {
 				// Special check for date:
 				// If date is inside brackets with more words, it's part of the title.
 				// If not, then we should consider and replace the regex date patterns inside the main regex pattern.
-				if ( ! releaseNameCleaned.match( this.stringToRegex( patterns.REGEX_DATE_MUSIC ) ) ) {
+				if ( ! releaseNameCleaned.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
 					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'regex_date', 'regex_date_monthname', 'year' ] )
 				}
 
 				// Match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				if ( matches ) {
 
@@ -880,7 +880,7 @@ class Release {
 				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] )
 
 				// Match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				if ( matches ) {
 					title = matches[1]
@@ -894,7 +894,7 @@ class Release {
 			case 'tv':
 
 				// Setup regex pattern
-				regexPattern = this.stringToRegex( patterns.REGEX_TITLE_TV )
+				regexPattern = patterns.REGEX_TITLE_TV.toRegExp()
 				regexUsed = 'REGEX_TITLE_TV'
 
 				// Match title
@@ -915,7 +915,7 @@ class Release {
 					releaseNameCleaned = this.cleanup( releaseNameCleaned, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 					// Match episode title
-					matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 					titleExtra = matches && matches[1] !== '.' ? matches[1] : ''
 
@@ -932,14 +932,14 @@ class Release {
 					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'regex_date', 'year' ] )
 
 					// Match Dated/Sports match title
-					matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+					matches = releaseNameCleaned.match(regexPattern.toRegExp() )
 
 					if ( matches ) {
 
 						// 1st match = event (nfl, mlb, etc.)
 						title = matches[1]
 						// 2nd match = specific event name (eg. team1 vs team2)
-						titleExtra = matches[2] ? matches[2] : ''
+						titleExtra = matches && matches[2] ? matches[2] : ''
 
 						break
 
@@ -956,7 +956,7 @@ class Release {
 				regexUsed = 'REGEX_TITLE_TV'
 
 				// Match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				// Check for matches with regex title tv
 				if ( matches ) {
@@ -972,9 +972,9 @@ class Release {
 					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 					// Match episode title
-					matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-					titleExtra = matches[1] ? matches[1] : ''
+					titleExtra = matches && matches[1] ? matches[1] : ''
 
 					break
 
@@ -994,13 +994,13 @@ class Release {
 				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] )
 
 				// Match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				if ( matches ) {
 					// 1st Match = Publisher, Website, etc.
 					title = matches[1]
 					// 2nd Match = Specific release name (movie/episode/model name, etc.)
-					titleExtra = matches[2] ? matches[2] : ''
+					titleExtra = matches[6] ? matches[6] : ''
 
 					break
 				}
@@ -1022,7 +1022,7 @@ class Release {
 				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'regex_date', 'regex_date_monthname', 'year' ] )
 
 				// Match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				if ( matches ) {
 
@@ -1061,7 +1061,7 @@ class Release {
 				releaseNameCleaned = this.cleanup( releaseNameCleaned, [ 'version', 'os', 'format' ] )
 
 				// Match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				if ( matches ) {
 					title = matches[1]
@@ -1092,7 +1092,7 @@ class Release {
 				regexPattern = regexPattern.replace( '%dateformat%', '(?:\\d+[._-]){3}' )
 
 				// Match Dated/Sports match title
-				matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				if ( matches && matches[2] ) {
 
@@ -1111,7 +1111,7 @@ class Release {
 					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year' ] )
 
 					// Match title
-					matches = releaseNameCleaned.match( this.stringToRegex( regexPattern ) )
+					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 					if ( matches ) {
 
@@ -1131,7 +1131,7 @@ class Release {
 						}
 
 						// Match title
-						matches = releaseNameCleaned.match( this.stringToRegex( '/^' + regexPattern + '/i' ) )
+						matches = releaseNameCleaned.match( ( '/^' + regexPattern + '/i' ).toRegExp() )
 
 						// If nothing matches here, this release must be da real shit!
 						title = matches ? matches[1] : ''
@@ -1186,7 +1186,7 @@ class Release {
 			attrPattern.forEach( ( pattern ) => {
 
 				// Check if pattern is inside release name
-				let matches = this.release.match( this.stringToRegex( '/[._\\(-]' + pattern + '[._\\)-]/i' ) )
+				let matches = this.release.match( ( '/[._\\(-]' + pattern + '[._\\)-]/i' ).toRegExp() )
 
 				// Yes? Return attribute array key as value
 				if ( matches ) {
@@ -1379,14 +1379,14 @@ class Release {
 								if ( information === 'os' )
 									value = '(?:for[._-])?' + value
 
-								releaseName = releaseName.replace( this.stringToRegex( '/[._\\(]' + value + '/i' ), '.' )
+								releaseName = releaseName.replace( ( '/[._\\(]' + value + '/i' ).toRegExp(), '.' )
 							} )
 						} else {
 							// Exception for OS
 							if ( information === 'os' )
 								attribute = '(?:for[._-])?' + attribute
 
-							releaseName = releaseName.replace( this.stringToRegex( '/[._\\(-]' + attribute + '/i' ), '.' )
+							releaseName = releaseName.replace( ( '/[._\\(-]' + attribute + '/i' ).toRegExp(), '.' )
 						}
 					} )
 				}
@@ -1506,14 +1506,14 @@ class Release {
 
 					case 'regex_date':
 						// Replace all ( with (?: for non capturing
-						attributes.push( patterns.REGEX_DATE.replace( /\((?!\?)/i, '(?:' ) )
+						attributes.push( patterns.REGEX_DATE.replaceAll( '(\\', '(?:\\' ) )
 						break
 
 					case 'regex_date_monthname':
 						// Replace all ( with (?: for non capturing
 						let regexDateMonthname = patterns.REGEX_DATE_MONTHNAME.replace( /\((?!\?)/i, '(?:' )
 						// Get monthname pattern
-						regexDateMonthname = regexDateMonthname.replace( '%monthname%', patterns.MONTHS[ informationValue.getMonth() ] )
+						regexDateMonthname = regexDateMonthname.replace( '%monthname%', patterns.MONTHS[ informationValue.getMonth() + 1 ] )
 						attributes.push( regexDateMonthname )
 
 						break
@@ -1542,7 +1542,7 @@ class Release {
 								value = information === 'os' ? '(?:for[._-])?' + value : value
 
 								// And check what exactly pattern matches the given release name.
-								let matches = this.release.match( this.stringToRegex( '/[._\\(-]' + value + '[._\\)-]/i' ) )
+								let matches = this.release.match( ( '/[._\\(-]' + value + '[._\\)-]/i' ).toRegExp() )
 
 								// We have a match? ...
 								if ( matches ) {
@@ -1581,13 +1581,13 @@ class Release {
 		if ( text ) {
 
 			// Trim '-' at the end of the string
-			text = this.trimChar( text, '-' )
+			text = text.trim( '-' )
 			// Replace every separator char with whitespaces
 			text = text.replace( /[_\.]+/gi, ' ' )
 			// Put extra whitespace between '-', looks better
 			//text = text.replace( '-', ' - ' )
 			// Trim and simplify multiple whitespaces
-			text = this.trimChar( text )
+			text = text.trim()
 			text = text.replace( /\s{2,}/gi, ' ' )
 
 			// Check if all letters are uppercase:
@@ -1596,19 +1596,19 @@ class Release {
 				if ( text === text.toUpperCase() ) {
 					// Transforms into lowercase, for ucwords to work properly.
 					// Ucwords don't do anything if all chars are uppercase.
-					text = this.ucwords( text.toLowerCase() )
+					text = text.capitalizeWords()
 				}
 			}
 
-			//let type = this.get('type') ? this.get('type').toLowerCase() : ''
+			let type = this.get('type') ? this.get('type').toLowerCase() : ''
 			// Words which should end with a point
 			let specialWordsAfter = [ 'feat', 'ft', 'nr', 'st', 'pt', 'vol' ]
-			if ( this.get('type') !== 'app' ) {
+			if ( type !== 'app' ) {
 				specialWordsAfter.push( 'vs' )
 			}
 			// Words which should have a point before (usualy xxx domains)
 			let specialWordsBefore = ''
-			if ( this.get('type') === 'xxx' ) {
+			if ( type === 'xxx' ) {
 				specialWordsBefore = [ 'com', 'net', 'pl' ]
 			}
 
@@ -1671,90 +1671,80 @@ class Release {
 		}
 		return false
 	}
-
-
-	/**
-	 *
-	 * Check if only numbers in string.
-	 *
-	 * @param string value  Value to check.
-	 */
-	isNumeric( value ) {
-		return /^\d+$/.test( value )
-	}
-
-
-	/**
-	 *
-	 * Check if only numbers in string.
-	 * https://masteringjs.io/tutorials/fundamentals/trim
-	 *
-	 * @param string value  Value to check.
-	 */
-	trimChar( str, char = ' ' ) {
-		if ( str ) {
-			str = str.replace( this.stringToRegex( '/^[' + char + ']+/i' ), '' ).replace( this.stringToRegex( '/[' + char +']+$/i' ), '' )
-		}
-		return str
-	}
-
-
-	/**
-	 *
-	 * Makes the first char uppercase.
-	 *
-	 * @param string str  String to format.
-	 */
-	ucfirst( str ) {
-		return str.charAt(0).toUpperCase() + str.slice(1);
-	}
-
-
-	/**
-	 *
-	 * Makes the first char of every wird uppercase.
-	 * https://gist.github.com/rickycheers/4541395?permalink_comment_id=2565472#gistcomment-2565472
-	 *
-	 * @param string str  String to format.
-	 */
-	ucwords( str ) {
-		let string = str.toLowerCase().replace( /\b[a-z]/g, function( char ) {
-			return char.toUpperCase();
-		} )
-		return string
-	}
-
-
-	/**
-	 *
-	 * Convert string to regex.
-	 * https://stackoverflow.com/a/55258958/4371770
-	 *
-	 * @param string str  String to convert.
-	 */
-	stringToRegex( str ) {
-		// Main regex
-		const main = str.match(/\/(.+)\/.*/)[1]
-		
-		// Regex options
-		const options = str.match(/\/.+\/(.*)/)[1]
-		
-		// Compiled regex
-		return new RegExp( main, options )
-	}
 }
 
 module.exports = Release
 
-/*const express = require('express');
-const app = express();
 
-app.listen( 9999, () => {
-	console.log( 'Parsed: ' + new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() )
-	console.log( 'Right: Show: Full Metal Panic / Title: 02 / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV')
-})*/
+/**
+ *
+ * Convert string to regex.
+ * https://stackoverflow.com/a/55258958/4371770
+ *
+ * @param string str  String to convert.
+ */
+String.prototype.toRegExp = function( str ) {
+	// if the string is not provided, and if it's called directly on the string, we can access the text via 'this'
+	if ( ! str ) str = this
+	// Main regex
+	let main = str.match( /\/(.+)\/.*/ )[1]
+	// Regex options
+	let options = str.match( /\/.+\/(.*)/ )[1]
+	// Compiled regex
+	return new RegExp( main, options )
+}
 
-//console.log( 'Parsed: ' + new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() )
-//console.log( 'Right: Show: Full Metal Panic / Title: 02 / Group: USAnime / Episode: 01-02 / Flags: DIRFiX, Dubbed, Internal / Source: DVDRip / Format: SVCD / Type: TV')
 
-console.log( new Release( 'Otfried_Preussler_-_Der_Hotzenplotz_Geht_Um-F04-(Audiobook)-DE-2001-S8', 'Abook' ).toString() )
+/**
+ *
+ * Check if only numbers in string.
+ * https://masteringjs.io/tutorials/fundamentals/trim
+ *
+ * @param string value  Value to check.
+ */
+String.prototype.trim = function( char = ' ', str ) {
+	if ( ! str ) str = this
+	return str.replace( ('/^[' + char + ']+/i').toRegExp(), '' ).replace( ('/[' + char +']+$/i').toRegExp(), '' )
+}
+
+
+/**
+ *
+ * Check if only numbers in string.
+ *
+ * @param string value  Value to check.
+ */
+String.prototype.isNumeric = function( str ) {
+	if ( ! str ) str = this
+	return /^\d+$/.test( str )
+}
+
+
+/**
+ *
+ * Makes the first char of every word uppercase.
+ * https://gist.github.com/rickycheers/4541395?permalink_comment_id=2565472#gistcomment-2565472
+ *
+ * @param string str  String to format.
+ */
+String.prototype.capitalizeWords = function( str ) {
+	if ( ! str ) str = this
+	str = ( ' ' + str ).replace( / [\w]/g, a => a.toLocaleUpperCase() ).trim()
+	return str
+}
+
+
+/**
+ *
+ * Makes the first char uppercase.
+ *
+ * @param string str  String to format.
+ */
+String.prototype.capitalizeFirstLetter = function( str ) {
+	if ( ! str ) str = this
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+
+console.log( new Release( 'IDW.-.Machete.No.0.2010.Hybrid.Comic.eBook-BitBook', 'ebook' ).toString() )
+console.log( 'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Episode: 0 / Flags: Comic, eBook / Format: Hybrid / Type: eBook' )
