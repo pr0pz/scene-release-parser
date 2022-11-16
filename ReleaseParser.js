@@ -590,7 +590,8 @@ class Release {
 	 */
 	parseEpisode() {
 
-		let matches = this.release.match( this.stringToRegex( '/[._-]' + patterns.REGEX_EPISODE + '[._-]/i' ) )
+		let regexPattern = this.stringToRegex( '/[._-]' + patterns.REGEX_EPISODE + '[._-]/i' )
+		let matches = this.release.match( regexPattern )
 
 		if ( matches ) {
 
@@ -1216,6 +1217,7 @@ class Release {
 
 		// Get attribute value
 		let attribute = this.get( attributeName )
+		let hasIt = false
 
 		// Check if attribute is set
 		if ( attribute ) {
@@ -1235,7 +1237,7 @@ class Release {
 					attribute.forEach( ( attrValue ) => {
 						if ( value.toLowerCase() === attrValue.toLowerCase() ) {
 							//console.log( value.toLowerCase() + ' === ' + attrValue.toLowerCase() )
-							return true
+							hasIt = true
 						}
 					})
 
@@ -1243,13 +1245,13 @@ class Release {
 				} else {
 					if ( value.toLowerCase() === attribute.toLowerCase() ) {
 						//console.log( value.toLowerCase() + ' === ' + attribute.toLowerCase() )
-						return true
+						hasIt = true
 					}
 				}
 			} )
 		}
 
-		return false
+		return hasIt
 	}
 
 

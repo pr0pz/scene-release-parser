@@ -1,10 +1,11 @@
 {
 	"name": "scene-release-parser",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Scene Release Parser",
 	"main": "ReleaseParser.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"start": "nodemon ParserTest.js",
+		"test": "jest"
 	},
 	"repository": {
 		"type": "git",
@@ -24,6 +25,8 @@
 	},
 	"homepage": "https://bitbucket.org/pr0pz/scene-release-parser#readme",
 	"devDependencies": {
-		"jest": "^29.3.1"
+		"express": "^4.18.2",
+		"jest": "^29.3.1",
+		"nodemon": "^2.0.20"
 	}
 }

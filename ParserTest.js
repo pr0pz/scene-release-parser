@@ -1,69 +1,16 @@
+const express = require('express');
+const app = express();
 const Release = require('./ReleaseParser.js')
 
+// https://help.dreamhost.com/hc/en-us/articles/360043547431-Node-js-example-scripts
+app.listen( 9999, () => {
+	console.log( new Release( 'Full.Metal.Panic.Eps.01-02.INTERNAL.SVCD.DVDrip.DUBBED.DIRFIX-USAnime', 'SVCD' ).toString() );
+})
+
 function parserTest() {
-	
-	// Some Bash color codes (looks better)
-	const reset = '\x1b[0m'
-	const bold = '\x1b[1m'
-	//const green = '\x1b[92m'
-	const green = '\x1b[32m'
-	const greenlight = '\x1b[92m'
-	const greenlightbg = '\x1b[102m'
-	const red = '\x1b\x1b[31m'
-	const redlight = '\x1b[91m'
-	const redbg = '\x1b[41m'
-	const black = '\x1b[30m'
-	const white = '\x1b[97m'
-	const yellow = '\x1b[33m'
 
 	// All releases that needed to be tested.
 	const tests = [
-
-		// Game
-		[
-			new Release( 'Diablo_II_Resurrected_Update_v1.0.0.3_incl_Offline_Crack_NSW-VENOM', 'games' ),
-			'Title: Diablo II Resurrected / Group: VENOM / Flags: Incl. Crack, Update / Device: Nintendo Switch / Version: 1.0.0.3 / Type: Game'
-		],
-
-		// Apps
-		[
-			new Release( 'RSP.OGG.Vorbis.Player.OCX.v2.5.0-Lz0', 'Apps' ),
-			'Title: RSP OGG Vorbis Player OCX / Group: Lz0 / Audio: OGG / Version: 2.5.0 / Type: App'
-		],
-		[
-			new Release( 'ActiveState.Visual.Python.for.VS.2003.v1.8.1.2082.WinNT2K.Incl.Keygenerator-TMG', 'Games' ),
-			'Title: ActiveState Visual Python for VS 2003 / Group: TMG / Year: 2003 / Flags: KEYGEN / Os: Windows / Version: 1.8.1.2082 / Type: App'
-		],
-		[
-			new Release( 'PluralSight.Microsoft.Azure.Network.Engineer-secure.And.Monitor.Networks.Bookware-KNiSO', '0day' ),
-			'Title: PluralSight Microsoft Azure Network Engineer-secure And Monitor Networks / Group: KNiSO / Flags: Bookware / Type: App'
-		],
-		[
-			new Release( 'Aviano.Update.v1.03-ANOMALY', '0day' ),
-			'Title: Aviano / Group: ANOMALY / Flags: Update / Version: 1.03 / Type: App'
-		],
-		[
-			new Release( 'QUIZWARE.PRACTICE.TESTS.FOR.COMPUTER.ASSOCIATES.CERTIFICATIONS.V4.84-JGT', 'ebook' ),
-			'Title: Quizware Practice Tests For Computer Associates Certifications / Group: JGT / Version: 4.84 / Type: App'
-		],
-
-		// Movies (usually a lot of flags for testing)
-		[
-			new Release( 'Harry.Potter.und.die.Kammer.des.Schreckens.TS.Line.Dubbed.German.INTERNAL.VCD.CD2.REPACK-TGSC', 'Apps' ),
-			'Title: Harry Potter und die Kammer des Schreckens / Group: TGSC / Flags: Internal, Line dubbed, Repack / Source: TS / Format: VCD / Language: German / Type: Movie'
-		],
-		[
-			new Release( 'Sweet.Home.Alabama.SCREENER.Line.Dubbed.German.VCD-TGSC', 'Screener' ),
-			'Title: Sweet Home Alabama / Group: TGSC / Flags: Line dubbed / Source: DVD Screener / Format: VCD / Language: German / Type: Movie'
-		],
-		[
-			new Release( 'Die.Bourne.Verschwoerung.German.2004.INTERNAL.No.Bock.uff.Proper.READ.NFO.AC3.Dubbed.DL.DVDR-Cinemaniacs', 'DVDR' ),
-			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: AC3 Dubbed, Internal, PROPER, READNFO / Source: DVD / Format: DVDR / Language: German, Multilingual / Type: Movie'
-		],
-		[
-			new Release( 'Gegen.den.Strom.2018.German.AC3D.DL.1080p.BluRay.x264-SAVASTANOS', 'X264' ),
-			'Title: Gegen den Strom / Group: SAVASTANOS / Year: 2018 / Source: Bluray / Format: x264 / Resolution: 1080p / Audio: AC3D / Language: German, Multilingual / Type: Movie'
-		],
 
 		// TV
 		[ // Multiple episodes: 01-02
@@ -249,26 +196,7 @@ function parserTest() {
 			'Artist: David Guetta ft. Nicki Minaj and FloRida / Title: Where Them Girls At (Americas Got Talent 08-31-11) / Group: 2LC / Year: 2011 / Date: 31.08.2011 / Source: HDTV / Format: x264 / Resolution: 720p / Type: MusicVideo'
 		]
 	]
-
-	let i = 1
-
-	// Loop all test scenarios
-	tests.forEach( ( test ) => {
-
-		// Passeds
-		if ( test[0].toString() === test[1] ) {
-			let output = test[0].get( 'titleExtra' ) ? test[0].get( 'title' ) + white + ' / ' + reset + test[0].get( 'titleExtra' ) : test[0].get( 'title' )
-			console.log( green + '(' + i + ')' + bold + greenlight + ' ✓ Passed: ' + reset + output )
-		
-		// Failed
-		} else {
-			console.log( redlight + '(' + i + ')' + bold + red +' ✘ Failed:' + reset + '\n' + greenlightbg + black + ' Right > ' + reset + ' ' + test[1] + '\n' + redbg + black + ' Wrong > ' + reset + ' ' + test[0] + '\n' )
-		}
-
-		i++
-	} )
 }
 
 //parserTest()
 
-console.log( new Release( 'David_Guetta_ft_Nicki_Minaj_and_FloRida-Where_Them_Girls_At_(Americas_Got_Talent_08-31-11)-HDTV-720p-X264-2011-2LC', 'mvid' ) )
