@@ -9,7 +9,7 @@
  */
 
 const regexDate = '(\\d{2}|\\d{4})[._-](\\d{2})[._-](\\d{2}|\\d{4})'
-const regexTitle = '([\\w.\\(\\)-]+?)' // last ? = JS fix for ungreedy
+const regexTitle = '([\\w.()-]+?)' // last ? = JS fix for ungreedy
 const regexEpisodeTv = '(?:(?:[ST]\\d+)?[._-]?(?:ep?|o[av]+[._-]?|d|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
 const regexVersionText = '(?:v(?:ersion)?|Updated?[._-]?v?|Build)'
 
@@ -20,7 +20,7 @@ const patterns = {
 	// %varname% will be replaced with the parsed valued for better macthing.
 
 	// Find language (old: (?!sub))
-	REGEX_LANGUAGE : '/[._\\(-]%language_pattern%[._\\)-][._\\(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|multi|ml[._\\)-]|dl[._\\)-]|dual[._-]|%group%)/i',
+	REGEX_LANGUAGE : '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i',
 	// Find date
 	REGEX_DATE : regexDate,
 	// Special date with month name: 24th January 2002 / Sep. 2000 day 5 / January 2000 1
@@ -28,7 +28,7 @@ const patterns = {
 	// Description with date inside brackets is nearly always music or musicvideo
 	REGEX_DATE_MUSIC : '/\\([a-z._]+[._-]' + regexDate + '\\)/i',
 	// Get right year
-	REGEX_YEAR : '/(?=[\\(._-](19\\d[\\dx]|20\\d[\\dx])[\\)._-])/i',
+	REGEX_YEAR : '/(?=[(._-](19\\d[\\dx]|20\\d[\\dx])[)._-])/i',
 	// Extract group
 	REGEX_GROUP : '/-(\\w+)$/i',
 	// Extract OS
@@ -42,26 +42,26 @@ const patterns = {
 	// Basic title pattern
 	REGEX_TITLE : regexTitle,
 	// Good for Ebooks
-	REGEX_TITLE_EBOOK : '/^' + regexTitle + '[._\\(-]+(?:%year%|%language%|%flags%|%format%|%regex_date%|%regex_date_monthname%)[._\\)-]?/i', // ungreedy
+	REGEX_TITLE_EBOOK : '/^' + regexTitle + '[._(-]+(?:%year%|%language%|%flags%|%format%|%regex_date%|%regex_date_monthname%)[._)-]/i', // ungreedy
 	// Good for Fonts
 	REGEX_TITLE_FONT : '/^' + regexTitle + '-/i',
 	// Good for Movies
-	REGEX_TITLE_MOVIE : '/^' + regexTitle + '[._\\(-]+(?:%year%|%language%|%source%|%flags%|%format%)[._\\)-]?/i', // ungreedy
+	REGEX_TITLE_MOVIE : '/^' + regexTitle + '[._(-]+(?:%year%|%language%|%source%|%flags%|%format%)[._)-]?/i', // ungreedy
 	// Music pattern matches: Author_2.0_(Name)-Track_album_title_2.0_-_track_bla_(Extended_edition)-...
 	// Good for music releases and Audiobooks
-	REGEX_TITLE_MUSIC : '/^' + regexTitle + '(?:\\([\\w-]+\\))?[._\\(-]+(?:%source%[._\\)-]?|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._\\)-])/i', // ungreedy
-	REGEX_TITLE_ABOOK : '/^' + regexTitle + '[._\\(-]+(?:%source%[._\\)-]?|%year%|%group%|%audio%|%flags%|%format%|%language%[._\\)-])/i', // ungreedy
-	REGEX_TITLE_MVID : '/^' + regexTitle + '[._\\(-]+(?:%source%|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._\\)-])/i', // ungreedy
+	REGEX_TITLE_MUSIC : '/^' + regexTitle + '(?:\\([\\w-]+\\))?[._(-]+(?:%source%[._)-]?|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/i', // ungreedy
+	REGEX_TITLE_ABOOK : '/^' + regexTitle + '[._(-]+(?:%source%[._)-]?|%year%|%group%|%audio%|%flags%|%format%|%language%[._)-])/i', // ungreedy
+	REGEX_TITLE_MVID : '/^' + regexTitle + '[._(-]+(?:%source%|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/i', // ungreedy
 	// Good for general Software releases (also Games)
-	REGEX_TITLE_APP : '/^' + regexTitle + '[._\\(-]+(?:' + regexVersionText + '[._\\(-]?\\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/i', // ungreedy
+	REGEX_TITLE_APP : '/^' + regexTitle + '[._(-]+(?:' + regexVersionText + '[._)-]?\\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/i', // ungreedy
 	// Good for all kind of series (also Anime)
 	REGEX_TITLE_TV : '/^' + regexTitle + '[._-]' + regexEpisodeTv + '/i', // ungreedy
-	REGEX_TITLE_TV_EPISODE : '/' + regexEpisodeTv + '[._-](?:' + regexTitle + '[._\\(-]+)?\\.+/i', // ungreedy
-	REGEX_TITLE_TV_DATE : '/^' + regexTitle + '[._\\(-]+(?:%regex_date%|%year%)[._\\)-]' + regexTitle + '?[._\\(-]?(?:%language%[._\\)-]|%resolution%|%source%|%flags%|%format%)/i', // ungreedy
+	REGEX_TITLE_TV_EPISODE : '/' + regexEpisodeTv + '[._-](?:' + regexTitle + '[._(-]+)?\\.+/i', // ungreedy
+	REGEX_TITLE_TV_DATE : '/^' + regexTitle + '[._(-]+(?:%regex_date%|%year%)[._)-]' + regexTitle + '??[._(-]?(?:%language%[._)-]|%resolution%|%source%|%flags%|%format%)/i', // ungreedy
 	// Good for XXX paysite releases
-	REGEX_TITLE_XXX : '/^' + regexTitle + '[._\\(-]+(?:%year%|%language%[._\\)-]|%flags%)/i', // ungreedy
+	REGEX_TITLE_XXX : '/^' + regexTitle + '[._(-]+(?:%year%|%language%[._)-]|%flags%)/i', // ungreedy
 	//REGEX_TITLE_XXX_DATE : '/^' + REGEX_TITLE + '[._-](?:\\d+\\.){3}' + REGEX_TITLE + '[._-](?:xxx|%language%)/iU',
-	REGEX_TITLE_XXX_DATE : '/^' + regexTitle + '[._\\(-]+(?:%regex_date%|%regex_date_monthname%)[._\\)-]+' + regexTitle + '[._\\(-]+(?:%flags%|%language%[._\\)-])/i', // ungreedy
+	REGEX_TITLE_XXX_DATE : '/^' + regexTitle + '[._(-]+(?:%regex_date%|%regex_date_monthname%)[._)-]+' + regexTitle + '[._(-]+(?:%flags%|%language%[._)-])/i', // ungreedy
 	// Extract software version
 	REGEX_VERSION_TEXT : '(?:v(?:ersion)?|Updated?[._-]?v?|Build)',
 	REGEX_VERSION : regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?![._-]gage))',

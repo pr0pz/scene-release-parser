@@ -249,7 +249,7 @@ class Release {
 	parseDate() {
 
 		// Check for normal date
-		let regex = ( '/[._\\(-]' + patterns.REGEX_DATE + '[._\\)-]/i' ).toRegExp()
+		let regex = ( '/[._(-]' + patterns.REGEX_DATE + '[._)-]/i' ).toRegExp()
 		let matches = this.release.match( regex )
 
 		let [day, month, year, temp, date] = ''
@@ -602,7 +602,8 @@ class Release {
 
 			if ( episode ) {
 				// Sanitize episode if it's not only numeric (eg. more then one episode found "1 - 2")
-				if ( episode.isNumeric() ) {
+				// If it's episode 0, keep it as a string. If not, IF statements won't work, won't recognize value as set.
+				if ( episode.isNumeric() && episode !== '0' ) {
 					episode = parseInt( episode )
 				} else {
 					episode = this.sanitize( episode.replace( /[_\.]/, '-' ) )
@@ -932,7 +933,7 @@ class Release {
 					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'regex_date', 'year' ] )
 
 					// Match Dated/Sports match title
-					matches = releaseNameCleaned.match(regexPattern.toRegExp() )
+					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 					if ( matches ) {
 
@@ -1023,7 +1024,7 @@ class Release {
 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
+				
 				if ( matches ) {
 
 					// Full match
@@ -1173,7 +1174,7 @@ class Release {
 
 			// We need to catch the web source
 			if ( attrKey === 'WEB' ) {
-				attrPattern += '[._\\)-](%format%|%group%|%language%|%year%)'
+				attrPattern += '[._)-](%format%|%group%|%language%|%year%)'
 				attrPattern = this.cleanupPattern( this.release, attrPattern, [ 'format', 'group', 'language',  'year' ] )
 			}
 
@@ -1186,7 +1187,7 @@ class Release {
 			attrPattern.forEach( ( pattern ) => {
 
 				// Check if pattern is inside release name
-				let matches = this.release.match( ( '/[._\\(-]' + pattern + '[._\\)-]/i' ).toRegExp() )
+				let matches = this.release.match( ( '/[._(-]' + pattern + '[._)-]/i' ).toRegExp() )
 
 				// Yes? Return attribute array key as value
 				if ( matches ) {
@@ -1231,13 +1232,10 @@ class Release {
 			// Loop all values to check for
 			values.forEach( ( value ) => {
 
-				//console.log( value + ' / ' + attributeName + ' : ' + attribute )
-
 				// If values were saved as array, check if in array
 				if ( Array.isArray( attribute ) ) {
 					attribute.forEach( ( attrValue ) => {
 						if ( value.toLowerCase() === attrValue.toLowerCase() ) {
-							//console.log( value.toLowerCase() + ' === ' + attrValue.toLowerCase() )
 							hasIt = true
 						}
 					})
@@ -1245,7 +1243,6 @@ class Release {
 				// If not, just check if the value is equal
 				} else {
 					if ( value.toLowerCase() === attribute.toLowerCase() ) {
-						//console.log( value.toLowerCase() + ' === ' + attribute.toLowerCase() )
 						hasIt = true
 					}
 				}
@@ -1280,6 +1277,7 @@ class Release {
 
 			// Get information value
 			let informationValue = this.get( information )
+
 			// Get date as value if looking for "daymonth" or "month" (ebooks)
 			if ( information.includes( 'month' ) || information.includes( 'date' ) ) {
 				informationValue = this.get( 'date' )
@@ -1352,6 +1350,10 @@ class Release {
 						}
 						break
 					
+					case 'resolution':
+						attributes.push( patterns.RESOLUTION[ informationValue ] )
+						break
+					
 					case 'source':
 						// Check if we need to loop array
 						if ( Array.isArray( informationValue ) ) {
@@ -1379,14 +1381,14 @@ class Release {
 								if ( information === 'os' )
 									value = '(?:for[._-])?' + value
 
-								releaseName = releaseName.replace( ( '/[._\\(]' + value + '/i' ).toRegExp(), '.' )
+								releaseName = releaseName.replace( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp(), '.' )
 							} )
 						} else {
 							// Exception for OS
 							if ( information === 'os' )
 								attribute = '(?:for[._-])?' + attribute
 
-							releaseName = releaseName.replace( ( '/[._\\(-]' + attribute + '/i' ).toRegExp(), '.' )
+							releaseName = releaseName.replace( ( '/[._(-]' + attribute + '[._)-]/i' ).toRegExp(), '.' )
 						}
 					} )
 				}
@@ -1542,7 +1544,7 @@ class Release {
 								value = information === 'os' ? '(?:for[._-])?' + value : value
 
 								// And check what exactly pattern matches the given release name.
-								let matches = this.release.match( ( '/[._\\(-]' + value + '[._\\)-]/i' ).toRegExp() )
+								let matches = this.release.match( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp() )
 
 								// We have a match? ...
 								if ( matches ) {
@@ -1664,7 +1666,8 @@ class Release {
 	 * @param mixed value  Attribute value to set.
 	 */
 	set( name, value ) {
-		if ( name && value ) {
+		// Ps.: this check will not work iv values is int 0
+		if ( name, value ) {
 			// Check if array key alerady exists, so we don't create a new one
 			this.information[ name ] = value
 			return true
@@ -1729,7 +1732,7 @@ String.prototype.isNumeric = function( str ) {
  */
 String.prototype.capitalizeWords = function( str ) {
 	if ( ! str ) str = this
-	str = ( ' ' + str ).replace( / [\w]/g, a => a.toLocaleUpperCase() ).trim()
+	str = str.toLowerCase().replace( /\b[a-z]/g, char => char.toUpperCase() )
 	return str
 }
 
@@ -1746,5 +1749,5 @@ String.prototype.capitalizeFirstLetter = function( str ) {
 }
 
 
-console.log( new Release( 'IDW.-.Machete.No.0.2010.Hybrid.Comic.eBook-BitBook', 'ebook' ).toString() )
-console.log( 'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Episode: 0 / Flags: Comic, eBook / Format: Hybrid / Type: eBook' )
+console.log( new Release( 'QUIZWARE.PRACTICE.TESTS.FOR.COMPUTER.ASSOCIATES.CERTIFICATIONS.V4.84-JGT', 'ebook' ).toString() )
+console.log( 'Title: Quizware Practice Tests For Computer Associates Certifications / Group: JGT / Version: 4.84 / Type: App' )

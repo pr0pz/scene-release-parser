@@ -61,7 +61,7 @@ test( 'TV #4', () => {
 	expect( new Release( 'Direct.Talk.S09E09.Mizutani.Yoshihiro.Relief.Beds.Made.of.Cardboard.1080p.HDTV.H264-DARKFLiX', 'tv' ).toString() ).toBe( 'Show: Direct Talk / Title: Mizutani Yoshihiro Relief Beds Made of Cardboard / Group: DARKFLiX / Season: 9 / Episode: 9 / Source: HDTV / Format: h264 / Resolution: 1080p / Type: TV' )
 })
 
-test( 'TV #5', () => {
+test( 'TV #5 - No episode title given', () => {
 	expect( new Release( 'Dark.Net.S01E06.DOC.SUBFRENCH.720p.WEBRip.x264-TiMELiNE', 'tv' ).toString() ).toBe( 'Title: Dark Net / Group: TiMELiNE / Season: 1 / Episode: 6 / Flags: DOC, Subbed / Source: WEB / Format: x264 / Resolution: 720p / Type: TV' )
 })
 
