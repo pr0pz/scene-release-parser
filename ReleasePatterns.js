@@ -1,13 +1,11 @@
 /**
  * ReleasePatterns
  *
- * For more in depth informations check https://scenerules.org/.
- *
- *
- * @package	ReleasePatterns
- * @author predb.de
+ * @package	ReleaseParser
+ * @author	pr0pz
  */
 
+// Some vars for reuse
 const regexDate = '(\\d{2}|\\d{4})[._-](\\d{2})[._-](\\d{2}|\\d{4})'
 const regexTitle = '([\\w.()-]+?)' // last ? = JS fix for ungreedy
 const regexEpisodeTv = '(?:(?:[ST]\\d+)?[._-]?(?:ep?|o[av]+[._-]?|d|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
@@ -420,8 +418,8 @@ const patterns = {
 		'OVA': 'O[AV]+', // Original Video Anime/Original Anime Video
 		'OAD': 'OAD', // Original Anime DVD
 		'ONA': 'OMA', // Original Net Animation
-		'OEM': 'OEM',
-		'OST': 'OST', // music
+		'OEM': 'OEM', // Original equipment manufacturer
+		'OST': 'OST', // Music - Original Soundtrack
 		//'PACK': 'PACK',
 		'Incl. Patch': [ '(?:incl[._-])?(?:[a-z]+[._-])?patch(?:ed)?(?:[._-]only)', 'no[a-zA-Z]+[._-]patch(?:ed)?(?:[._-]only)' ], // software
 		'Paysite': 'PAYSITE', // xxx
@@ -443,7 +441,7 @@ const patterns = {
 		'Samplefix': 'SAMPLE[._-]?FIX',
 		'SDR': 'SDR',
 		'Serial': 'SERIAL(?![._-]Killer)?', // Software
-		'SH3': 'SH3', // software (SH3 CPU)
+		'SH3': 'SH3', // Software (SH3 CPU)
 		'Soundfix': 'SOUNDFIX',
 		'STV': 'STV',
 		'Subbed': [ '[a-zA-Z]*SUB(?:BED|S)?', 'SUB[._-]?\\w+' ],
@@ -464,7 +462,7 @@ const patterns = {
 		'Update': '(WITH[._-])?UPDATE',
 		'VKI': 'VKI', // Variable Keyframe Intervals
 		'VR': 'VR', // Virtual reality
-		'VR180': 'VR180',
+		'VR180': 'VR180', // Virtual reality video format with a 180° panorama
 		'Workprint': [ 'WORKPRINT', 'WP' ],
 		'Widescreen': [ 'widescreen', 'WS' ], // Widescreen
 		'x64': 'x64', // software
@@ -484,15 +482,13 @@ const patterns = {
 		7: 'Jul[iy]o?|Juillet|Luglio|Jul',
 		8: 'August|Aout|Agosto|Augustus|Aug',
 		9: 'Septemb[er][er]|Settembre|Septiembre|Sep',
-		10: 'O[ck]tob[er][er]|Ottobre|Octubre|Oct',
+		10: 'O[ck]tob[er][er]|Ottobre|Octubre|O[ck]t',
 		11: 'Novi?emb[er][er]|Nov',
-		12: 'D[ei][cz]i?emb[er][er]|Dec'
+		12: 'D[ei][cz]i?emb[er][er]|De[cz]'
 	},
 
 
-	// Flags
-	// guessTypeByParsedAttributes
-	// Put together some flag/format arrays for better code reading
+	// Flags for identifying release type ( guessTypeByParsedAttributes )
 	flagsMovie : [ 'Dubbed', 'AC3 Dubbed', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Subbed' ],
 	flagsEbook : [ 'EBOOK', 'MAGAZINE', 'COMIC', 'EPUB' ],
 	flagsMusic : [ 'OST' ],

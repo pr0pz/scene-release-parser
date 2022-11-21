@@ -1,24 +1,25 @@
 const patterns = require('./ReleasePatterns.js')
 
 /**
- * Release
+ * ReleaseParser - A tool for parsing scene release names.
  *
- * For more in depth informations check https://scenerules.org/.
- *
- *
- * @package    Release
- * @author     predb.de
+ * @package	ReleaseParser
+ * @author	pr0pz
+ * 
+ * @version 1.0.0
  */
 
 
-class Release {
+class ReleaseParser {
+
+	#release
 
 	constructor( release, section = '' ) {
-		
-		// Setup vars
-		this.release = release
+
+		// Init all needed vars
+		this.#release = release
 		this.information = {
-			'release'		: this.release, // Original rls name
+			'release'		: this.#release, // Original rls name
 			'title'			: null, // First part of title
 			'titleExtra'	: null, // Second part of title (optional) like Name of track/book/xxx etc.
 			'group'			: null,
@@ -34,67 +35,33 @@ class Release {
 			'device'		: null, // For Software/Game rls
 			'os'			: null, // For Software/Game rls
 			'version'		: null, // For Software/Game rls
-			'language'		: null, // Language code as key and name as value (in english)
-			'type'			: null,
-			'debug'			: null, // Only for debugging infos
+			'language'		: null, // Object with language code as key and name as value (in english)
+			'type'			: null
 		}
 
-		// Parse scene group
-		this.parseGroup()
-
-		// Parse misc tags
-		this.parseFlags()
-
-		// Parse OS
-		this.parseOs()
-
-		// Parse device (like console)
-		this.parseDevice()
-
-		// Parse version
-		this.parseVersion( )
-
-		// Parse episode
-		this.parseEpisode()
-
-		// Parse season
-		this.parseSeason()
-
-		// Parse date
-		this.parseDate()
-
-		// Parse year
-		this.parseYear()
-
-		// Parse format
-		this.parseFormat()
-
-		// Parse source
-		this.parseSource()
-
-		// Parse resolution
-		this.parseResolution()
-
-		// Parse audio
-		this.parseAudio()
-
-		// Parse language
-		this.parseLanguage()
-
-		// Parse source (2nd time, for right web source)
-		this.parseSource()
-
-		// Parse release type
-		this.parseType( section )
-
-		// Parse release title
-		this.parseTitle()
-
+		// Parse everything.
+		// The parsing order DO matter!
+		this.#parseGroup()
+		this.#parseFlags()			// Misc rls name flags
+		this.#parseOs()				// For Software/Game rls: Operating System
+		this.#parseDevice()			// For Software/Game rls: Device (like console)
+		this.#parseVersion( )		// For Software/Game rls: Version
+		this.#parseEpisode()			// For TV/Audiobook/Ebook (issue) rls: Episode
+		this.#parseSeason()			// For TV rls: Season
+		this.#parseDate()
+		this.#parseYear()
+		this.#parseFormat()			// Rls format/encoding
+		this.#parseSource()
+		this.#parseResolution()		// For Video rls: Resolution (720, 1080p...)
+		this.#parseAudio()			// For Video rls: Audio format
+		this.#parseLanguage()		// Object with language code as key and name as value (in english)
+		this.#parseSource()			// Source (2nd time, for right web source)
+		this.#parseType( section )
+		this.#parseTitle()			// Title and extra title
 	}
 
 
 	/**
-	 *
 	 * The toString() method allows a class to decide how it will react when it is treated like a string.
 	 *
 	 * @return string classString  Stringified attribute values.
@@ -149,8 +116,7 @@ class Release {
 				// So put them together in this var.
 				let values = ''
 
-				// Date (DateTime) is the only obect,
-				// So we have to handle it differently.
+				// We have to handle Date a little bit different.
 				if ( Object.prototype.toString.call( informationValue ) === '[object Date]' ) {
 
 					// https://stackoverflow.com/questions/3605214/javascript-add-leading-zeroes-to-date
@@ -177,7 +143,7 @@ class Release {
 				if ( classString ) {
 					classString += ' / '
 				}
-				classString += information.capitalizeFirstLetter() + ': ' + values
+				classString += information.capitalizeWord() + ': ' + values
 			}
 		}
 
@@ -188,12 +154,12 @@ class Release {
 	/**
 	 * Parse release language/s.
 	 */
-	parseLanguage() {
+	#parseLanguage() {
 
 		let languageCodes = []
 
 		// Search and replace pattern in regex pattern for better macthing
-		let regexPattern = this.cleanupPattern( this.release, patterns.REGEX_LANGUAGE, [ 'audio', 'device', 'flags', 'format', 'group', 'os', 'resolution', 'source', 'year' ] )
+		let regexPattern = this.#cleanupPattern( this.#release, patterns.REGEX_LANGUAGE, [ 'audio', 'device', 'flags', 'format', 'group', 'os', 'resolution', 'source', 'year' ] )
 
 		// Loop all languages
 		for ( const languageCodeKey in patterns.LANGUAGES ) {
@@ -212,7 +178,7 @@ class Release {
 				let newRegexPattern = regexPattern.replace( '%language_pattern%', name ).toRegExp()
 
 				// Check for language tag (exclude "grand" for formula1 rls)
-				let matches = this.release.match( newRegexPattern )
+				let matches = this.#release.match( newRegexPattern )
 				if ( matches ) {
 					languageCodes.push( languageCodeKey )
 				}
@@ -241,16 +207,13 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release date.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseDate() {
+	#parseDate() {
 
 		// Check for normal date
 		let regex = ( '/[._(-]' + patterns.REGEX_DATE + '[._)-]/i' ).toRegExp()
-		let matches = this.release.match( regex )
+		let matches = this.#release.match( regex )
 
 		let [day, month, year, temp, date] = ''
 
@@ -262,7 +225,7 @@ class Release {
 			day = parseInt( matches[3] )
 
 			// On older Mvid releases the format is year last.
-			if ( this.release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
+			if ( this.#release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
 				temp = year
 				year = day
 				day = temp
@@ -299,13 +262,13 @@ class Release {
 				this.set( 'date', new Date( date ) )
 
 			} catch ( err ) {
-				console.log( 'Datetime Error (Date): ' + date + ' / rls: ' + this.release )
+				console.log( 'Datetime Error (Date): ' + date + ' / rls: ' + this.#release )
 			}
 
 		} else {
 
 			// Cleanup release name for better matching
-			let releaseNameCleaned = this.cleanup( this.release, 'episode' )
+			let releaseNameCleaned = this.#cleanup( this.#release, 'episode' )
 
 			// Put all months together
 			let allMonths = ''
@@ -357,7 +320,7 @@ class Release {
 				try {
 					this.set( 'date', new Date( date ) )
 				} catch ( err ) {
-					console.log( 'Datetime Error (Date): ' + date + ' / rls: ' + this.release )
+					console.log( 'Datetime Error (Date): ' + date + ' / rls: ' + this.#release )
 				}
 			}
 		}
@@ -365,15 +328,12 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release year.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseYear() {
+	#parseYear() {
 
 		// Remove any version so regex works better (remove unneeded digits)
-		let releaseNameCleaned = this.cleanup( this.release, 'version' )
+		let releaseNameCleaned = this.#cleanup( this.#release, 'version' )
 
 		// Match year
 		let matches = releaseNameCleaned.match( patterns.REGEX_YEAR.toRegExp() )
@@ -396,17 +356,14 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release device.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseDevice() {
+	#parseDevice() {
 
 		let device = ''
 
 		// Cleanup release name for better matching
-		let releaseNameCleaned = this.cleanup( this.release, [ 'flags', 'os' ] )
+		let releaseNameCleaned = this.#cleanup( this.#release, [ 'flags', 'os' ] )
 
 		// Loop all device patterns
 		for ( const deviceName in patterns.DEVICE ) {
@@ -437,14 +394,11 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release flags.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseFlags() {
+	#parseFlags() {
 
-		let flags = this.parseAttribute( patterns.FLAGS )
+		let flags = this.#parseAttribute( patterns.FLAGS )
 
 		if ( flags ) {
 			// Always save flags as array
@@ -455,14 +409,11 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse the release group.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseGroup() {
+	#parseGroup() {
 
-		let matches = this.release.match( patterns.REGEX_GROUP.toRegExp() )
+		let matches = this.#release.match( patterns.REGEX_GROUP.toRegExp() )
 
 		if ( matches && matches[1] ) {
 			this.set( 'group', matches[1] )
@@ -472,26 +423,20 @@ class Release {
 	}
 
 	/**
-	 *
 	 * Parse release version (software, games, etc.).
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseVersion() {
-		let matches = this.release.match( ( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ).toRegExp() )
+	#parseVersion() {
+		let matches = this.#release.match( ( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ).toRegExp() )
 		if ( matches ) this.set( 'version', matches[1] )
 	}
 
 
 	/**
-	 *
 	 * Parse release source.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseSource() {
+	#parseSource() {
 
-		let source = this.parseAttribute( patterns.SOURCE )
+		let source = this.#parseAttribute( patterns.SOURCE )
 
 		if ( source ) {
 			// Only one source allowed, so get first parsed occurence (should be the right one)
@@ -502,14 +447,11 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release format/encoding.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseFormat() {
+	#parseFormat() {
 
-		let format = this.parseAttribute( patterns.FORMAT )
+		let format = this.#parseAttribute( patterns.FORMAT )
 
 		if ( format ) {
 			// Only one source allowed, so get first parsed occurence (should be the right one)
@@ -520,14 +462,11 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release resolution.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseResolution() {
+	#parseResolution() {
 
-		let resolution = this.parseAttribute( patterns.RESOLUTION )
+		let resolution = this.#parseAttribute( patterns.RESOLUTION )
 
 		if ( resolution ) {
 			// Only one resolution allowed, so get first parsed occurence (should be the right one)
@@ -538,38 +477,29 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release audio.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseAudio() {
-		let audio = this.parseAttribute( patterns.AUDIO )
+	#parseAudio() {
+		let audio = this.#parseAttribute( patterns.AUDIO )
 		if ( audio ) this.set( 'audio', audio )
 	}
 
 
 	/**
-	 *
 	 * Parse release operating system.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseOs() {
-		let os = this.parseAttribute( patterns.OS )
+	#parseOs() {
+		let os = this.#parseAttribute( patterns.OS )
 		if ( os ) this.set( 'os', os )
 	}
 
 
 	/**
-	 *
 	 * Parse release season.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseSeason() {
+	#parseSeason() {
 
-		let matches = this.release.match( patterns.REGEX_SEASON.toRegExp() )
+		let matches = this.#release.match( patterns.REGEX_SEASON.toRegExp() )
 
 		if ( matches ) {
 
@@ -583,15 +513,12 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release episode.
-	 *
-	 * @param string releaseName  Original release name.
 	 */
-	parseEpisode() {
+	#parseEpisode() {
 
 		let regexPattern = ( '/[._-]' + patterns.REGEX_EPISODE + '[._-]/i' ).toRegExp()
-		let matches = this.release.match( regexPattern )
+		let matches = this.#release.match( regexPattern )
 
 		if ( matches ) {
 
@@ -615,18 +542,16 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse the release type by section.
 	 *
-	 * @param string releaseName  Original release name.
 	 * @param string section  Original release section.
 	 */
-	parseType( section ) {
+	#parseType( section ) {
 
 		// 1st: guesss type by rls name
-		let type = this.guessTypeByParsedAttributes()
+		let type = this.#guessTypeByParsedAttributes()
 		// 2nd: no type found? guess by section
-		type = !type ? this.guessTypeBySection( section ) : type
+		type = !type ? this.#guessTypeBySection( section ) : type
 		// 3rd: set parsed type or default to Movie
 		type = !type ? 'Movie' : type
 
@@ -635,12 +560,11 @@ class Release {
 
 
 	/**
-	 *
-	 * Guess the release type by alerady parsed attributes.
+	 * Guess the release type by already parsed attributes.
 	 *
 	 * @return string type  Guessed type.
 	 */
-	 guessTypeByParsedAttributes() {
+	#guessTypeByParsedAttributes() {
 
 		let type = ''
 
@@ -667,12 +591,12 @@ class Release {
 				type = 'XXX'
 
 			// Description with date inside brackets is nearly always music or musicvideo
-			} else if ( this.release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
+			} else if ( this.#release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
 				type = 'MusicVideo'
 			}
 
 		// Description with date inside brackets is nearly always music or musicvideo
-		} else if ( this.release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
+		} else if ( this.#release.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
 
 			if ( this.get( 'resolution' ) ) {
 				type = 'MusicVideo'
@@ -736,13 +660,12 @@ class Release {
 
 
 	/**
-	 *
 	 * Guess the release type by section.
 	 *
 	 * @param string section  Original release section.
 	 * @return string type  Guessed/Parsed release type.
 	 */
-	guessTypeBySection( section ) {
+	#guessTypeBySection( section ) {
 
 		let type = ''
 
@@ -779,16 +702,14 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse release title.
 	 *
 	 * @param string releaseName  Original release name.
 	 */
-	parseTitle() {
+	#parseTitle() {
 
-		//let type = this.get('type') ? this.get('type').toLowerCase() : ''
 		let type = this.get('type').toLowerCase()
-		let releaseNameCleaned = this.release
+		let releaseNameCleaned = this.#release
 
 		// Main title vars
 		let [title, titleExtra] = ''
@@ -818,13 +739,13 @@ class Release {
 				}
 
 				// Search and replace pattern in regex pattern for better macthing
-				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'audio', 'flags', 'format', 'group', 'language', 'source' ] )
+				regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'audio', 'flags', 'format', 'group', 'language', 'source' ] )
 
 				// Special check for date:
 				// If date is inside brackets with more words, it's part of the title.
 				// If not, then we should consider and replace the regex date patterns inside the main regex pattern.
 				if ( ! releaseNameCleaned.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
-					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'regex_date', 'regex_date_monthname', 'year' ] )
+					regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'regex_date', 'regex_date_monthname', 'year' ] )
 				}
 
 				// Match title
@@ -842,7 +763,7 @@ class Release {
 
 						// First value is the artist = title
 						// We need the . for proper matching cleanup episode.
-						title = this.cleanup( '.' + titleArray[0], 'episode' )
+						title = this.#cleanup( '.' + titleArray[0], 'episode' )
 
 						// Unset first item before the loop
 						titleArray.splice( 0, 1 )
@@ -854,7 +775,7 @@ class Release {
 						titleArray.forEach( ( titlePart ) => {
 
 							// We need the . for proper macthing cleanup episode.
-							titlePart = this.cleanup( '.' + titlePart + '.', 'episode' )
+							titlePart = this.#cleanup( '.' + titlePart + '.', 'episode' )
 							titlePart = titlePart.replace( /^\.|\.$/gm,'' )
 
 							if ( titlePart ) {
@@ -878,7 +799,7 @@ class Release {
 				regexUsed = 'REGEX_TITLE_APP'
 
 				// Search and replace pattern in regex pattern for better macthing
-				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] )
+				regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] )
 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -912,8 +833,8 @@ class Release {
 					regexUsed += ' + REGEX_TITLE_TV_EPISODE'
 
 					// Search and replace pattern in regex pattern for better macthing
-					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
-					releaseNameCleaned = this.cleanup( releaseNameCleaned, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+					regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+					releaseNameCleaned = this.#cleanup( releaseNameCleaned, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 					// Match episode title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -930,7 +851,7 @@ class Release {
 					regexUsed = 'REGEX_TITLE_TV_DATE'
 
 					// Search and replace pattern in regex pattern for better macthing
-					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'regex_date', 'year' ] )
+					regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'regex_date', 'year' ] )
 
 					// Match Dated/Sports match title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -970,7 +891,7 @@ class Release {
 					regexUsed += ' + REGEX_TITLE_TV_EPISODE'
 
 					// Search and replace pattern in regex pattern for better macthing
-					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+					regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 					// Match episode title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -992,7 +913,7 @@ class Release {
 				regexUsed = this.get( 'date' ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX'
 
 				// Search and replace pattern in regex pattern for better macthing
-				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] )
+				regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] )
 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -1017,10 +938,10 @@ class Release {
 				regexUsed = 'REGEX_TITLE_EBOOK'
 
 				// Cleanup release name for better matching
-				releaseNameCleaned = this.cleanup( releaseNameCleaned, 'episode' )
+				releaseNameCleaned = this.#cleanup( releaseNameCleaned, 'episode' )
 
 				// Search and replace pattern in regex pattern for better macthing
-				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'regex_date', 'regex_date_monthname', 'year' ] )
+				regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'flags', 'format', 'language', 'regex_date', 'regex_date_monthname', 'year' ] )
 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -1059,7 +980,7 @@ class Release {
 				regexUsed = 'REGEX_TITLE_FONT'
 
 				// Cleanup release name for better matching
-				releaseNameCleaned = this.cleanup( releaseNameCleaned, [ 'version', 'os', 'format' ] )
+				releaseNameCleaned = this.#cleanup( releaseNameCleaned, [ 'version', 'os', 'format' ] )
 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -1081,11 +1002,11 @@ class Release {
 				regexUsed = 'REGEX_TITLE_TV_DATE'
 
 				// Search and replace pattern in regex pattern for better macthing
-				regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+				regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 				// Cleanup release name for better matching
 				if ( type === 'xxx' ) {
-					releaseNameCleaned = this.cleanup( releaseNameCleaned, [ 'episode', 'monthname', 'daymonth' ] )
+					releaseNameCleaned = this.#cleanup( releaseNameCleaned, [ 'episode', 'monthname', 'daymonth' ] )
 				}
 
 				// Try first date format
@@ -1109,7 +1030,7 @@ class Release {
 					regexUsed = 'REGEX_TITLE_MOVIE'
 
 					// Search and replace pattern in regex pattern for better macthing
-					regexPattern = this.cleanupPattern( this.release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year' ] )
+					regexPattern = this.#cleanupPattern( this.#release, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year' ] )
 
 					// Match title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -1141,9 +1062,6 @@ class Release {
 
 		}
 
-		// Only for debugging
-		this.set( 'debug', regexUsed + ': ' + regexPattern )
-
 		// Sanitize and set title
 		title = this.sanitize( title )
 		this.set( 'title', title )
@@ -1157,13 +1075,12 @@ class Release {
 
 
 	/**
-	 *
 	 * Parse simple attribute.
 	 *
 	 * @param array attribute  Attribute to parse.
-	 * @return mixed  attributeKeys  Found attribute value (string or array).
+	 * @return mixed  attributeKeys  Found attribute value (string or array) or null if couldn't parse attribute.
 	 */
-	parseAttribute( attribute ) {
+	#parseAttribute( attribute ) {
 
 		let attributeKeys = []
 
@@ -1175,7 +1092,7 @@ class Release {
 			// We need to catch the web source
 			if ( attrKey === 'WEB' ) {
 				attrPattern += '[._)-](%format%|%group%|%language%|%year%)'
-				attrPattern = this.cleanupPattern( this.release, attrPattern, [ 'format', 'group', 'language',  'year' ] )
+				attrPattern = this.#cleanupPattern( this.#release, attrPattern, [ 'format', 'group', 'language', 'year' ] )
 			}
 
 			// Transform all attribute values to array (simpler, so we just loop everything)
@@ -1187,7 +1104,7 @@ class Release {
 			attrPattern.forEach( ( pattern ) => {
 
 				// Check if pattern is inside release name
-				let matches = this.release.match( ( '/[._(-]' + pattern + '[._)-]/i' ).toRegExp() )
+				let matches = this.#release.match( ( '/[._(-]' + pattern + '[._)-]/i' ).toRegExp() )
 
 				// Yes? Return attribute array key as value
 				if ( matches ) {
@@ -1209,11 +1126,10 @@ class Release {
 
 
 	/**
-	 *
-	 * Check if rls has specified attribute value.
+	 * Check if release has specified attribute value.
 	 *
 	 * @param mixed values  Attribute values to check for (array or string)
-	 * @return boolean  If attribute values were found
+	 * @return boolean hasIt  If attribute values were found.
 	 */
 	hasAttribute( values, attributeName ) {
 
@@ -1254,15 +1170,14 @@ class Release {
 
 
 	/**
-	 *
 	 * Cleanup release name from given attribute.
 	 * Mostly needed for better title matching in some cases.
 	 *
 	 * @param string releaseName  Original release name.
-	 * @param mixed information  Informations to clean up (string or array).
+	 * @param mixed informations  Informations to clean up (string or array).
 	 * @return string releaseNameCleaned cleaned up release name.
 	 */
-	cleanup( releaseName, informations ) {
+	#cleanup( releaseName, informations ) {
 
 		// Just return if no information name was passed.
 		if ( !informations || !releaseName ) return releaseName
@@ -1381,28 +1296,27 @@ class Release {
 								if ( information === 'os' )
 									value = '(?:for[._-])?' + value
 
-								releaseName = releaseName.replace( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp(), '.' )
+								// We need to replace all findings with double dots for proper matching later on.
+								releaseName = releaseName.replace( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp(), '..' )
 							} )
 						} else {
 							// Exception for OS
 							if ( information === 'os' )
 								attribute = '(?:for[._-])?' + attribute
 
-							releaseName = releaseName.replace( ( '/[._(-]' + attribute + '[._)-]/i' ).toRegExp(), '.' )
+							// We need to replace all findings with double dots for proper matching later on.
+							releaseName = releaseName.replace( ( '/[._(-]' + attribute + '[._)-]/i' ).toRegExp(), '..' )
 						}
 					} )
 				}
 			}
 		} )
 
-		releaseName = releaseName.replace( /^\.|\.$/, '' )
-
 		return releaseName
 	}
 
 
 	/**
-	 *
 	 * Replace %attribute% in regex pattern with attribute pattern.
 	 *
 	 * @param string releaseName  Original release name.
@@ -1410,7 +1324,7 @@ class Release {
 	 * @param mixed informations  The information value to check for (string or array)
 	 * @return string regexPattern  Edited pattern
 	 */
-	cleanupPattern( releaseName, regexPattern, informations ) {
+	#cleanupPattern( releaseName, regexPattern, informations ) {
 
 		// Just return if no information name was passed.
 		if ( !informations || !releaseName || !regexPattern ) return regexPattern
@@ -1544,7 +1458,7 @@ class Release {
 								value = information === 'os' ? '(?:for[._-])?' + value : value
 
 								// And check what exactly pattern matches the given release name.
-								let matches = this.release.match( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp() )
+								let matches = this.#release.match( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp() )
 
 								// We have a match? ...
 								if ( matches ) {
@@ -1572,11 +1486,10 @@ class Release {
 
 
 	/**
-	 *
 	 * Sanitize the title.
 	 *
-	 * @param string title  Parsed title.
-	 * @return string title  Sanitized title.
+	 * @param string text  Text to sanitize.
+	 * @return string text  Sanitized text.
 	 */
 	sanitize( text ) {
 
@@ -1637,16 +1550,15 @@ class Release {
 
 
 	/**
-	 *
 	 * Get attribute value.
 	 *
 	 * @param string name  Attribute name.
-	 * @return mixed Attribute value (array, strint, int, date, boolean)
+	 * @return mixed Attribute value (array, string, int, date, boolean) or null if not found.
 	 */
 	get( name ) {
 
 		// Check if var exists
-		if ( this.information[ name ] ) {
+		if ( this.information[ name ] != null ) {
 			return this.information[ name ]
 
 		// Return all values
@@ -1659,16 +1571,14 @@ class Release {
 
 
 	/**
-	 *
 	 * Set attribute value.
 	 *
 	 * @param string name  Attribute name to set.
 	 * @param mixed value  Attribute value to set.
+	 * @return boolean  If atrribute was succesfully set.
 	 */
 	set( name, value ) {
-		// Ps.: this check will not work iv values is int 0
-		if ( name, value ) {
-			// Check if array key alerady exists, so we don't create a new one
+		if ( name && value != null ) {
 			this.information[ name ] = value
 			return true
 		}
@@ -1676,15 +1586,15 @@ class Release {
 	}
 }
 
-module.exports = Release
+module.exports = ReleaseParser
 
 
 /**
- *
- * Convert string to regex.
+ * Convert string to RegExp object.
  * https://stackoverflow.com/a/55258958/4371770
  *
  * @param string str  String to convert.
+ * @return RegExp  Converted RegExp from string.
  */
 String.prototype.toRegExp = function( str ) {
 	// if the string is not provided, and if it's called directly on the string, we can access the text via 'this'
@@ -1699,11 +1609,12 @@ String.prototype.toRegExp = function( str ) {
 
 
 /**
- *
- * Check if only numbers in string.
+ * Trim Characters from a String.
  * https://masteringjs.io/tutorials/fundamentals/trim
  *
- * @param string value  Value to check.
+ * @param string char  Char to trim, defaults to whitespace.
+ * @param string str  String to trim.
+ * @return string str  Trimmed string.
  */
 String.prototype.trim = function( char = ' ', str ) {
 	if ( ! str ) str = this
@@ -1712,10 +1623,11 @@ String.prototype.trim = function( char = ' ', str ) {
 
 
 /**
+ * Check if string has only numbers.
+ * No check for dots or commas, so only works with positive int.
  *
- * Check if only numbers in string.
- *
- * @param string value  Value to check.
+ * @param string str  String to check.
+ * @return boolean
  */
 String.prototype.isNumeric = function( str ) {
 	if ( ! str ) str = this
@@ -1724,11 +1636,11 @@ String.prototype.isNumeric = function( str ) {
 
 
 /**
- *
- * Makes the first char of every word uppercase.
+ * Makes the first character of every word uppercase.
  * https://gist.github.com/rickycheers/4541395?permalink_comment_id=2565472#gistcomment-2565472
  *
  * @param string str  String to format.
+ * @return string str  Formatted String.
  */
 String.prototype.capitalizeWords = function( str ) {
 	if ( ! str ) str = this
@@ -1738,16 +1650,12 @@ String.prototype.capitalizeWords = function( str ) {
 
 
 /**
- *
- * Makes the first char uppercase.
+ * Makes the first character of a string/word uppercase.
  *
  * @param string str  String to format.
+ * @return string str  Formatted String.
  */
-String.prototype.capitalizeFirstLetter = function( str ) {
+String.prototype.capitalizeWord = function( str ) {
 	if ( ! str ) str = this
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
-
-console.log( new Release( 'QUIZWARE.PRACTICE.TESTS.FOR.COMPUTER.ASSOCIATES.CERTIFICATIONS.V4.84-JGT', 'ebook' ).toString() )
-console.log( 'Title: Quizware Practice Tests For Computer Associates Certifications / Group: JGT / Version: 4.84 / Type: App' )

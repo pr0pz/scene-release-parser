@@ -1,8 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Extra excludes from npm package
+/test
+README.md
+
 # dependencies
 /node_modules
 
 # misc
 .DS_Store
-/package-lock.json
+package-lock.json
