@@ -20,7 +20,7 @@ if ( argv.indexOf('--help') !== -1 || argv.indexOf('-h') !== -1 ) {
 		'  ' + package.description,
 		'',
 		'  Example:',
-		'    scene-release 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed',
+		'    scene-release-parser 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed',
 		'',
 		'    => {',
 		'        "title": "24",',
