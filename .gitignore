@@ -6,3 +6,4 @@
 # misc
 .DS_Store
 /package-lock.json
+/out

@@ -10,28 +10,35 @@ The applied rules are based on
 ## Install
 
 ```sh
-$ npm install --save scene-release-parser
+$ npm install scene-release-parser
 ```
 
 
 ## Usage
 
 ```js
-var sceneRelease = require('scene-release-parser');
+import ReleaseParser from 'scene-release-parser'
 
-new sceneRelease('24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed')
+const release = ReleaseParser('24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed')
 // => {
-// 	"title": "24",
-// 	"titleExtra": "9 00 Uhr bis 10 00 Uhr",
-// 	"group": "c0nFuSed",
-// 	"year": null,
-// 	"date": null,
-// 	"season": 2,
-// 	"episode": 2,
-// 	"flags": [ "READNFO", "TV Dubbed" ],
-// 	"source": "DVDRip",
-// 	"format": "SVCD",
-// 	...
+//    release: '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed',
+//    title: '24',
+//    titleExtra: '9 00 Uhr bis 10 00 Uhr',
+//    group: 'c0nFuSed',
+//    year: null,
+//    date: null,
+//    season: 2,
+//    episode: 2,
+//    flags: [ 'READNFO', 'TV Dubbed' ],
+//    source: 'DVDRip',
+//    format: 'SVCD',
+//    resolution: null,
+//    audio: null,
+//    device: null,
+//    os: null,
+//    version: null,
+//    language: { de: 'German', multi: 'Multilingual' },
+//    type: 'TV'
 // }
 ```
 
@@ -39,29 +46,36 @@ new sceneRelease('24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SV
 ## CLI
 
 ```sh
-$ npm install --global scene-release-parser
+$ npm install --global release-parser
 ```
 
 ```sh
-$ scene-release-parser -h
+$ release-parser -h
 
   A tool for parsing scene release names.
 
   Example:
-    scene-release 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed
+    release-parser 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed
 
     => {
-        "title": "24",
-        "titleExtra": "9 00 Uhr bis 10 00 Uhr",
-        "group": "c0nFuSed",
-        "year": null,
-        "date": null,
-        "season": 2,
-        "episode": 2,
-        "flags": [ "READNFO", "TV Dubbed" ],
-        "source": "DVDRip",
-        "format": "SVCD",
-        ...
+      release: '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed',
+      title: '24',
+      titleExtra: '9 00 Uhr bis 10 00 Uhr',
+      group: 'c0nFuSed',
+      year: null,
+      date: null,
+      season: 2,
+      episode: 2,
+      flags: [ 'READNFO', 'TV Dubbed' ],
+      source: 'DVDRip',
+      format: 'SVCD',
+     resolution: null,
+      audio: null,
+      device: null,
+      os: null,
+      version: null,
+      language: { de: 'German', multi: 'Multilingual' },
+      type: 'TV'
     }
 ```
 

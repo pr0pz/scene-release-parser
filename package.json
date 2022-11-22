@@ -3,9 +3,11 @@
 	"version": "1.0.0",
 	"description": "A tool for parsing scene release names.",
 	"main": "ReleaseParser.js",
+	"bin": "cli.js",
+	"type": "module",
 	"scripts": {
 		"start": "nodemon test/ParserTest.js",
-		"test": "jest"
+		"test": "mocha"
 	},
 	"keywords": [
 		"scene",
@@ -21,7 +23,7 @@
 	},
 	"homepage": "https://github.com/pr0pz/scene-release-parser#readme",
 	"devDependencies": {
-		"jest": "^29.3.1",
+		"mocha": "^10.1.0",
 		"nodemon": "^2.0.20"
 	}
 }

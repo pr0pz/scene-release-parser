@@ -1,22 +1,26 @@
-const patterns = require('./ReleasePatterns.js')
+import patterns from './ReleasePatterns.js'
 
 /**
  * ReleaseParser - A tool for parsing scene release names.
- *
- * @package	ReleaseParser
- * @author	pr0pz
  * 
+ * @author pr0pz
  * @version 1.0.0
+ * 
+ * @module ReleaseParser
+ * @param {string} releaseName - Original release name.
+ * @param {string} section - Optional: Original release section for even better parsing.
  */
+const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section = '' ) => {
 
-
-const ReleaseParser = ( releaseName, section = '' ) => {
-
-	// Init all needed vars
+	/**
+	 * All parsed informations.
+	 * 
+	 * @public
+	*/
 	let data = {
 		'release'		: releaseName, // Original rls name
 		'title'			: null, // First part of title
-		'titleExtra'	: null, // Second part of title (optional) like Name of track/book/xxx etc.
+		'titleExtra'	: null, // Second part of title (optional) like Name of track/episode/book/xxx etc.
 		'group'			: null,
 		'year'			: null,
 		'date'			: null,
@@ -36,9 +40,10 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 
 	/**
-	 * The toString() method allows a class to decide how it will react when it is treated like a string.
-	 *
-	 * @return string classString  Stringified attribute values.
+	 * Object toString() override: allows the object to decide how it will react when it is treated like a string.
+	 * 
+	 * @public
+	 * @return {string} Stringified attribute values.
 	 */
 	const toString = () => {
 
@@ -127,12 +132,14 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 		
 	/**
 	 * Parse release language/s.
+	 * 
+	 * @private
 	 */
 	const parseLanguage = () => {
 
 		let languageCodes = []
 
-		// Search and replace pattern in regex pattern for better macthing
+		// Search and replace pattern in regex pattern for better matching
 		let regexPattern = cleanupPattern( releaseName, patterns.REGEX_LANGUAGE, [ 'audio', 'device', 'flags', 'format', 'group', 'os', 'resolution', 'source', 'year' ] )
 
 		// Loop all languages
@@ -182,6 +189,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release date.
+	 * 
+	 * @private
 	 */
 	const parseDate = () => {
 
@@ -304,6 +313,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release year.
+	 * 
+	 * @private
 	 */
 	const parseYear = () => {
 
@@ -332,6 +343,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release device.
+	 * 
+	 * @private
 	 */
 	const parseDevice = () => {
 
@@ -370,6 +383,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release flags.
+	 * 
+	 * @private
 	 */
 	const parseFlags = () => {
 
@@ -385,6 +400,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse the release group.
+	 * 
+	 * @private
 	 */
 	const parseGroup = () => {
 
@@ -399,6 +416,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release version (software, games, etc.).
+	 * 
+	 * @private
 	 */
 	const parseVersion = () => {
 		let matches = releaseName.match( ( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ).toRegExp() )
@@ -408,6 +427,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release source.
+	 * 
+	 * @private
 	 */
 	const parseSource = () => {
 
@@ -423,6 +444,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release format/encoding.
+	 * 
+	 * @private
 	 */
 	const parseFormat = () => {
 
@@ -438,6 +461,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release resolution.
+	 * 
+	 * @private
 	 */
 	const parseResolution = () => {
 
@@ -453,6 +478,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release audio.
+	 * 
+	 * @private
 	 */
 	const parseAudio = () => {
 		let audio = parseAttribute( patterns.AUDIO )
@@ -462,6 +489,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release operating system.
+	 * 
+	 * @private
 	 */
 	const parseOs = () => {
 		let os = parseAttribute( patterns.OS )
@@ -471,6 +500,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release season.
+	 * 
+	 * @private
 	 */
 	const parseSeason = () => {
 
@@ -489,6 +520,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release episode.
+	 * 
+	 * @private
 	 */
 	const parseEpisode = () => {
 
@@ -519,7 +552,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	/**
 	 * Parse the release type by section.
 	 *
-	 * @param string section  Original release section.
+	 * @private
+	 * @param {string} section - Original release section.
 	 */
 	const parseType = ( section ) => {
 
@@ -537,7 +571,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	/**
 	 * Guess the release type by already parsed attributes.
 	 *
-	 * @return string type  Guessed type.
+	 * @private
+	 * @return {string} Guessed type.
 	 */
 	const guessTypeByParsedAttributes = () => {
 
@@ -637,8 +672,9 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	/**
 	 * Guess the release type by section.
 	 *
-	 * @param string section  Original release section.
-	 * @return string type  Guessed/Parsed release type.
+	 * @private
+	 * @param {string} section - Original release section.
+	 * @return {string} Guessed/Parsed release type.
 	 */
 	const guessTypeBySection = ( section ) => {
 
@@ -678,8 +714,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Parse release title.
-	 *
-	 * @param string releaseName  Original release name.
+	 * 
+	 * @private
 	 */
 	const parseTitle = () => {
 
@@ -1038,22 +1074,18 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 		}
 
 		// Sanitize and set title
-		title = sanitize( title )
-		set( 'title', title )
-
+		set( 'title', sanitize( title ) )
 		// Sanitize and set title extra
-		if ( titleExtra ) {
-			titleExtra = sanitize( titleExtra )
-			set( 'titleExtra', titleExtra )
-		}
+		if ( titleExtra ) set( 'titleExtra', sanitize( titleExtra ) )
 	}
 
 
 	/**
 	 * Parse simple attribute.
 	 *
-	 * @param array attribute  Attribute to parse.
-	 * @return mixed  attributeKeys  Found attribute value (string or array) or null if couldn't parse attribute.
+	 * @private
+	 * @param {array} attribute - Attribute to parse.
+	 * @return {mixed} Found attribute value (string or array) or null if couldn't parse attribute.
 	 */
 	const parseAttribute = ( attribute ) => {
 
@@ -1103,8 +1135,10 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	/**
 	 * Check if release has specified attribute value.
 	 *
-	 * @param mixed values  Attribute values to check for (array or string)
-	 * @return boolean hasIt  If attribute values were found.
+	 * @public
+	 * @param {mixed} values - Attribute values to check for (array or string).
+	 * @param {string} attributeName - Attribute name to check for.
+	 * @return {boolean} If attribute values were found.
 	 */
 	const hasAttribute = ( values, attributeName ) => {
 
@@ -1132,10 +1166,8 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 					})
 
 				// If not, just check if the value is equal
-				} else {
-					if ( value.toLowerCase() === attribute.toLowerCase() ) {
-						hasIt = true
-					}
+				} else if ( value.toLowerCase() === attribute.toLowerCase() ) {
+					hasIt = true
 				}
 			} )
 		}
@@ -1146,11 +1178,13 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 	/**
 	 * Cleanup release name from given attribute.
+	 * 
 	 * Mostly needed for better title matching in some cases.
 	 *
-	 * @param string releaseName  Original release name.
-	 * @param mixed informations  Informations to clean up (string or array).
-	 * @return string releaseNameCleaned cleaned up release name.
+	 * @private
+	 * @param {string} releaseName - Original release name.
+	 * @param {mixed} informations - Informations to clean up (string or array).
+	 * @return {string} Cleaned up release name.
 	 */
 	const cleanup = ( releaseName, informations ) => {
 
@@ -1294,10 +1328,11 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	/**
 	 * Replace %attribute% in regex pattern with attribute pattern.
 	 *
-	 * @param string releaseName  Original release name.
-	 * @param string regexPattern  The pattern to check.
-	 * @param mixed informations  The information value to check for (string or array)
-	 * @return string regexPattern  Edited pattern
+	 * @private
+	 * @param {string} releaseName - Original release name.
+	 * @param {string} regexPattern - The pattern to check.
+	 * @param {mixed} informations - The information value to check for (string or array)
+	 * @return {string} Cleaned regex pattern.
 	 */
 	const cleanupPattern = ( releaseName, regexPattern, informations ) => {
 
@@ -1461,10 +1496,11 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 
 
 	/**
-	 * Sanitize the title.
+	 * Sanitize given text.
 	 *
-	 * @param string text  Text to sanitize.
-	 * @return string text  Sanitized text.
+	 * @private
+	 * @param {string} text - Text to sanitize.
+	 * @return {string} Sanitized text.
 	 */
 	const sanitize = ( text ) => {
 
@@ -1527,8 +1563,9 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	/**
 	 * Get attribute value.
 	 *
-	 * @param string name  Attribute name.
-	 * @return mixed Attribute value (array, string, int, date, boolean) or null if not found.
+	 * @public
+	 * @param {string} name - Attribute name.
+	 * @return {mixed} Attribute value (array, string, int, date, boolean) or null if not found.
 	 */
 	const get = ( name ) => {
 
@@ -1548,9 +1585,10 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	/**
 	 * Set attribute value.
 	 *
-	 * @param string name  Attribute name to set.
-	 * @param mixed value  Attribute value to set.
-	 * @return boolean  If atrribute was succesfully set.
+	 * @private
+	 * @param {string} name - Attribute name to set.
+	 * @param {mixed} value - Attribute value to set (array, string, int, date).
+	 * @return {boolean} If atrribute was succesfully set.
 	 */
 	const set = ( name, value ) => {
 		if ( name && value != null ) {
@@ -1581,22 +1619,20 @@ const ReleaseParser = ( releaseName, section = '' ) => {
 	parseType( section )
 	parseTitle()			// Title and extra title
 
-
 	return {
 		data,
-		get,
-		hasAttribute
+		hasAttribute,
+		toString
 	}
 }
 
-module.exports = ReleaseParser
 
 /**
  * Convert string to RegExp object.
  * https://stackoverflow.com/a/55258958/4371770
  *
- * @param string str  String to convert.
- * @return RegExp  Converted RegExp from string.
+ * @param {string} str - String to convert to RegExp.
+ * @return {RegExp} Converted RegExp from string.
  */
 String.prototype.toRegExp = function( str ) {
 	// if the string is not provided, and if it's called directly on the string, we can access the text via 'this'
@@ -1614,9 +1650,9 @@ String.prototype.toRegExp = function( str ) {
  * Trim Characters from a String.
  * https://masteringjs.io/tutorials/fundamentals/trim
  *
- * @param string char  Char to trim, defaults to whitespace.
- * @param string str  String to trim.
- * @return string str  Trimmed string.
+ * @param {string} char - Character to trim, defaults to whitespace.
+ * @param {string} str - String to trim.
+ * @return {string} Trimmed string.
  */
 String.prototype.trim = function( char = ' ', str ) {
 	if ( ! str ) str = this
@@ -1628,8 +1664,8 @@ String.prototype.trim = function( char = ' ', str ) {
  * Check if string has only numbers.
  * No check for dots or commas, so only works with positive int.
  *
- * @param string str  String to check.
- * @return boolean
+ * @param {string} str - String to check.
+ * @return {boolean} Check result.
  */
 String.prototype.isNumeric = function( str ) {
 	if ( ! str ) str = this
@@ -1641,8 +1677,8 @@ String.prototype.isNumeric = function( str ) {
  * Makes the first character of every word uppercase.
  * https://gist.github.com/rickycheers/4541395?permalink_comment_id=2565472#gistcomment-2565472
  *
- * @param string str  String to format.
- * @return string str  Formatted String.
+ * @param {string} str - String to format.
+ * @return {string} Formatted String.
  */
 String.prototype.capitalizeWords = function( str ) {
 	if ( ! str ) str = this
@@ -1654,12 +1690,13 @@ String.prototype.capitalizeWords = function( str ) {
 /**
  * Makes the first character of a string/word uppercase.
  *
- * @param string str  String to format.
- * @return string str  Formatted String.
+ * @param {string} str - String to format.
+ * @return {string} Formatted String.
  */
 String.prototype.capitalizeWord = function( str ) {
 	if ( ! str ) str = this
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-let rls = ReleaseParser( 'Diablo_II_Resurrected_Update_v1.0.0.3_incl_Offline_Crack_NSW-VENOM', 'games' )
+
+export default ReleaseParser
