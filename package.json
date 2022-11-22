@@ -1,5 +1,5 @@
 {
-	"name": "scene-release-parser",
+	"name": "release-parser",
 	"version": "1.0.0",
 	"description": "A tool for parsing scene release names.",
 	"main": "ReleaseParser.js",
@@ -16,12 +16,12 @@
 		"release",
 		"predb"
 	],
-	"author": "Wellington 'pr0pz' Estevo <info@propz.de> (https://propz.de)",
+	"author": "pr0pz <info@propz.de>",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/pr0pz/scene-release-parser/issues"
+		"url": "https://github.com/pr0pz/release-parser/issues"
 	},
-	"homepage": "https://github.com/pr0pz/scene-release-parser#readme",
+	"homepage": "https://github.com/pr0pz/release-parser#readme",
 	"devDependencies": {
 		"mocha": "^10.1.0",
 		"nodemon": "^2.0.20"
