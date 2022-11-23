@@ -1,9 +1,6 @@
 /**
  * This is the main test file.
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
- *
- * @author	pr0pz
- * @version 1.0.0
  */
 
 import ReleaseParser from '../ReleaseParser.js'

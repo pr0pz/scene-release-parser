@@ -3,13 +3,14 @@ import patterns from './ReleasePatterns.js'
 /**
  * ReleaseParser - A tool for parsing scene release names.
  * 
- * @author pr0pz
- * @version 1.0.0
+ * @author Wellington Estevo
+ * @version 1.0.1
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
  * @param {string} section - Optional: Original release section for even better parsing.
  */
+
 const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section = '' ) => {
 
 	/**
@@ -607,12 +608,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 		// Description with date inside brackets is nearly always music or musicvideo
 		} else if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
-
-			if ( get( 'resolution' ) ) {
-				type = 'MusicVideo'
-			} else {
-				type = 'Music'
-			}
+			type = get( 'resolution' ) ? 'MusicVideo' : 'Music'
 
 		// Has date and a resolution? probably TV
 		} else if ( get( 'date' ) && get( 'resolution' ) ) {
@@ -1279,14 +1275,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 						break
 					
 					case 'source':
-						// Check if we need to loop array
-						if ( Array.isArray( informationValue ) ) {
-							informationValue.forEach( ( source ) => {
-								attributes.push( patterns.SOURCE[ source ] )
-							} )
-						} else {
-							attributes.push( patterns.SOURCE[ informationValue ] )
-						}
+						attributes.push( patterns.SOURCE[ informationValue ] )
 						break
 
 					case 'version':
@@ -1509,7 +1498,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			// Trim '-' at the end of the string
 			text = text.trim( '-' )
 			// Replace every separator char with whitespaces
-			text = text.replace( /[_\.]+/gi, ' ' )
+			text = text.replace( /[_.]+/gi, ' ' )
 			// Put extra whitespace between '-', looks better
 			//text = text.replace( '-', ' - ' )
 			// Trim and simplify multiple whitespaces

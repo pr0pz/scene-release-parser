@@ -1,11 +1,11 @@
 /**
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
- * @author pr0pz
- * @version 1.0.0
+ * @author Wellington Estevo
+ * @version 1.0.1
  */
 
-// Reusable vars.
+// Reusable vars
 const regexDate = '(\\d{2}|\\d{4})[._-](\\d{2})[._-](\\d{2}|\\d{4})'
 const regexTitle = '([\\w.()-]+?)' // last ? = JS fix for ungreedy
 const regexEpisodeTv = '(?:(?:[ST]\\d+)?[._-]?(?:ep?|o[av]+[._-]?|d|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'

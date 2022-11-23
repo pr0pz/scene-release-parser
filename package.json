@@ -1,6 +1,6 @@
 {
 	"name": "release-parser",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A tool for parsing scene release names.",
 	"main": "ReleaseParser.js",
 	"bin": "cli.js",
@@ -14,10 +14,25 @@
 		"warez",
 		"parser",
 		"release",
-		"predb"
+		"predb",
+		"propz"
 	],
-	"author": "pr0pz <info@propz.de>",
+	"author": "Wellington Estevo <info@propz.de> (https://propz.de)",
 	"license": "MIT",
+	"funding": [
+		{
+			"type": "ko-fi",
+			"url": "https://ko-fi.com/propz"
+		},
+		{
+			"type": "coindrop",
+			"url": "https://coindrop.to/propz"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pr0pz/release-parser"
+	},
 	"bugs": {
 		"url": "https://github.com/pr0pz/release-parser/issues"
 	},
