@@ -1,8 +1,8 @@
 # __Scene Release Parser__
 
 ![Made with JavaScript](https://img.shields.io/static/v1?label&message=JavaScript&color=f0db4f&logo=javascript&logoColor=323330)
-![npm package version](https://img.shields.io/npm/v/release-parser)
-![Minified npm package size](https://img.shields.io/bundlephobia/minzip/release-parser)
+![npm package version: v1.0.2](https://img.shields.io/npm/v/release-parser?color=CC3534&logo=npm)
+![Minified npm package size: 9.09 kB](https://img.shields.io/bundlephobia/minzip/release-parser?color=CC3534&logo=npm)
 
 ## __A library for parsing scene release names into simpler, reusable data.__
 
@@ -26,7 +26,7 @@ The approach was to implement an algorithm that can really parse a variety of sc
 
 I suppose you already know some JavaScript and [Node](https://nodejs.org/en/) is already installed on your computer. The next steps are:
 
-› Install the library via npm;
+› Install the library via npm ___OR___ download the [latest release](https://github.com/pr0pz/scene-release-parser/releases/latest);
 
 ```sh
 $ npm install release-parser
@@ -103,6 +103,12 @@ $ release-parser 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVC
     }
 ```
 
+That's it!
+
+### __Found any Bugs?__
+
+If you find any bugs/errors, feel free to [post an issue](https://github.com/pr0pz/scene-release-parser/issues).
+
 ### __Similar projects and inspirations__
 - [matiassingers/scene-release](https://github.com/matiassingers/scene-release) (JavaScript)
 - [thcolin/scene-release-parser-php](https://github.com/thcolin/scene-release-parser-php) (PHP)
@@ -112,3 +118,7 @@ $ release-parser 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVC
 ### __License__
 
 ![License: MIT](https://img.shields.io/npm/l/release-parser)
+
+_That's it!_
+
+___Be excellent to each other. And, Party on, dudes!___
