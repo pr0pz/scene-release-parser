@@ -1,10 +1,10 @@
 import patterns from './ReleasePatterns.js'
 
 /**
- * ReleaseParser - A tool for parsing scene release names.
+ * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.0.1
+ * @version 1.0.2
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.

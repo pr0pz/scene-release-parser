@@ -1,7 +1,7 @@
 {
 	"name": "release-parser",
-	"version": "1.0.1",
-	"description": "A tool for parsing scene release names.",
+	"version": "1.0.2",
+	"description": "A library for parsing scene release names into human readable data.",
 	"main": "ReleaseParser.js",
 	"bin": "cli.js",
 	"type": "module",
@@ -10,10 +10,14 @@
 		"test": "mocha"
 	},
 	"keywords": [
-		"scene",
-		"warez",
 		"parser",
+		"parser-library",
+		"scene",
+		"scene-release",
 		"release",
+		"warez",
+		"warezscene",
+		"warez-scripts",
 		"predb",
 		"propz"
 	],
@@ -23,20 +27,16 @@
 		{
 			"type": "ko-fi",
 			"url": "https://ko-fi.com/propz"
-		},
-		{
-			"type": "coindrop",
-			"url": "https://coindrop.to/propz"
 		}
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pr0pz/release-parser"
+		"url": "https://github.com/pr0pz/scene-release-parser"
 	},
 	"bugs": {
-		"url": "https://github.com/pr0pz/release-parser/issues"
+		"url": "https://github.com/pr0pz/scene-release-parser/issues"
 	},
-	"homepage": "https://github.com/pr0pz/release-parser#readme",
+	"homepage": "https://github.com/pr0pz/scene-release-parser#readme",
 	"devDependencies": {
 		"mocha": "^10.1.0",
 		"nodemon": "^2.0.20"

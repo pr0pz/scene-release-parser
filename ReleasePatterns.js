@@ -2,7 +2,7 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 // Reusable vars
