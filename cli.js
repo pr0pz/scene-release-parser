@@ -10,15 +10,15 @@ import pckg from './package.json' assert { type: 'json' }
 var args = process.argv.slice(2)
 
 // No release name given?
-if ( !args[0] ) {
-	
+if ( !args[0] )
+{
 	console.error( 'Please enter a release name.' )
-
-} else {
-
+}
+else
+{
 	// Check for commands or parse release
-	switch ( args[0] ) {
-
+	switch ( args[0] )
+	{
 		// Version
 		case '-v':
 		case '--version':

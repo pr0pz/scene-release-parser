@@ -2,14 +2,14 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.0.2
+ * @version 1.0.3
  */
 
 // Reusable vars
 const regexDate = '(\\d{2}|\\d{4})[._-](\\d{2})[._-](\\d{2}|\\d{4})'
 const regexTitle = '([\\w.()-]+?)' // last ? = JS fix for ungreedy
 const regexEpisodeTv = '(?:(?:[ST]\\d+)?[._-]?(?:ep?|o[av]+[._-]?|d|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
-const regexVersionText = '(?:v(?:ersion)?|Updated?[._-]?v?|Build)'
+const regexVersionText = '(?:v(?:ersione?)?|Updated?[._-]?v?|Build)'
 
 const patterns = {
 
@@ -103,7 +103,8 @@ const patterns = {
 		'CAM': 'cam([._-]?rip)?',
 		'CD Album': '\\d*cda', // CD Album
 		'CD EP': 'cdep',
-		'CD Single': [ 'cd[sm]', 'mcd', '(?:(?:cd|maxi)[._-]?)?single(?:[._-]web)?', 'cd[._-]?maxi' ], // CD Maxi / Single
+		'CD Single': [ 'cd[sm]', 'mcd', '(?:(?:cd|maxi)[._-]?)single', 'cd[._-]?maxi' ], // CD Maxi / Single
+		'Web Single': 'web[._-]single|single[._-]web', // Web single
 		'Console DVD': [ 'xboxdvdr?', 'ps2dvd' ],
 		'DAT Tape': 'DAT', // Digital Audio Tape
 		'DAB': 'dab', // Digital Audio Broadcast

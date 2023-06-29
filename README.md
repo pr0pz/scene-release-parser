@@ -1,7 +1,7 @@
 # __Scene Release Parser__
 
 ![Made with JavaScript](https://img.shields.io/static/v1?label&message=JavaScript&color=f0db4f&logo=javascript&logoColor=323330)
-![npm package version: v1.0.2](https://img.shields.io/npm/v/release-parser?color=CC3534&logo=npm)
+![npm package version: v1.0.3](https://img.shields.io/npm/v/release-parser?color=CC3534&logo=npm)
 ![Minified npm package size: 9.09 kB](https://img.shields.io/bundlephobia/minzip/release-parser?color=CC3534&logo=npm)
 
 ## __A library for parsing scene release names into simpler, reusable data.__
@@ -17,7 +17,7 @@ _Like it? I'd appreciate the support :)_
 
 This library parses scene release names and splits the data into smaller, simpler, human readable and therefore more reusable data.
 
-The applied rules are mostly based on studying the [existing collection of Scene rules](https://scenerules.org/) and other release examples from a [PreDB](https://predb.de/), since a lot of releases are not named correctly (specially older ones).
+The applied rules are mostly based on studying the [existing collection of Scene rules](https://scenerules.org/) and other release examples from a PreDB, since a lot of releases are not named correctly (specially older ones).
 
 The approach was to implement an algorithm that can really parse a variety of scene releases from all decades. The main test file covers some more complex names.
 
@@ -110,6 +110,7 @@ That's it!
 If you find any bugs/errors, feel free to [post an issue](https://github.com/pr0pz/scene-release-parser/issues).
 
 ### __Similar projects and inspirations__
+- [pr0pz/scene-release-parser-php](https://github.com/pr0pz/scene-release-parser-php) (PHP)
 - [matiassingers/scene-release](https://github.com/matiassingers/scene-release) (JavaScript)
 - [thcolin/scene-release-parser-php](https://github.com/thcolin/scene-release-parser-php) (PHP)
 - [majestixx/scene-release-parser-php-lib](https://github.com/majestixx/scene-release-parser-php-lib) (PHP)

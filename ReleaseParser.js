@@ -4,15 +4,15 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.0.2
+ * @version 1.0.3
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
  * @param {string} section - Optional: Original release section for even better parsing.
  */
 
-const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section = '' ) => {
-
+const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section = '' ) =>
+{
 	/**
 	 * All parsed informations.
 	 * 
@@ -46,59 +46,78 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @public
 	 * @return {string} Stringified attribute values.
 	 */
-	const toString = () => {
-
+	const toString = () =>
+	{
 		let classString = ''
 		let type = get( 'type' ).toLowerCase()
 		let informations = get( 'all' )
 
 		// Loop all values and put together the stringified class
-		for ( let information in informations ) {
-
+		for ( let information in informations )
+		{
 			let informationValue = informations[ information ]
 
 			// Skip original release name and debug
 			if ( information === 'release' || information === 'debug' ) continue
 
 			// Rename var title based on attributes
-			if ( get( 'titleExtra' ) ) {
-				if ( information === 'title' ) {
-					if ( type === 'ebook' || type === 'abook' ) {
+			if ( get( 'titleExtra' ) )
+			{
+				if ( information === 'title' )
+				{
+					if ( type === 'ebook' || type === 'abook' )
+					{
 						information = 'Author'
-					} else if ( type === 'music' || type === 'musicvideo' ) {
+					}
+					else if ( type === 'music' || type === 'musicvideo' )
+					{
 						information = 'Artist'
-					} else if ( type === 'tv' || type === 'anime' ) {
+					}
+					else if ( type === 'tv' || type === 'anime' )
+					{
 						information = 'Show'
-					} else if ( type === 'xxx' ) {
+					}
+					else if ( type === 'xxx' )
+					{
 						information = 'Publisher'
-					} else {
+					}
+					else
+					{
 						information = 'Name'
 					}
-
+				}
 				// Rename title_extra based on attributes
-				} else if ( information === 'titleExtra' ) {
-					if ( hasAttribute( [ 'CD Single', 'VLS' ], 'source' ) ) {
+				else if ( information === 'titleExtra' )
+				{
+					if ( hasAttribute( [ 'CD Single', 'Web Single', 'VLS' ], 'source' ) )
+					{
 						information = 'Song'
-					} else if ( hasAttribute( [ 'CD Album', 'Vynil', 'LP' ], 'source' ) ) {
+					}
+					else if ( hasAttribute( [ 'CD Album', 'Vynil', 'LP' ], 'source' ) )
+					{
 						information = 'Album'
-					} else if ( hasAttribute( [ 'EP', 'CD EP' ], 'source' ) ) {
+					}
+					else if ( hasAttribute( [ 'EP', 'CD EP' ], 'source' ) )
+					{
 						information = 'EP'
-					} else {
+					}
+					else
+					{
 						information = 'Title'
 					}
 				}
 			}
 
 			// Value set?
-			if ( informationValue ) {
-
+			if ( informationValue )
+			{
 				// Some attributes can have more then one value.
 				// So put them together in this var.
 				let values = ''
 
 				// We have to handle Date a little bit different.
-				if ( Object.prototype.toString.call( informationValue ) === '[object Date]' ) {
-
+				if ( Object.prototype.toString.call( informationValue ) === '[object Date]' )
+				{
 					// https://stackoverflow.com/questions/3605214/javascript-add-leading-zeroes-to-date
 					values = informationValue.toLocaleString('de-DE', { // you can use undefined as first argument
 						year: 'numeric',
@@ -110,19 +129,22 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 						('0' + informationValue.getDate()).slice(-2) + '.' +
 						('0' + informationValue.getMonth()).slice(-2) + '.' +
 						informationValue.getFullYear()*/
-
+				}
 				// Join all found languages
-				} else if ( information === 'language' ) {
+				else if ( information === 'language' )
+				{
 					values = Object.values( informationValue ).join( ', ' )
 
-				} else {
+				}
+				else
+				{
 					values = Array.isArray( informationValue ) ? values + informationValue.join( ', ' ) : informationValue
 				}
 
 				// Separate every information type with a slash
-				if ( classString ) {
+				if ( classString )
 					classString += ' / '
-				}
+
 				classString += information.capitalizeWord() + ': ' + values
 			}
 		}
@@ -136,46 +158,47 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseLanguage = () => {
-
+	const parseLanguage = () =>
+	{
 		let languageCodes = []
 
 		// Search and replace pattern in regex pattern for better matching
 		let regexPattern = cleanupPattern( releaseName, patterns.REGEX_LANGUAGE, [ 'audio', 'device', 'flags', 'format', 'group', 'os', 'resolution', 'source', 'year' ] )
 
 		// Loop all languages
-		for ( const languageCodeKey in patterns.LANGUAGES ) {
-
+		for ( const languageCodeKey in patterns.LANGUAGES )
+		{
 			let languageName = patterns.LANGUAGES[ languageCodeKey ]
 
 			// Turn every var into an array so we can loop it
-			if ( !Array.isArray( languageName ) ) {
+			if ( !Array.isArray( languageName ) )
 				languageName = [ languageName ]
-			}
 
 			// Loop all sub language names
-			languageName.forEach ( (name) => {
-
+			languageName.forEach ( (name) =>
+			{
 				// Insert current lang pattern
 				let newRegexPattern = regexPattern.replace( '%language_pattern%', name ).toRegExp()
 
 				// Check for language tag (exclude "grand" for formula1 rls)
 				let matches = releaseName.match( newRegexPattern )
-				if ( matches ) {
+
+				if ( matches )
 					languageCodes.push( languageCodeKey )
-				}
 			} )
 		}
 
-		if ( languageCodes ) {
-
+		if ( languageCodes )
+		{
 			let languages = {}
 
-			languageCodes.forEach( (languageCode) => {
+			languageCodes.forEach( (languageCode) =>
+			{
 				// Get language name by language key
 				let language = patterns.LANGUAGES[ languageCode ]
 				// If it's an array, get the first value as language name
-				if ( Array.isArray( language ) ) {
+				if ( Array.isArray( language ) )
+				{
 					language = patterns.LANGUAGES[ languageCode ][0]
 				}
 				languages[ languageCode ] = language
@@ -193,30 +216,32 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseDate = () => {
-
+	const parseDate = () =>
+	{
 		// Check for normal date
 		let regex = ( '/[._(-]' + patterns.REGEX_DATE + '[._)-]/i' ).toRegExp()
 		let matches = releaseName.match( regex )
 
 		let [day, month, year, temp, date] = ''
 
-		if ( matches ) {
-
+		if ( matches )
+		{
 			// Date formats: 21.09.16 (default) / 16.09.2021 / 2021.09.16 / 09.16.2021
 			year = parseInt( matches[1] )
 			month = parseInt( matches[2] )
 			day = parseInt( matches[3] )
 
 			// On older Mvid releases the format is year last.
-			if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
+			if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
+			{
 				temp = year
 				year = day
 				day = temp
 			}
 
 			// 4 digits day (= year) would change the vars.
-			if ( day.toString().length === 4 ) {
+			if ( day.toString().length === 4 )
+			{
 				temp = year
 				year = day
 				day = temp
@@ -225,7 +250,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			// Month > 12 means we swap day and month (16.09.2021)
 			// What if day and month are <= 12?
 			// Then it's not possible to get the right order, so date could be wrong.
-			if ( month > 12 ) {
+			if ( month > 12 )
+			{
 				temp = day
 				day = month
 				month = temp
@@ -233,7 +259,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 			// 2 digits year has to be converted to 4 digits year
 			// https://www.php.net/manual/en/datetime.createfromformat.php (y)
-			if ( year.toString().length === 2 ) {
+			if ( year.toString().length === 2 )
+			{
 				// If year <= this year, it's in the 2000's
 				year = year <= ( new Date().getFullYear().toString() ).slice( -2 ) ? '20' + year : '19' + year
 			}
@@ -243,21 +270,24 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 			// Try to create datetime object
 			// No error handling if it doesn't work.
-			try {
+			try
+			{
 				set( 'date', new Date( date ) )
-
-			} catch ( err ) {
+			}
+			catch ( err )
+			{
 				console.log( 'Datetime Error (Date): ' + date + ' / rls: ' + releaseName )
 			}
-
-		} else {
-
+		}
+		else
+		{
 			// Cleanup release name for better matching
 			let releaseNameCleaned = cleanup( releaseName, 'episode' )
 
 			// Put all months together
 			let allMonths = ''
-			for ( const [key, value] of Object.entries( patterns.MONTHS ) ) {
+			for ( const [key, value] of Object.entries( patterns.MONTHS ) )
+			{
 				allMonths = allMonths ? allMonths + '|' + value : value
 			}
 			// Set regex pattern
@@ -267,15 +297,20 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 			// If match: get last matched value (should be the right one)
 			// Day is optional, year is a must have.
-			if ( matches && matches[0] ) {
-
+			if ( matches && matches[0] )
+			{
 				// Day, default to 1 if no day found
 				day = 1
-				if ( matches[1] ) {
+				if ( matches[1] )
+				{
 					day = matches[1]
-				} else if ( matches[3] ) {
+				}
+				else if ( matches[3] )
+				{
 					day = matches[3]
-				} else if ( matches[5] ) {
+				}
+				else if ( matches[5] )
+				{
 					day = matches[5]
 				}
 
@@ -286,12 +321,14 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				year = matches[4]
 
 				// Check for month name to get right month number
-				for ( const monthNumber in patterns.MONTHS ) {
+				for ( const monthNumber in patterns.MONTHS )
+				{
 					let monthPattern = patterns.MONTHS[ monthNumber ]
 
 					matches = month.match( ( '/' + monthPattern + '/i' ).toRegExp() )
 
-					if ( matches ) {
+					if ( matches )
+					{
 						month = monthNumber
 						break
 					}
@@ -302,9 +339,12 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 				// Try to create datetime object
 				// No error handling if it doesn't work.
-				try {
+				try
+				{
 					set( 'date', new Date( date ) )
-				} catch ( err ) {
+				}
+				catch ( err )
+				{
 					console.log( 'Datetime Error (Date): ' + date + ' / rls: ' + releaseName )
 				}
 			}
@@ -317,16 +357,16 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseYear = () => {
-
+	const parseYear = () =>
+	{
 		// Remove any version so regex works better (remove unneeded digits)
 		let releaseNameCleaned = cleanup( releaseName, 'version' )
 
 		// Match year
 		let matches = releaseNameCleaned.match( patterns.REGEX_YEAR.toRegExp() )
 
-		if ( matches && matches[1] ) {
-
+		if ( matches && matches[1] )
+		{
 			// If we have any matches, take the last possible value (normally the real year).
 			// Release name could have more than one 4 digit number that matches the regex.
 			// The first number would belong to the title.
@@ -334,9 +374,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			let year = Array.isArray( matches[1] ) ? matches[1][ matches[1].length - 1 ] : matches[1]
 			year = year.isNumeric() ? parseInt( year ) : sanitize( year )
 			set( 'year', year )
-
+		}
 		// No Matches? Get year from parsed Date instead.
-		} else if ( get( 'date' ) ) {
+		else if ( get( 'date' ) )
+		{
 			set( 'year', get( 'date' ).getFullYear() )
 		}
 	}
@@ -347,31 +388,31 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseDevice = () => {
-
+	const parseDevice = () =>
+	{
 		let device = ''
 
 		// Cleanup release name for better matching
 		let releaseNameCleaned = cleanup( releaseName, [ 'flags', 'os' ] )
 
 		// Loop all device patterns
-		for ( const deviceName in patterns.DEVICE ) {
-
+		for ( const deviceName in patterns.DEVICE )
+		{
 			let devicePattern = patterns.DEVICE[ deviceName ]
 
 			// Turn every var into an array so we can loop it
-			if ( !Array.isArray( devicePattern ) ) {
+			if ( !Array.isArray( devicePattern ) )
 				devicePattern = [ devicePattern ]
-			}
 
 			// Loop all sub patterns
-			for ( const pattern of devicePattern ) {
-
+			for ( const pattern of devicePattern )
+			{
 				// Match device
 				let matches = releaseNameCleaned.match( ( '/[._-]' + pattern + '-\\w+$/i' ).toRegExp() )
 
 				// Match found, set type parent key as type
-				if ( matches ) {
+				if ( matches )
+				{
 					device = deviceName
 					break
 				}
@@ -387,11 +428,12 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseFlags = () => {
-
+	const parseFlags = () =>
+	{
 		let flags = parseAttribute( patterns.FLAGS )
 
-		if ( flags ) {
+		if ( flags )
+		{
 			// Always save flags as array
 			flags = !Array.isArray( flags ) ? [ flags ] : flags
 			set( 'flags', flags )
@@ -404,13 +446,16 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseGroup = () => {
-
+	const parseGroup = () =>
+	{
 		let matches = releaseName.match( patterns.REGEX_GROUP.toRegExp() )
 
-		if ( matches && matches[1] ) {
+		if ( matches && matches[1] )
+		{
 			set( 'group', matches[1] )
-		} else {
+		}
+		else
+		{
 			set( 'group', 'NOGRP' )
 		}
 	}
@@ -420,7 +465,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseVersion = () => {
+	const parseVersion = () =>
+	{
 		let matches = releaseName.match( ( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ).toRegExp() )
 		if ( matches ) set( 'version', matches[1] )
 	}
@@ -431,11 +477,12 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseSource = () => {
-
+	const parseSource = () =>
+	{
 		let source = parseAttribute( patterns.SOURCE )
 
-		if ( source ) {
+		if ( source )
+		{
 			// Only one source allowed, so get first parsed occurence (should be the right one)
 			source = Array.isArray( source ) ? source[0] : source
 			set( 'source', source )
@@ -448,11 +495,12 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseFormat = () => {
-
+	const parseFormat = () =>
+	{
 		let format = parseAttribute( patterns.FORMAT )
 
-		if ( format ) {
+		if ( format )
+		{
 			// Only one source allowed, so get first parsed occurence (should be the right one)
 			format = Array.isArray( format ) ? format[0] : format
 			set( 'format', format )
@@ -465,11 +513,12 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseResolution = () => {
-
+	const parseResolution = () =>
+	{
 		let resolution = parseAttribute( patterns.RESOLUTION )
 
-		if ( resolution ) {
+		if ( resolution )
+		{
 			// Only one resolution allowed, so get first parsed occurence (should be the right one)
 			resolution = Array.isArray( resolution ) ? resolution[0] : resolution
 			set( 'resolution', resolution )
@@ -482,7 +531,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseAudio = () => {
+	const parseAudio = () =>
+	{
 		let audio = parseAttribute( patterns.AUDIO )
 		if ( audio ) set( 'audio', audio )
 	}
@@ -493,7 +543,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseOs = () => {
+	const parseOs = () =>
+	{
 		let os = parseAttribute( patterns.OS )
 		if ( os ) set( 'os', os )
 	}
@@ -504,12 +555,12 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseSeason = () => {
-
+	const parseSeason = () =>
+	{
 		let matches = releaseName.match( patterns.REGEX_SEASON.toRegExp() )
 
-		if ( matches ) {
-
+		if ( matches )
+		{
 			// key 1 = 1st pattern, key 2 = 2nd pattern
 			let season = matches[1] ? matches[1] : null
 			season = !season && matches[2] ? matches[2] : season
@@ -524,24 +575,28 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseEpisode = () => {
-
+	const parseEpisode = () =>
+	{
 		let regexPattern = ( '/[._-]' + patterns.REGEX_EPISODE + '[._-]/i' ).toRegExp()
 		let matches = releaseName.match( regexPattern )
 
-		if ( matches ) {
-
+		if ( matches )
+		{
 			// key 1 = 1st pattern, key 2 = 2nd pattern
 			// 0 can be a valid value
 			let episode = matches[1] ? matches[1] : null
 			episode = !episode && matches[2] ? matches[2] : episode
 
-			if ( episode ) {
+			if ( episode )
+			{
 				// Sanitize episode if it's not only numeric (eg. more then one episode found "1 - 2")
 				// If it's episode 0, keep it as a string. If not, IF statements won't work, won't recognize value as set.
-				if ( episode.isNumeric() && episode !== '0' ) {
+				if ( episode.isNumeric() && episode !== '0' )
+				{
 					episode = parseInt( episode )
-				} else {
+				}
+				else
+				{
 					episode = sanitize( episode.replace( /[_\.]/, '-' ) )
 				}
 				set( 'episode', episode )
@@ -556,8 +611,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @private
 	 * @param {string} section - Original release section.
 	 */
-	const parseType = ( section ) => {
-
+	const parseType = ( section ) =>
+	{
 		// 1st: guesss type by rls name
 		let type = guessTypeByParsedAttributes()
 		// 2nd: no type found? guess by section
@@ -575,86 +630,102 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @private
 	 * @return {string} Guessed type.
 	 */
-	const guessTypeByParsedAttributes = () => {
-
+	const guessTypeByParsedAttributes = () =>
+	{
 		let type = ''
 
 		// Do We have an episode?
-		if ( get( 'episode' ) || get( 'season' ) || hasAttribute( patterns.sourcesTv, 'source' ) ) {
-
+		if ( get( 'episode' ) || get( 'season' ) || hasAttribute( patterns.sourcesTv, 'source' ) )
+		{
 			// Default to TV
 			type = 'TV'
 
 			// Anime (can have episodes) = if we additionaly have an anime flag in rls name
-			if ( hasAttribute( patterns.flagsAnime, 'flags' ) ) {
+			if ( hasAttribute( patterns.flagsAnime, 'flags' ) )
+			{
 				type = 'Anime'
-
+			}
 			// Ebook (can have episodes) = if we additionaly have an ebook flag in rls name
-			} else if ( hasAttribute( patterns.flagsEbook, 'flags' ) ) {
+			else if ( hasAttribute( patterns.flagsEbook, 'flags' ) )
+			{
 				type = 'eBook'
-
+			}
 			// Abook (can have episodes) = if we additionaly have an abook flag in rls name
-			} else if ( hasAttribute( 'ABOOK', 'flags' ) ) {
+			else if ( hasAttribute( 'ABOOK', 'flags' ) )
+			{
 				type = 'ABook'
-
+			}
 			// Imageset (set number)
-			} else if ( hasAttribute( patterns.flagsXxx, 'flags' ) ) {
+			else if ( hasAttribute( patterns.flagsXxx, 'flags' ) )
+			{
 				type = 'XXX'
-
+			}
 			// Description with date inside brackets is nearly always music or musicvideo
-			} else if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
+			else if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
+			{
 				type = 'MusicVideo'
 			}
-
+		}
 		// Description with date inside brackets is nearly always music or musicvideo
-		} else if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
+		else if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
+		{
 			type = get( 'resolution' ) ? 'MusicVideo' : 'Music'
-
+		}
 		// Has date and a resolution? probably TV
-		} else if ( get( 'date' ) && get( 'resolution' ) ) {
-
+		else if ( get( 'date' ) && get( 'resolution' ) )
+		{
 			// Default to TV
 			type = 'TV'
 
 			// Could be an xxx movie
-			if ( hasAttribute( patterns.flagsXxx, 'flags' ) ) {
+			if ( hasAttribute( patterns.flagsXxx, 'flags' ) )
+			{
 				type = 'XXX'
 			}
-
+		}
 		// Check for MVid formats
-		} else if ( hasAttribute( patterns.formatsMvid, 'format' ) ) {
+		else if ( hasAttribute( patterns.formatsMvid, 'format' ) )
+		{
 			type = 'MusicVideo'
-
+		}
 		// Not TV, so first check for movie related flags
-		} else if ( hasAttribute( patterns.flagsMovie, 'flags' ) ) {
+		else if ( hasAttribute( patterns.flagsMovie, 'flags' ) )
+		{
 			type = 'Movie'
-
+		}
 		// Music = if we found some music related flags
-		} else if ( hasAttribute( patterns.flagsMusic, 'flags' ) || hasAttribute( patterns.formatsMusic, 'format' ) ) {
+		else if ( hasAttribute( patterns.flagsMusic, 'flags' ) || hasAttribute( patterns.formatsMusic, 'format' ) )
+		{
 			type = 'Music'
-
+		}
 		// Ebook = ebook related flag
-		} else if ( hasAttribute( patterns.flagsEbook, 'flags' ) ) {
+		else if ( hasAttribute( patterns.flagsEbook, 'flags' ) )
+		{
 			type = 'eBook'
-
+		}
 		// Abook = Abook related flag
-		} else if ( hasAttribute( 'ABOOK', 'flags' ) ) {
+		else if ( hasAttribute( 'ABOOK', 'flags' ) )
+		{
 			type = 'ABook'
-
+		}
 		// Font = Font related flag
-		} else if ( hasAttribute( [ 'FONT', 'FONTSET' ], 'flags' ) ) {
+		else if ( hasAttribute( [ 'FONT', 'FONTSET' ], 'flags' ) )
+		{
 			type = 'Font'
-
+		}
 		// Games = if device was found or game related flags
-		} else if ( get( 'device' ) || hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) ) {
+		else if ( get( 'device' ) || hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) )
+		{
 			type = 'Game'
-
+		}
 		// App = if os is set or software (also game) related flags
-		} else if ( ( get( 'version' ) || hasAttribute( patterns.flagsApps, 'flags' ) ) && !hasAttribute( patterns.formatsVideo, 'format' ) ) {
+		else if ( ( get( 'version' ) || hasAttribute( patterns.flagsApps, 'flags' ) ) && !hasAttribute( patterns.formatsVideo, 'format' ) )
+		{
 			type = 'App'
-
+		}
 		// Porn = if JAV flag
-		} else if ( hasAttribute( patterns.flagsXxx, 'flags' ) ) {
+		else if ( hasAttribute( patterns.flagsXxx, 'flags' ) )
+		{
 			type = 'XXX'
 		}
 
@@ -672,31 +743,31 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @param {string} section - Original release section.
 	 * @return {string} Guessed/Parsed release type.
 	 */
-	const guessTypeBySection = ( section ) => {
-
+	const guessTypeBySection = ( section ) =>
+	{
 		let type = ''
 
 		// No Section, no chocolate!
-		if ( section ) {
-
+		if ( section )
+		{
 			// Loop all types
-			for ( const typeParentKey in patterns.TYPE ) {
-
+			for ( const typeParentKey in patterns.TYPE )
+			{
 				let typeValue = patterns.TYPE[ typeParentKey ]
 
 				// Transform every var to array, so we can loop
-				if ( !Array.isArray( typeValue ) ) {
+				if ( !Array.isArray( typeValue ) )
 					typeValue = [ typeValue ]
-				}
 
 				// Loop all type patterns
-				for ( const value of typeValue ) {
-
+				for ( const value of typeValue )
+				{
 					// Match type
 					let matches = section.match( ( '/' + value + '/i' ).toRegExp() )
 
 					// Match found, set type parent key as type
-					if ( matches ) {
+					if ( matches )
+					{
 						type = typeParentKey
 						break
 					}
@@ -713,8 +784,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * 
 	 * @private
 	 */
-	const parseTitle = () => {
-
+	const parseTitle = () =>
+	{
 		let type = get('type').toLowerCase()
 		let releaseNameCleaned = releaseName
 
@@ -726,8 +797,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		// We only break if we have some results.
 		// If the case doenst't deliver results, it runs till default
 		// which is the last escape and should deliver something.
-		switch ( type ) {
-
+		switch ( type )
+		{
 			// Music artist + release title (album/single/track name, etc.)
 			case 'music':
 			case 'abook':
@@ -737,10 +808,13 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				regexPattern = patterns.REGEX_TITLE_MUSIC
 				regexUsed = 'REGEX_TITLE_MUSIC'
 
-				if ( type === 'abook' ) {
+				if ( type === 'abook' )
+				{
 					regexPattern = patterns.REGEX_TITLE_ABOOK
 					regexUsed = 'REGEX_TITLE_ABOOK'
-				} else if ( type === 'musicvideo' ) {
+				}
+				else if ( type === 'musicvideo' )
+				{
 					regexPattern = patterns.REGEX_TITLE_MVID
 					regexUsed = 'REGEX_TITLE_MVID'
 				}
@@ -751,23 +825,22 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Special check for date:
 				// If date is inside brackets with more words, it's part of the title.
 				// If not, then we should consider and replace the regex date patterns inside the main regex pattern.
-				if ( ! releaseNameCleaned.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) ) {
+				if ( ! releaseNameCleaned.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
 					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'regex_date', 'regex_date_monthname', 'year' ] )
-				}
 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-				if ( matches ) {
-
+				if ( matches )
+				{
 					// Full match
 					title = matches[1]
 
 					// Split the title in the respective parts
 					let titleArray = title.split( '-' )
 
-					if ( titleArray ) {
-
+					if ( titleArray )
+					{
 						// First value is the artist = title
 						// We need the . for proper matching cleanup episode.
 						title = cleanup( '.' + titleArray[0], 'episode' )
@@ -779,15 +852,14 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 						let separator = type === 'abook' ? ' - ' : '-'
 
 						// Loop remaining parts and set title extra
-						titleArray.forEach( ( titlePart ) => {
-
+						titleArray.forEach( ( titlePart ) =>
+						{
 							// We need the . for proper macthing cleanup episode.
 							titlePart = cleanup( '.' + titlePart + '.', 'episode' )
 							titlePart = titlePart.replace( /^\.|\.$/gm,'' )
 
-							if ( titlePart ) {
+							if ( titlePart )
 								titleExtra = titleExtra ? titleExtra + separator + titlePart : titlePart
-							}
 						} )
 					}
 
@@ -811,7 +883,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-				if ( matches ) {
+				if ( matches )
+				{
 					title = matches[1]
 					break
 				}
@@ -830,8 +903,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				matches = releaseNameCleaned.match( regexPattern )
 
 				// Check for matches with regex title tv
-				if ( matches ) {
-
+				if ( matches )
+				{
 					title = matches[1]
 
 					// Build pattern and try to get episode title
@@ -849,9 +922,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 					titleExtra = matches && matches[1] !== '.' ? matches[1] : ''
 
 					break
-
+				}
 				// Try to match Sports match
-				} else {
+				else
+				{
 
 					// Setup regex pattern
 					regexPattern = patterns.REGEX_TITLE_TV_DATE
@@ -863,8 +937,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 					// Match Dated/Sports match title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-					if ( matches ) {
-
+					if ( matches )
+					{
 						// 1st match = event (nfl, mlb, etc.)
 						title = matches[1]
 						// 2nd match = specific event name (eg. team1 vs team2)
@@ -888,8 +962,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 				// Check for matches with regex title tv
-				if ( matches ) {
-
+				if ( matches )
+				{
 					title = matches[1]
 
 					// Build pattern and try to get episode title
@@ -925,7 +999,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-				if ( matches ) {
+				if ( matches )
+				{
 					// 1st Match = Publisher, Website, etc.
 					title = matches[1]
 					// 2nd Match = Specific release name (movie/episode/model name, etc.)
@@ -953,22 +1028,23 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 				
-				if ( matches ) {
-
+				if ( matches )
+				{
 					// Full match
 					title = matches[1]
 
 					// Split the title in the respective parts
 					let titleArray = title.split( '-' )
 
-					if ( titleArray ) {
-
+					if ( titleArray )
+					{
 						// First value is the artist = title
 						title = titleArray[0]
 						// Unset this before the loop
 						titleArray.splice( 0, 1 )
 						// Loop remaining parts and set title extra
-						titleArray.forEach( ( titlePart ) => {
+						titleArray.forEach( ( titlePart ) =>
+						{
 							if ( titlePart )
 								titleExtra = titleExtra ? titleExtra + ' - ' + titlePart : titlePart
 						} )
@@ -992,7 +1068,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-				if ( matches ) {
+				if ( matches )
+				{
 					title = matches[1]
 					break
 				}
@@ -1012,9 +1089,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 				// Cleanup release name for better matching
-				if ( type === 'xxx' ) {
+				if ( type === 'xxx' )
 					releaseNameCleaned = cleanup( releaseNameCleaned, [ 'episode', 'monthname', 'daymonth' ] )
-				}
 
 				// Try first date format
 				// NFL.2021.01.01.Team1.vs.Team2.1080p...
@@ -1023,15 +1099,15 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Match Dated/Sports match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-				if ( matches && matches[2] ) {
-
+				if ( matches && matches[2] )
+				{
 					// 1st match = event (nfl, mlb, etc.)
 					title = matches[1]
 					// 2nd match = specific event name (eg. team1 vs team2)
 					titleExtra = matches[2]
-
-				} else {
-
+				}
+				else
+				{
 					// Setup regex pattern
 					regexPattern = patterns.REGEX_TITLE_MOVIE
 					regexUsed = 'REGEX_TITLE_MOVIE'
@@ -1042,22 +1118,21 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 					// Match title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-					if ( matches ) {
-
+					if ( matches )
+					{
 						title = matches[1]
-
+					}
 					// No matches? Try simplest regex pattern.
-					} else {
-
+					else
+					{
 						// Some very old (or very wrong named) releases dont have a group at the end.
 						// But I still wanna match them, so we check for the '-'.
 						regexPattern = patterns.REGEX_TITLE
 						regexUsed = 'REGEX_TITLE'
 
 						// This should be default, because we found the '-'.
-						if ( releaseNameCleaned.includes( '-' ) ) {
+						if ( releaseNameCleaned.includes( '-' ) )
 							regexPattern += '-'
-						}
 
 						// Match title
 						matches = releaseNameCleaned.match( ( '/^' + regexPattern + '/i' ).toRegExp() )
@@ -1066,7 +1141,6 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 						title = matches ? matches[1] : ''
 					}
 				}
-
 		}
 
 		// Sanitize and set title
@@ -1083,45 +1157,46 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @param {array} attribute - Attribute to parse.
 	 * @return {mixed} Found attribute value (string or array) or null if couldn't parse attribute.
 	 */
-	const parseAttribute = ( attribute ) => {
-
+	const parseAttribute = ( attribute ) =>
+	{
 		let attributeKeys = []
 
 		// Loop all attributes
-		for ( const attrKey in attribute ) {
-
+		for ( const attrKey in attribute )
+		{
 			let attrPattern = attribute[ attrKey ]
 
 			// We need to catch the web source
-			if ( attrKey === 'WEB' ) {
+			if ( attrKey === 'WEB' )
+			{
 				attrPattern += '[._)-](%format%|%group%|%language%|%year%)'
 				attrPattern = cleanupPattern( releaseName, attrPattern, [ 'format', 'group', 'language', 'year' ] )
 			}
 
 			// Transform all attribute values to array (simpler, so we just loop everything)
-			if ( !Array.isArray( attrPattern ) ) {
+			if ( !Array.isArray( attrPattern ) )
 				attrPattern = [ attrPattern ]
-			}
 
 			// Loop attribute values
-			attrPattern.forEach( ( pattern ) => {
+			attrPattern.forEach( ( pattern ) =>
+			{
 
 				// Check if pattern is inside release name
 				let matches = releaseName.match( ( '/[._(-]' + pattern + '[._)-]/i' ).toRegExp() )
 
 				// Yes? Return attribute array key as value
-				if ( matches ) {
+				if ( matches )
 					attributeKeys.push( attrKey )
-				}
 			} )
 		}
 
 		// Only return if array not empty
-		if ( attributeKeys.length > 0 ) {
+		if ( attributeKeys.length > 0 )
+		{
 			// Transform array to string if we have just one value
-			if ( attributeKeys.length === 1 ) {
+			if ( attributeKeys.length === 1 )
 				attributeKeys = attributeKeys.join()
-			}
+
 			return attributeKeys
 		}
 		return null
@@ -1136,33 +1211,34 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @param {string} attributeName - Attribute name to check for.
 	 * @return {boolean} If attribute values were found.
 	 */
-	const hasAttribute = ( values, attributeName ) => {
-
+	const hasAttribute = ( values, attributeName ) =>
+	{
 		// Get attribute value
 		let attribute = get( attributeName )
 		let hasIt = false
 
 		// Check if attribute is set
-		if ( attribute ) {
-
+		if ( attribute )
+		{
 			// Transform var into array for loop
-			if ( !Array.isArray( values ) ) {
+			if ( !Array.isArray( values ) )
 				values = [ values ]
-			}
 
 			// Loop all values to check for
-			values.forEach( ( value ) => {
-
+			values.forEach( ( value ) =>
+			{
 				// If values were saved as array, check if in array
-				if ( Array.isArray( attribute ) ) {
-					attribute.forEach( ( attrValue ) => {
-						if ( value.toLowerCase() === attrValue.toLowerCase() ) {
+				if ( Array.isArray( attribute ) )
+				{
+					attribute.forEach( ( attrValue ) =>
+					{
+						if ( value.toLowerCase() === attrValue.toLowerCase() )
 							hasIt = true
-						}
 					})
-
+				}
 				// If not, just check if the value is equal
-				} else if ( value.toLowerCase() === attribute.toLowerCase() ) {
+				else if ( value.toLowerCase() === attribute.toLowerCase() )
+				{
 					hasIt = true
 				}
 			} )
@@ -1182,35 +1258,33 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @param {mixed} informations - Informations to clean up (string or array).
 	 * @return {string} Cleaned up release name.
 	 */
-	const cleanup = ( releaseName, informations ) => {
-
+	const cleanup = ( releaseName, informations ) =>
+	{
 		// Just return if no information name was passed.
 		if ( !informations || !releaseName ) return releaseName
 
 		// Transform var into array for loop
-		if ( !Array.isArray( informations ) ) {
+		if ( !Array.isArray( informations ) )
 			informations = [ informations ]
-		}
 
 		// Loop all attribute values to be cleaned up
-		informations.forEach( ( information ) => {
-
+		informations.forEach( ( information ) =>
+		{
 			// Get information value
 			let informationValue = get( information )
 
 			// Get date as value if looking for "daymonth" or "month" (ebooks)
-			if ( information.includes( 'month' ) || information.includes( 'date' ) ) {
+			if ( information.includes( 'month' ) || information.includes( 'date' ) )
 				informationValue = get( 'date' )
-			}
 
 			// Only do something if it's not empty
-			if ( informationValue ) {
-
+			if ( informationValue )
+			{
 				let attributes = []
 
 				// Get proper attr value
-				switch ( information ) {
-
+				switch ( information )
+				{
 					case 'daymonth':
 						// Clean up day and month number from rls
 						attributes = [
@@ -1222,11 +1296,15 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 					case 'format':
 						// Check if we need to loop array
-						if ( Array.isArray( informationValue ) ) {
-							informationValue.forEach( ( format ) => {
+						if ( Array.isArray( informationValue ) )
+						{
+							informationValue.forEach( ( format ) =>
+							{
 								attributes.push( patterns.FORMAT[ format ] )
 							} )
-						} else {
+						}
+						else
+						{
 							attributes.push( patterns.FORMAT[ informationValue ] )
 						}
 						break
@@ -1237,7 +1315,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 					case 'flags':
 						// Flags are always saved as array, so loop them.
-						informationValue.forEach( ( flag ) => {
+						informationValue.forEach( ( flag ) =>
+						{
 							// Skip some flags, needed for proper software/game title regex.
 							if ( flag !== 'UPDATE' && flag !== '3D' )
 								attributes.push( patterns.FLAGS[ flag ] )
@@ -1246,7 +1325,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 					case 'language':
 						// Get first parsed language code
-						for ( let languageCode in informationValue ) {
+						for ( let languageCode in informationValue )
+						{
 							attributes.push( patterns.LANGUAGES[ languageCode ] )
 						}
 						break
@@ -1261,11 +1341,14 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 					case 'os':
 						// Some old releases have "for x" before the OS
-						if ( Array.isArray( informationValue ) ) {
+						if ( Array.isArray( informationValue ) )
+						{
 							informationValue.forEach( ( value ) => {
 								attributes.push( patterns.OS[ value ] )
 							} )
-						} else {
+						}
+						else
+						{
 							attributes.push( patterns.OS[ informationValue ] )
 						}
 						break
@@ -1284,12 +1367,14 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				}
 
 				// Loop attributes if not empty and preg replace to cleanup
-				if ( attributes ) {
-
-					attributes.forEach( ( attribute ) => {
-
-						if ( Array.isArray( attribute ) ) {
-							attribute.forEach( ( value ) => {
+				if ( attributes )
+				{
+					attributes.forEach( ( attribute ) =>
+					{
+						if ( Array.isArray( attribute ) )
+						{
+							attribute.forEach( ( value ) =>
+							{
 								// Exception for OS
 								if ( information === 'os' )
 									value = '(?:for[._-])?' + value
@@ -1297,7 +1382,9 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 								// We need to replace all findings with double dots for proper matching later on.
 								releaseName = releaseName.replace( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp(), '..' )
 							} )
-						} else {
+						}
+						else
+						{
 							// Exception for OS
 							if ( information === 'os' )
 								attribute = '(?:for[._-])?' + attribute
@@ -1323,59 +1410,66 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @param {mixed} informations - The information value to check for (string or array)
 	 * @return {string} Cleaned regex pattern.
 	 */
-	const cleanupPattern = ( releaseName, regexPattern, informations ) => {
-
+	const cleanupPattern = ( releaseName, regexPattern, informations ) =>
+	{
 		// Just return if no information name was passed.
 		if ( !informations || !releaseName || !regexPattern ) return regexPattern
 
 		// Transform to array
-		if ( !Array.isArray( informations ) ) {
+		if ( !Array.isArray( informations ) )
 			informations = [ informations ]
-		}
 
 		// Loop all information that need a replacement
-		informations.forEach( ( information ) => {
-
+		informations.forEach( ( information ) =>
+		{
 			// Get information value
 			let informationValue = get( information )
 			
 			// Get date as value if looking for "daymonth" or "month" (ebooks, imgset, sports)
-			if ( information.includes( 'month' ) || information.includes( 'date' ) ) {
+			if ( information.includes( 'month' ) || information.includes( 'date' ) )
 				informationValue = get( 'date' )
-			}
 
 			// Only do something if it's not empty
-			if ( informationValue && informationValue !== null ) {
-
+			if ( informationValue && informationValue !== null )
+			{
 				let attributes = []
 
-				switch( information ) {
-
+				switch( information )
+				{
 					case 'audio':
 						// Check if we need to loop array
-						if ( Array.isArray( informationValue ) ) {
-							informationValue.forEach( ( audio ) => {
+						if ( Array.isArray( informationValue ) )
+						{
+							informationValue.forEach( ( audio ) =>
+							{
 								attributes.push( patterns.AUDIO[ audio ] )
 							} )
-						} else {
+						}
+						else
+						{
 							attributes.push( patterns.AUDIO[ informationValue ] )
 						}
 						break
 
 					case 'device':
 						// Check if we need to loop array
-						if ( Array.isArray( informationValue ) ) {
-							informationValue.forEach( ( device ) => {
+						if ( Array.isArray( informationValue ) )
+						{
+							informationValue.forEach( ( device ) =>
+							{
 								attributes.push( patterns.DEVICE[ device ] )
 							} )
-						} else {
+						}
+						else
+						{
 							attributes.push( patterns.DEVICE[ informationValue ] )
 						}
 						break
 
 					case 'flags':
 						// Flags are always saved as array, so loop them.
-						informationValue.forEach( ( flag ) => {
+						informationValue.forEach( ( flag ) =>
+						{
 							// Skip some flags, needed for proper software/game title regex.
 							if ( flag !== '3D' )
 								attributes.push( patterns.FLAGS[ flag ] )
@@ -1384,11 +1478,15 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 					case 'format':
 						// Check if we need to loop array
-						if ( Array.isArray( informationValue ) ) {
-							informationValue.forEach( ( format ) => {
+						if ( Array.isArray( informationValue ) )
+						{
+							informationValue.forEach( ( format ) =>
+							{
 								attributes.push( patterns.FORMAT[ format ] )
 							} )
-						} else {
+						}
+						else
+						{
 							attributes.push( patterns.FORMAT[ informationValue ] )
 						}
 						break
@@ -1399,18 +1497,23 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 					case 'language':
 						// Get first parsed language code
-						for ( let languageCode in informationValue ) {
+						for ( let languageCode in informationValue )
+						{
 							attributes.push( patterns.LANGUAGES[ languageCode ] )
 						}
 						break
 
 					case 'os':
 						// Some old releases have "for x" before the OS
-						if ( Array.isArray( informationValue ) ) {
-							informationValue.forEach( ( value ) => {
+						if ( Array.isArray( informationValue ) )
+						{
+							informationValue.forEach( ( value ) =>
+							{
 								attributes.push( patterns.OS[ value ] )
 							} )
-						} else {
+						}
+						else
+						{
 							attributes.push( patterns.OS[ informationValue ] )
 						}
 						break
@@ -1440,33 +1543,32 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 					case 'year':
 						attributes.push( informationValue )
 						break
-
 				}
 
 				// Loop attributes if not empty and preg replace to cleanup
-				if ( attributes ) {
-
+				if ( attributes )
+				{
 					let values = ''
 
-					attributes.forEach( ( attribute ) => {
-
-						if ( Array.isArray( attribute ) ) {
-							
-							attribute.forEach( ( value ) => {
-
+					attributes.forEach( ( attribute ) =>
+					{
+						if ( Array.isArray( attribute ) )
+						{
+							attribute.forEach( ( value ) =>
+							{
 								value = information === 'os' ? '(?:for[._-])?' + value : value
 
 								// And check what exactly pattern matches the given release name.
 								let matches = releaseName.match( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp() )
 
 								// We have a match? ...
-								if ( matches ) {
+								if ( matches )
 									// Put to values and separate by | if needed.
 									values = values ? values + '|' + value : value
-								}
 							} )
-
-						} else {
+						}
+						else
+						{
 							attribute = information === 'os' ? '(?:for[._-])?' + attribute : attribute
 
 							// Put to values and separate by | if needed.
@@ -1485,16 +1587,34 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 
 	/**
+	 * Remove unneeded attributes that were falsely parsed.
+	 *
+	 * @private
+	 */
+	const cleanupAttributes = () =>
+	{
+		if ( get( 'type' ) === 'Movie' )
+		{			
+			// Remove version if it's a movie (falsely parsed from release name)
+			if ( get( 'version' ) !== null )
+			{
+				set( 'version', null )
+			}
+		}
+	}
+
+
+	/**
 	 * Sanitize given text.
 	 *
 	 * @private
 	 * @param {string} text - Text to sanitize.
 	 * @return {string} Sanitized text.
 	 */
-	const sanitize = ( text ) => {
-
-		if ( text ) {
-
+	const sanitize = ( text ) =>
+	{
+		if ( text )
+		{
 			// Trim '-' at the end of the string
 			text = text.trim( '-' )
 			// Replace every separator char with whitespaces
@@ -1507,8 +1627,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 			// Check if all letters are uppercase:
 			// First, check if we have more then 1 word in title (keep single worded titles uppercase).
-			if ( text.split(' ').length > 1 ) {
-				if ( text === text.toUpperCase() ) {
+			if ( text.split(' ').length > 1 )
+			{
+				if ( text === text.toUpperCase() )
+				{
 					// Transforms into lowercase, for ucwords to work properly.
 					// Ucwords don't do anything if all chars are uppercase.
 					text = text.capitalizeWords()
@@ -1518,27 +1640,30 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			let type = get('type') ? get('type').toLowerCase() : ''
 			// Words which should end with a point
 			let specialWordsAfter = [ 'feat', 'ft', 'nr', 'st', 'pt', 'vol' ]
-			if ( type !== 'app' ) {
+			if ( type !== 'app' )
 				specialWordsAfter.push( 'vs' )
-			}
+
 			// Words which should have a point before (usualy xxx domains)
 			let specialWordsBefore = ''
-			if ( type === 'xxx' ) {
+			if ( type === 'xxx' )
 				specialWordsBefore = [ 'com', 'net', 'pl' ]
-			}
 
 			// Split title so we can loop
 			let textSplitted = text.split( ' ' )
 
 			// Loop, search and replace special words
-			if ( Array.isArray( textSplitted ) ) {
-				textSplitted.forEach( ( textWord ) => {
+			if ( Array.isArray( textSplitted ) )
+			{
+				textSplitted.forEach( ( textWord ) =>
+				{
 					// Point after word
-					if ( specialWordsAfter.includes( textWord.toLowerCase() ) ) {
+					if ( specialWordsAfter.includes( textWord.toLowerCase() ) )
+					{
 						text = text.replace( textWord, textWord + '.' )
-
+					}
 					// Point before word
-					} else if ( specialWordsBefore.includes( textWord.toLowerCase() ) ) {
+					else if ( specialWordsBefore.includes( textWord.toLowerCase() ) )
+					{
 						text = text.replace( ' ' + textWord, '.' + textWord )
 					}
 				} )
@@ -1556,14 +1681,16 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @param {string} name - Attribute name.
 	 * @return {mixed} Attribute value (array, string, int, date, boolean) or null if not found.
 	 */
-	const get = ( name ) => {
-
+	const get = ( name ) =>
+	{
 		// Check if var exists
-		if ( data[ name ] != null ) {
+		if ( data[ name ] != null )
+		{
 			return data[ name ]
-
+		}
 		// Return all values
-		} else if ( name === 'all' ) {
+		else if ( name === 'all' )
+		{
 			return data
 		}
 
@@ -1579,8 +1706,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 * @param {mixed} value - Attribute value to set (array, string, int, date).
 	 * @return {boolean} If atrribute was succesfully set.
 	 */
-	const set = ( name, value ) => {
-		if ( name && value != null ) {
+	const set = ( name, value ) =>
+	{
+		if ( name in data )
+		{
 			data[ name ] = value
 			return true
 		}
@@ -1589,7 +1718,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 
 	// Parse everything.
-	// The parsing order DO matter!
+	// The parsing order DO MATTER!
 	parseGroup()
 	parseFlags()			// Misc rls name flags
 	parseOs()				// For Software/Game rls: Operating System
@@ -1607,6 +1736,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	parseSource()			// Source (2nd time, for right web source)
 	parseType( section )
 	parseTitle()			// Title and extra title
+	cleanupAttributes()
 
 	return {
 		data,
@@ -1623,7 +1753,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
  * @param {string} str - String to convert to RegExp.
  * @return {RegExp} Converted RegExp from string.
  */
-String.prototype.toRegExp = function( str ) {
+String.prototype.toRegExp = function( str )
+{
 	// if the string is not provided, and if it's called directly on the string, we can access the text via 'this'
 	if ( ! str ) str = this
 	// Main regex
@@ -1643,7 +1774,8 @@ String.prototype.toRegExp = function( str ) {
  * @param {string} str - String to trim.
  * @return {string} Trimmed string.
  */
-String.prototype.trim = function( char = ' ', str ) {
+String.prototype.trim = function( char = ' ', str )
+{
 	if ( ! str ) str = this
 	return str.replace( ('/^[' + char + ']+/i').toRegExp(), '' ).replace( ('/[' + char +']+$/i').toRegExp(), '' )
 }
@@ -1656,7 +1788,8 @@ String.prototype.trim = function( char = ' ', str ) {
  * @param {string} str - String to check.
  * @return {boolean} Check result.
  */
-String.prototype.isNumeric = function( str ) {
+String.prototype.isNumeric = function( str )
+{
 	if ( ! str ) str = this
 	return /^\d+$/.test( str )
 }
@@ -1669,7 +1802,8 @@ String.prototype.isNumeric = function( str ) {
  * @param {string} str - String to format.
  * @return {string} Formatted String.
  */
-String.prototype.capitalizeWords = function( str ) {
+String.prototype.capitalizeWords = function( str )
+{
 	if ( ! str ) str = this
 	str = str.toLowerCase().replace( /\b[a-z]/g, char => char.toUpperCase() )
 	return str
@@ -1682,7 +1816,8 @@ String.prototype.capitalizeWords = function( str ) {
  * @param {string} str - String to format.
  * @return {string} Formatted String.
  */
-String.prototype.capitalizeWord = function( str ) {
+String.prototype.capitalizeWord = function( str )
+{
 	if ( ! str ) str = this
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
