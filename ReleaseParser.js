@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.0.3
+ * @version 1.0.4
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -222,7 +222,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		let regex = ( '/[._(-]' + patterns.REGEX_DATE + '[._)-]/i' ).toRegExp()
 		let matches = releaseName.match( regex )
 
-		let [day, month, year, temp, date] = ''
+		let [ day, month, year, temp, date ] = ''
 
 		if ( matches )
 		{
@@ -363,15 +363,16 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		let releaseNameCleaned = cleanup( releaseName, 'version' )
 
 		// Match year
-		let matches = releaseNameCleaned.match( patterns.REGEX_YEAR.toRegExp() )
+		let matches = Array.from( releaseNameCleaned.matchAll( patterns.REGEX_YEAR.toRegExp() ) )
 
-		if ( matches && matches[1] )
+		if ( matches.length >= 1 )
 		{
 			// If we have any matches, take the last possible value (normally the real year).
-			// Release name could have more than one 4 digit number that matches the regex.
+			// Release name could have more than one 4 digit number
 			// The first number would belong to the title.
+			let year = matches.length >= 2 ? matches[ matches.length - 1 ][1] : matches[0][1]
+
 			// Sanitize year if it's not only numeric ("199X"/"200X")
-			let year = Array.isArray( matches[1] ) ? matches[1][ matches[1].length - 1 ] : matches[1]
 			year = year.isNumeric() ? parseInt( year ) : sanitize( year )
 			set( 'year', year )
 		}
@@ -694,7 +695,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			type = 'Movie'
 		}
 		// Music = if we found some music related flags
-		else if ( hasAttribute( patterns.flagsMusic, 'flags' ) || hasAttribute( patterns.formatsMusic, 'format' ) )
+		else if ( hasAttribute( patterns.flagsMusic, 'flags' ) || hasAttribute( patterns.formatsMusic, 'format' ) && !get( 'version' ) )
 		{
 			type = 'Music'
 		}
@@ -728,6 +729,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		{
 			type = 'XXX'
 		}
+
+		console.log( type )
 
 		// Check for Sports programs
 		//let sports = [ 'NFL', 'NHL', 'MLB', 'Formula1', 'Premier.League', 'La[._-]?Liga', 'Eredivisie', 'Bundesliga', 'Ligue[._-]?1']
@@ -790,9 +793,9 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		let releaseNameCleaned = releaseName
 
 		// Main title vars
-		let [title, titleExtra] = ''
+		let [ title, titleExtra ] = ''
 		// Some vars for better debugging which regex pattern was used
-		let [regexPattern, regexUsed, matches] = ''
+		let [ regexPattern, regexUsed, matches ] = ''
 
 		// We only break if we have some results.
 		// If the case doenst't deliver results, it runs till default
@@ -1185,7 +1188,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				let matches = releaseName.match( ( '/[._(-]' + pattern + '[._)-]/i' ).toRegExp() )
 
 				// Yes? Return attribute array key as value
-				if ( matches )
+				if ( matches && !attributeKeys.includes( attrKey ) )
 					attributeKeys.push( attrKey )
 			} )
 		}

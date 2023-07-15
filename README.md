@@ -110,7 +110,7 @@ That's it!
 If you find any bugs/errors, feel free to [post an issue](https://github.com/pr0pz/scene-release-parser/issues).
 
 ### __Similar projects and inspirations__
-- [pr0pz/scene-release-parser-php](https://github.com/pr0pz/scene-release-parser-php) (PHP)
+- [pr0pz/scene-release-parser-php](https://github.com/pr0pz/scene-release-parser-php) - Identical to this project but in PHP
 - [matiassingers/scene-release](https://github.com/matiassingers/scene-release) (JavaScript)
 - [thcolin/scene-release-parser-php](https://github.com/thcolin/scene-release-parser-php) (PHP)
 - [majestixx/scene-release-parser-php-lib](https://github.com/majestixx/scene-release-parser-php-lib) (PHP)

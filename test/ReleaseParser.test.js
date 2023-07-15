@@ -80,7 +80,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Die.Bourne.Verschwoerung.German.2004.INTERNAL.No.Bock.uff.Proper.READ.NFO.AC3.Dubbed.DL.DVDR-Cinemaniacs', 'DVDR' ).toString(),
-			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: AC3 Dubbed, Internal, PROPER, READNFO / Source: DVD / Format: DVDR / Language: German, Multilingual / Type: Movie'
+			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: AC3 Dubbed, Internal, Proper, READNFO / Source: DVD / Format: DVDR / Language: German, Multilingual / Type: Movie'
 		)
 	})
 
@@ -97,6 +97,22 @@ describe( 'ReleaseParser', function()
 		assert.equal(
 			ReleaseParser( 'Burial.Ground.The.Nights.Of.Terror.1981.DUBBED.GRINDHOUSE.VERSION.1080P.BLURAY.X264-WATCHABLE', 'X264' ).toString(),
 			'Title: Burial Ground The Nights Of Terror / Group: WATCHABLE / Year: 1981 / Flags: Dubbed / Source: Bluray / Format: x264 / Resolution: 1080p / Type: Movie'
+		)
+	})
+
+	it( 'Movies #6', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Batman.v.Superman.Dawn.of.Justice.2016.IMAX.German.DL.TrueHD.Atmos.DUBBED.2160p.UHD.BluRay.x265-GSG9', 'PRE' ).toString(),
+			'Title: Batman v Superman Dawn of Justice / Group: GSG9 / Year: 2016 / Flags: Dubbed, IMAX, UHD / Source: Bluray / Format: x265 / Resolution: 2160p / Audio: Dolby Atmos, Dolby trueHD / Language: German, Multilingual / Type: Movie'
+		)
+	})
+
+	it( 'Movies #7 - Lots of flags', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Wonder.Woman.1984.2020.IMAX.German.UHDBD.2160p.DV.HDR10.HEVC.TrueHD.DL.Remux-pmHD', '0DAY' ).toString(),
+			'Title: Wonder Woman 1984 / Group: pmHD / Year: 2020 / Flags: Dolby Vision, HDR, IMAX, Remux / Source: UHDBD / Format: HEVC / Resolution: 2160p / Audio: Dolby trueHD / Language: German, Multilingual / Type: Movie'
 		)
 	})
 
@@ -153,7 +169,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Riverdale.US.S05.PROPER.FRENCH.WEB.x264-STRINGERBELL', 'tv' ).toString(),
-			'Title: Riverdale US / Group: STRINGERBELL / Season: 5 / Flags: PROPER / Source: WEB / Format: x264 / Language: French / Type: TV'
+			'Title: Riverdale US / Group: STRINGERBELL / Season: 5 / Flags: Proper / Source: WEB / Format: x264 / Language: French / Type: TV'
 		)
 	})
 
@@ -203,7 +219,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Kurokos.Basketball.2nd.Season.NG-shuu.Specials.E06.German.Subbed.2014.ANiME.BDRiP.x264-STARS', 'anime' ).toString(),
-			'Title: Kurokos Basketball 2nd Season NG-shuu Specials / Group: STARS / Year: 2014 / Episode: 6 / Flags: Anime, Subbed, Subbed / Source: BDRip / Format: x264 / Language: German / Type: Anime'
+			'Title: Kurokos Basketball 2nd Season NG-shuu Specials / Group: STARS / Year: 2014 / Episode: 6 / Flags: Anime, Subbed / Source: BDRip / Format: x264 / Language: German / Type: Anime'
 		)
 	})
 

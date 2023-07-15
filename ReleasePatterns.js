@@ -2,7 +2,7 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 // Reusable vars
@@ -26,7 +26,7 @@ const patterns = {
 	// Description with date inside brackets is nearly always music or musicvideo
 	REGEX_DATE_MUSIC : '/\\([a-z._]+[._-]' + regexDate + '\\)/i',
 	// Get right year
-	REGEX_YEAR : '/(?=[(._-](19\\d[\\dx]|20\\d[\\dx])[)._-])/i',
+	REGEX_YEAR : '/(?=[(._-](19\\d[\\dx]|20\\d[\\dx])[)._-])/gi',
 	// Extract group
 	REGEX_GROUP : '/-(\\w+)$/i',
 	// Extract OS
@@ -141,6 +141,7 @@ const patterns = {
 		'Tape': 'tape', // Music tape
 		'TC': [ 'tc', 'telecine' ],
 		'TS': [ 'ts', 'telesync', 'pdvd' ], // ‘CAM’ video release with ‘Line’ audio synced to it.
+		'UHDBD': 'UHD[._-]?BD',
 		'UHDTV': 'UHD[._-]?TV',
 		'VHS': 'VHS(?:[._-]?rip)?',
 		'VLS': 'vls', // Vinyl Single
@@ -158,6 +159,7 @@ const patterns = {
 	// https://en.wikipedia.org/wiki/List_of_codecs#Video_compression_formats
 	FORMAT : {
 		// Video formats
+		'AVC': 'AVC',
 		'XViD': 'XViD',
 		'DiVX': 'DiVX\\d*',
 		'x264': 'x\\.?264',
@@ -236,8 +238,10 @@ const patterns = {
 		'EAC3D': 'EAC3D',
 		'DD2.0': 'dd.?2[._-]?0',
 		'DD5.1': [ 'dd.?5[._-]?1', '5[._-]1' ],
+		'Dolby Atmos': 'ATMOS',
 		'Dolby Digital': 'DOLBY[._-]?DIGITAL',
-		'DTS': 'DTS[._-]?(?:HD|MA)?',
+		'Dolby trueHD': '(?:Dolby)?[._-]?trueHD',
+		'DTS-HD MA': 'DTS[._-]?(?:HD|MA)?',
 		'OGG': 'OGG',
 	},
 
@@ -346,6 +350,7 @@ const patterns = {
 		'pt-BR': [ 'Brazilian', 'BR' ],
 		'ro': 'Romanian',
 		'ru': [ 'Russian', 'RU' ],
+		'sk': [ 'Slovak', 'SK', 'SLO', 'Slovenian' ],
 		'sv': [ 'Swedish', 'SW?E' ],
 		'sw': 'Swahili',
 		'tg': 'Tajik',
@@ -379,6 +384,7 @@ const patterns = {
 		'Convert': 'CONVERT',
 		'Cover': '(?:CUSTOM[._-]?|[a-z]+)?COVERS?',
 		'Incl. Crack': [ 'CRACK[._-]ONLY', '(?:incl|working)[._-](?:[a-zA-Z]+[._-])?crack' ], // software
+		'Chapterfix': 'CHAPTER[._-]?FIX', // Disc
 		'Cracked': 'CRACKED', // software
 		'Crackfix': 'CRACK[._-]?FIX', // software
 		'Digipack': 'DIGIPAC?K?', // music
@@ -386,7 +392,7 @@ const patterns = {
 		'DIZFiX': 'DIZ[._-]?FIX',
 		'DLC': '(?:incl[._-])?DLC(?![._-]?(?:Unlocker|Pack))?', // games
 		'DOC': 'D[O0][CX]',
-		'Doku': 'DOKU',
+		'Doku': 'DO[CK]U',
 		'Dolby Vision': 'DV',
 		'Dubbed': [ '(?<!line[._-]|mic[._-]|micro[._-]|ac3[._-]|tv[._-])Dubbed', 'E[._-]?Dubbed', '(?!over|thunder)[a-z]+dub' ],
 		'eBook': 'EBOOK',
@@ -398,11 +404,12 @@ const patterns = {
 		'Fullscreen': 'FS', // Fullscreen
 		'FSK': 'FSK', // German rating system
 		'HDLIGHT': 'HDLIGHT',
-		'HDR': 'HDR',
+		'HDR': 'HDR\\d*',
 		'HOTFiX': 'HOT[._-]?FIX',
 		'HOU': 'HOU',
 		'HSBS': 'HSBS',
 		'Imageset': '(?:Full[._-]?)?(?:IMA?GE?|photo|foto)[._-]?SETS?',
+		'IMAX': 'IMAX',
 		'Internal': 'iNT(ERNAL)?',
 		'IVTC': 'IVTC', // Inverce telecine
 		'JAV': 'JAV', // Japanese Adult Video
@@ -412,7 +419,7 @@ const patterns = {
 		'Line dubbed': [ 'ld', 'line[._-]?dubbed' ],
 		'Limited': 'LIMITED',
 		'Magazine': 'MAG(AZINE)?',
-		'MENUFiX': 'MENU[._-]?FIX',
+		'Menufix': 'MENU[._-]?FIX',
 		'Micro dubbed': [ 'md', 'mic(ro)?[._-]?dubbed' ],
 		'MIPS': 'MIPS', // software (MIPS CPU)
 		'NFOFiX': 'NFO[._-]?FiX',
@@ -426,16 +433,17 @@ const patterns = {
 		'Incl. Patch': [ '(?:incl[._-])?(?:[a-z]+[._-])?patch(?:ed)?(?:[._-]only)', 'no[a-zA-Z]+[._-]patch(?:ed)?(?:[._-]only)' ], // software
 		'Paysite': 'PAYSITE', // xxx
 		'Preair': 'PREAIR',
-		'PROPER': '(?:REAL)?PROPER',
+		'Proper': '(?:REAL)?PROPER',
 		'Promo': 'PROMO',
+		'Prooffix': 'PROOF[._-]?FIX',
 		'Rated': 'RATED',
-		'RARFiX': 'RARFIX',
+		'RARFix': 'RARFIX',
 		'READNFO': 'READ[._-]?NFO',
-		'REFiLL': 'Refill',
+		'Refill': 'Refill',
 		'Reissue': 'REISSUE',	// music
-		'REGGED': 'REGGED',	// software
+		'Regged': 'REGGED',	// software
 		'Remastered': 'REMASTERED',
-		'REMUX': 'REMUX',
+		'Remux': 'REMUX',
 		'Repack': '(working[._-])?REPACK',
 		'RERiP': 're[._-]?rip',
 		'Restored': 'RESTORED',
@@ -443,14 +451,16 @@ const patterns = {
 		'Samplefix': 'SAMPLE[._-]?FIX',
 		'SDR': 'SDR',
 		'Serial': 'SERIAL(?![._-]Killer)?', // Software
+		'SFVFix': 'SFV[._-]?FIX',
 		'SH3': 'SH3', // Software (SH3 CPU)
 		'Soundfix': 'SOUNDFIX',
 		'STV': 'STV',
 		'Subbed': [ '[a-zA-Z]*SUB(?:BED|S)?', 'SUB[._-]?\\w+' ],
+		'Subfix': 'SUB[._-]?FIX',
+		'Syncfix': 'SYNC[._-]?FIX', // Video AUdio
 		'Theatrical': 'THEATRICAL',
 		'Trackfix': 'TRACK[._-]?FiX', // Music
 		'Trailer': 'TRAILER',
-		'trueHD': 'trueHD',
 		'Tutorial': 'TUTORIAL',
 		'TV Dubbed': 'tv[._-]?dubbed',
 		'UHD': 'UHD',
@@ -491,14 +501,14 @@ const patterns = {
 
 
 	// Flags for identifying release type ( guessTypeByParsedAttributes )
-	flagsMovie : [ 'Dubbed', 'AC3 Dubbed', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Subbed' ],
+	flagsMovie : [ 'Dubbed', 'AC3 Dubbed', 'HDR', 'IMAX', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Remux', 'Subbed' ],
 	flagsEbook : [ 'EBOOK', 'MAGAZINE', 'COMIC', 'EPUB' ],
 	flagsMusic : [ 'OST' ],
 	flagsApps : [ 'CRACKED', 'REGGED', 'KEYGEN', 'PATCH', 'CRACKFIX', 'ISO', 'ARM', 'INTEL', 'x86', 'x64' ],
 	flagsAnime : [ 'ANIME', 'OVA', 'ONA', 'OAD' ],
 	flagsXxx : [ 'XXX', 'JAV', 'Imageset' ],
 	// Formats
-	formatsVideo : [ 'VCD', 'SVCD', 'CVCD', 'XViD', 'DiVX', 'x264', 'x265', 'h264', 'h265', 'HEVC', 'MP4', 'MPEG', 'MPEG2', 'WMV' ],
+	formatsVideo : [ 'AVC', 'VCD', 'SVCD', 'CVCD', 'XViD', 'DiVX', 'x264', 'x265', 'h264', 'h265', 'HEVC', 'MP4', 'MPEG', 'MPEG2', 'WMV' ],
 	formatsMusic : [ 'FLAC', 'KONTAKT', 'MP3', 'OGG', 'WAV' ],
 	formatsMvid : [ 'MBluray', 'MDVDR', 'MViD' ],
 	// Sources
