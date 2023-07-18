@@ -730,8 +730,6 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			type = 'XXX'
 		}
 
-		console.log( type )
-
 		// Check for Sports programs
 		//let sports = [ 'NFL', 'NHL', 'MLB', 'Formula1', 'Premier.League', 'La[._-]?Liga', 'Eredivisie', 'Bundesliga', 'Ligue[._-]?1']
 
