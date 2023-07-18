@@ -2,7 +2,7 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.0.4
+ * @version 1.0.5
  */
 
 // Reusable vars
@@ -167,6 +167,8 @@ const patterns = {
 		'h264': 'h\\.?264',
 		'h265': 'h\\.?265',
 		'HEVC': 'HEVC',
+		'VP8': 'VP8',
+		'VP9': 'VP9',
 		'MP4': 'MP4',
 		'MPEG': 'MPEG',
 		'MPEG2': 'MPEG2',
