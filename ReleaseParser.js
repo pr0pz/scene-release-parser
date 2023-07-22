@@ -108,6 +108,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				}
 			}
 
+			// Set ebook episode to edition
+			if ( get( 'type' ) === 'eBook' && information === 'episode' )
+				information = 'Issue'
+
 			// Value set?
 			if ( informationValue )
 			{
@@ -468,8 +472,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseVersion = () =>
 	{
-		let matches = releaseName.match( ( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ).toRegExp() )
-		if ( matches ) set( 'version', matches[1] )
+		// Cleanup release name for better matching
+		let releaseNameCleaned = cleanup( releaseName, [ 'flags', 'device' ] )
+
+		let matches = releaseNameCleaned.match( ( '/[._-]' + patterns.REGEX_VERSION + '[._-]/i' ).toRegExp() )
+		if ( matches ) set( 'version', matches[1].trim( '.' ) )
 	}
 
 
@@ -636,7 +643,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		let type = ''
 
 		// Do We have an episode?
-		if ( get( 'episode' ) || get( 'season' ) || hasAttribute( patterns.sourcesTv, 'source' ) )
+		if ( get( 'episode' ) || get( 'season' ) || hasAttribute( patterns.sourcesTv, 'source' || hasAttribute( patterns.FLAGS, 'sports' ) ) )
 		{
 			// Default to TV
 			type = 'TV'
@@ -671,6 +678,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		else if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
 		{
 			type = get( 'resolution' ) ? 'MusicVideo' : 'Music'
+		}
+		// If matches sports, probably TV
+		else if ( releaseName.match( patterns.REGEX_SPORTS.toRegExp() ) )
+		{
+			type = 'TV'
 		}
 		// Has date and a resolution? probably TV
 		else if ( get( 'date' ) && get( 'resolution' ) )
@@ -715,7 +727,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			type = 'Font'
 		}
 		// Games = if device was found or game related flags
-		else if ( get( 'device' ) || hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) )
+		else if ( get( 'device' ) || hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) || hasAttribute( patterns.sourcesGames, 'source' ) )
 		{
 			type = 'Game'
 		}
@@ -729,9 +741,6 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		{
 			type = 'XXX'
 		}
-
-		// Check for Sports programs
-		//let sports = [ 'NFL', 'NHL', 'MLB', 'Formula1', 'Premier.League', 'La[._-]?Liga', 'Eredivisie', 'Bundesliga', 'Ligue[._-]?1']
 
 		return type
 	}
@@ -787,7 +796,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseTitle = () =>
 	{
-		let type = get('type').toLowerCase()
+		let type = get( 'type' ).toLowerCase()
 		let releaseNameCleaned = releaseName
 
 		// Main title vars
@@ -879,7 +888,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				regexUsed = 'REGEX_TITLE_APP'
 
 				// Search and replace pattern in regex pattern for better macthing
-				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'source' ] )
+				//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'version' ] )
+				//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'version' ] )
 
 				// Match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -914,8 +924,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 					regexUsed += ' + REGEX_TITLE_TV_EPISODE'
 
 					// Search and replace pattern in regex pattern for better macthing
-					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
-					releaseNameCleaned = cleanup( releaseNameCleaned, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+					//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
+					releaseNameCleaned = cleanup( releaseNameCleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
 
 					// Match episode title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -1114,7 +1124,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 					regexUsed = 'REGEX_TITLE_MOVIE'
 
 					// Search and replace pattern in regex pattern for better macthing
-					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year' ] )
+					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year', 'audio' ] )
 
 					// Match title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -1168,10 +1178,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			let attrPattern = attribute[ attrKey ]
 
 			// We need to catch the web source
+			// COmmented out because i don't remeber what it's doing
 			if ( attrKey === 'WEB' )
 			{
-				attrPattern += '[._)-](%format%|%group%|%language%|%year%)'
-				attrPattern = cleanupPattern( releaseName, attrPattern, [ 'format', 'group', 'language', 'year' ] )
+				attrPattern += '[._)-](%format%|%group%|%language%|%year%|%audio%)'
+				attrPattern = cleanupPattern( releaseName, attrPattern, [ 'format', 'group', 'language', 'year', 'audio' ] )
 			}
 
 			// Transform all attribute values to array (simpler, so we just loop everything)
@@ -1286,6 +1297,19 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Get proper attr value
 				switch ( information )
 				{
+					case 'audio':
+						if ( Array.isArray( informationValue ) )
+						{
+							informationValue.forEach( ( value ) => {
+								attributes.push( patterns.AUDIO[ value ] )
+							} )
+						}
+						else
+						{
+							attributes.push( patterns.AUDIO[ informationValue ] )
+						}
+						break
+
 					case 'daymonth':
 						// Clean up day and month number from rls
 						attributes = [
@@ -1293,6 +1317,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 							informationValue.getDate() + '(th|rd|nd|st)?',
 							informationValue.getMonth() // need with leading zeros
 						]
+						break
+
+					case 'device':
+						attributes.push( patterns.DEVICE[ informationValue ] )
 						break
 
 					case 'format':
@@ -1602,6 +1630,20 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				set( 'version', null )
 			}
 		}
+		else if( get( 'type' ) === 'App' )
+		{
+			// Remove audio if it's an App (falsely parsed from release name)
+			if ( get( 'audio' ) !== null )
+			{
+				set( 'audio', null )
+			}
+
+			// Remove source if it's inside title
+			if ( get( 'source' ) !== null && get( 'title' ).includes( get( 'source' ) ) )
+			{
+				set( 'source', null )
+			}
+		}
 	}
 
 
@@ -1724,7 +1766,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	parseFlags()			// Misc rls name flags
 	parseOs()				// For Software/Game rls: Operating System
 	parseDevice()			// For Software/Game rls: Device (like console)
-	parseVersion( )			// For Software/Game rls: Version
+	parseVersion()			// For Software/Game rls: Version
 	parseEpisode()			// For TV/Audiobook/Ebook (issue) rls: Episode
 	parseSeason()			// For TV rls: Season
 	parseDate()

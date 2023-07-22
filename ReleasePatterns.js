@@ -10,6 +10,7 @@ const regexDate = '(\\d{2}|\\d{4})[._-](\\d{2})[._-](\\d{2}|\\d{4})'
 const regexTitle = '([\\w.()-]+?)' // last ? = JS fix for ungreedy
 const regexEpisodeTv = '(?:(?:[ST]\\d+)?[._-]?(?:ep?|o[av]+[._-]?|d|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
 const regexVersionText = '(?:v(?:ersione?)?|Updated?[._-]?v?|Build)'
+const regexVersion = regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?![._-]gage))'
 
 const patterns = {
 
@@ -18,7 +19,7 @@ const patterns = {
 	// %varname% will be replaced with the parsed valued for better macthing.
 
 	// Find language (old: (?!sub))
-	REGEX_LANGUAGE : '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i',
+	REGEX_LANGUAGE : '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|us|gbr|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i',
 	// Find date
 	REGEX_DATE : regexDate,
 	// Special date with month name: 24th January 2002 / Sep. 2000 day 5 / January 2000 1
@@ -33,7 +34,7 @@ const patterns = {
 	//REGEX_OS : ''
 	// Episode pattern matches: S01E01 / 1x01 / E(PS)1 / OVA1 / F123 / Folge_123 / Episode 1 / Issue 1 etc.
 	// Good for tv and audiobook rls
-	REGEX_EPISODE : '(?:(?:s\\d+[._-]?)?(?:s?ep?|o[av]+[._-]?|f(?:olge[._-])?|band[._-]?|issue[._-]?|ausgabe[._-]?|n[or]?[._-]?|eps[._-]?|episode[._-]?|sets?[._-]?)([\\d_-]+)|(?:\\d+x)(\\d+))',
+	REGEX_EPISODE : '(?:(?:s\\d+[._-]?)?(?:s?ep?|o[av]+[._-]?|f(?:olge[._-])?|band[._-]?|issue[._-]?|ausgabe[._-]?|n[or]?[._-]?|eps[._-]?|episode[._-]?|(?:silber[._-])?edition[._-]?|sets?[._-]?)([\\d_-]+)|(?:\\d+x)(\\d+))',
 	REGEX_EPISODE_TV : regexEpisodeTv,
 	// Season pattern matches: S01E01 / 1x01
 	REGEX_SEASON : '/[._-](?:[ST](\\d+)[._-]?(?:[EDP]+\\d+)?|(\\d+)(?:x\\d+))[._-]/i',
@@ -44,14 +45,15 @@ const patterns = {
 	// Good for Fonts
 	REGEX_TITLE_FONT : '/^' + regexTitle + '-/i',
 	// Good for Movies
-	REGEX_TITLE_MOVIE : '/^' + regexTitle + '[._(-]+(?:%year%|%language%|%source%|%flags%|%format%)[._)-]?/i', // ungreedy
+	REGEX_TITLE_MOVIE : '/^' + regexTitle + '[._(-]+(?:%year%|%language%|%source%|%flags%|%format%|%resolution%|%audio%)[._)-]?/i', // ungreedy
 	// Music pattern matches: Author_2.0_(Name)-Track_album_title_2.0_-_track_bla_(Extended_edition)-...
 	// Good for music releases and Audiobooks
 	REGEX_TITLE_MUSIC : '/^' + regexTitle + '(?:\\([\\w-]+\\))?[._(-]+(?:%source%[._)-]?|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/i', // ungreedy
 	REGEX_TITLE_ABOOK : '/^' + regexTitle + '[._(-]+(?:%source%[._)-]?|%year%|%group%|%audio%|%flags%|%format%|%language%[._)-])/i', // ungreedy
 	REGEX_TITLE_MVID : '/^' + regexTitle + '[._(-]+(?:%source%|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/i', // ungreedy
 	// Good for general Software releases (also Games)
-	REGEX_TITLE_APP : '/^' + regexTitle + '[._(-]+(?:' + regexVersionText + '[._)-]?\\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/i', // ungreedy
+	//REGEX_TITLE_APP : '/^' + regexTitle + '[._(-]+(?:' + regexVersionText + '[._)-]?\\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/i', // ungreedy
+	REGEX_TITLE_APP : '/^' + regexTitle + '[._(-]+' + regexVersion + '[._)-]?/i', // ungreedy
 	// Good for all kind of series (also Anime)
 	REGEX_TITLE_TV : '/^' + regexTitle + '[._-]' + regexEpisodeTv + '/i', // ungreedy
 	REGEX_TITLE_TV_EPISODE : '/' + regexEpisodeTv + '[._-](?:' + regexTitle + '[._(-]+)?\\.+/i', // ungreedy
@@ -61,8 +63,10 @@ const patterns = {
 	//REGEX_TITLE_XXX_DATE : '/^' + REGEX_TITLE + '[._-](?:\\d+\\.){3}' + REGEX_TITLE + '[._-](?:xxx|%language%)/iU',
 	REGEX_TITLE_XXX_DATE : '/^' + regexTitle + '[._(-]+(?:%regex_date%|%regex_date_monthname%)[._)-]+' + regexTitle + '[._(-]+(?:%flags%|%language%[._)-])/i', // ungreedy
 	// Extract software version
-	REGEX_VERSION_TEXT : '(?:v(?:ersion)?|Updated?[._-]?v?|Build)',
+	REGEX_VERSION_TEXT : regexVersionText,
 	REGEX_VERSION : regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?![._-]gage))',
+	// Football, Cricket, Racing, Hockey, Basketball
+	REGEX_SPORTS : '/^(NFL|NBA.(?:East|West|Finals)|NHL|ML[BS]|Formula.?1|Premier.?League|La.?Liga|Eredivisie|Bundesliga|Ligue.?1|Seria.?A|CSL|IPL|BBL|T20|LPL.PRO)[._-]/i',
 
 
 	// Type patterns.
@@ -94,21 +98,36 @@ const patterns = {
 
 	// Video/Audio source patterns
 	SOURCE : {
-		'ATVP': 'ATVP', // Apple TV
+		'ABC': 'ABC', // American Broadcasting Company (P2P)
+		'Amazon': [ 'AZ', 'AMZN', 'AmazonHD' ], // (P2P)
+		'Amazon Freevee': 'Freevee', // (P2P)
+		'ATVP': 'ATVP', // Apple TV+
 		'AUD': 'AUD', // Audience Microphone
+		'BBC': 'BBC', // British Broadcasting Company (P2P)
+		'BBC iPlayer': 'iP', // (P2P)
 		'BDRip': 'b[dr]+[._-]?rip',
 		'Bluray Screener': [ 'bluray[._-]?scr', 'bd[._-]?scr' ],
+		'BookMyShow': 'BMS', // (P2P)
 		'Bootleg': '(?:LIVE|\\d*cd)?[._-]?BOOTLEG',
 		'CABLE': 'cable',
-		'CAM': 'cam([._-]?rip)?',
+		'CAM': '(?:new)?cam([._-]?rip)?',
+		'CBS': 'CBS', // CBS Corporation (P2P)
 		'CD Album': '\\d*cda', // CD Album
 		'CD EP': 'cdep',
 		'CD Single': [ 'cd[sm]', 'mcd', '(?:(?:cd|maxi)[._-]?)single', 'cd[._-]?maxi' ], // CD Maxi / Single
 		'Web Single': 'web[._-]single|single[._-]web', // Web single
-		'Console DVD': [ 'xboxdvdr?', 'ps2dvd' ],
+		'Comedy Central': 'CC', // (P2P)
+		'Console DVD': [ 'xboxdvdr?', 'ps2[._-]?dvd' ],
+		'Crave': 'CRAV', // (P2P)
+		'Crunchyroll': 'CR', // (P2P)
 		'DAT Tape': 'DAT', // Digital Audio Tape
 		'DAB': 'dab', // Digital Audio Broadcast
+		'DC Universe': 'DCU', // (P2P)
+		'DD': 'dd(?![._-]?\d)', // Digital Download
 		'DDC': 'ddc', // Downloadable/Direct Digital Content
+		'Disney Plus': [ 'DP', 'DSNP' ], // (P2P)
+		'Disney Networks': 'DSNY', // (P2P)
+		'Discovery Plus': 'DSCP', // (P2P)
 		'DSR': [ 'dsr', 'dth', 'dsr?[._-]?rip', 'sat[._-]?rip', 'dth[._-]?rip' ], // Digital satellite rip (DSR, also called SATRip or DTH)
 		'DVB': [ 'dvb[sct]?(?:[._-]?rip)?', 'dtv', 'digi?[._-]?rip' ],
 		'DVDA': '\\d*dvd[_-]?a', // Audio DVD
@@ -117,37 +136,58 @@ const patterns = {
 		'DVD Screener': [ 'dvd[._-]?scr', '(?:dvd[._-]?)?screener', 'scr' ],
 		'EDTV': 'EDTV(?:[._-]rip)?', // Enhanced-definition television
 		'EP': 'EP',
-		'HDDVD': 'hd[._-]?dvdr?',
-		'HDRip': [ 'hd[._-]?rip', 'hdlight', 'mhd', 'hd' ],
-		'HDTC': 'HDTC', // High Definition Telecine
+		'Google Play': 'GPLAY', // (P2P)
+		'HBO Max': [ 'HM', 'HMAX', 'HBOM', 'HBO[._-]Max' ], // (P2P)
+		'HDCAM': 'HDCAM',
+		'HDDVD': 'hd[\\d._-]?dvdr?',
+		'HDRip': [ 'hd[._-]?rip', 'hdlight', 'mhd', '(?<!dts[._-])hd' ],
+		'HDTC': 'HDTC(?:[._-]?rip)?', // High Definition Telecine
 		'HDTV': 'a?hd[._-]?tv(?:[._-]?rip)?',
 		'HLS': 'HLS', // HTTP Live Streaming
+		'Hotstar': 'HTSR', // (P2P)
+		'Hulu': 'Hulu(?:UHD)?', // (P2P)
+		'iTunes': [ 'iT', 'iTunes(?:HD)?' ], // (P2P)
+		'Lionsgate Play': 'LGP', // Lionsgate Play (P2P)
 		'Line': 'line(?![._-]dubbed)',
 		'LP': '\\d*lp', // Vinyl Album
 		'MBluray': 'MBLURAY',
 		'MDVDR': 'MDVDR?',
 		'MiniDisc': [ 'md', 'minidisc' ],
+		'Movies Anywhere': '(?<!(?:DTS|HD)[._-])MA', // (P2P)
 		'MP3 CD': '\\d*mp3cd',
+		'MTV Networks': 'MTV', // (P2P)
+		'Mubi': 'MUBI', // (P2P)
+		'NBC': 'NBC', // National Broadcasting Company (P2P)
+		'Netflix': [ 'NF', 'NFLX', 'Netflix(?:HD)?' ], // (P2P)
 		'Nintendo eShop': 'eshop', // Nintendo eShop
+		'Paramount Plus': 'PMTP', // (P2P)
+		'Peacock': 'PCOK', // (P2P)
 		'PDTV': 'PDTV',
 		'PPV': 'PPV(?:[._-]?RIP)?', // Pay-per-view
 		'PSN': 'PSN', // Playstation Network
 		'FM': '\\d*FM', // Analog Radio
 		'SAT': 'sat', // Analog Satellite
 		'Scan': 'scan',
+		'Showtime': 'SHO', // (P2P)
 		'SDTV': '(?:sd)?tv(?:[._-]?rip)?',
 		'SBD': 'SBD', // Soundboard
+		'Stan': 'Stan(?:HD)?', // (P2P)
 		'Stream': 'stream',
+		'Starz': 'STA?R?Z', // (P2P)
 		'Tape': 'tape', // Music tape
-		'TC': [ 'tc', 'telecine' ],
-		'TS': [ 'ts', 'telesync', 'pdvd' ], // ‘CAM’ video release with ‘Line’ audio synced to it.
-		'UHDBD': 'UHD[._-]?BD',
+		'TBS': 'TBS', // Turner Broadcasting System
+		'Telecine': [ 'tc', 'telecine' ],
+		'Telesync': [ '(?:hd[._-])?ts', 'telesync', 'pdvd' ], // ‘CAM’ video release with ‘Line’ audio synced to it.
+		'UHDBD': 'UHD[\\d._-]?BD',
 		'UHDTV': 'UHD[._-]?TV',
 		'VHS': 'VHS(?:[._-]?rip)?',
 		'VLS': 'vls', // Vinyl Single
 		'Vinyl': [ '(?:Complete[._-])?Vinyl', '12inch' ],
-		'WEB': 'web[._-]?(?:tv|dl|hd|rip|flac)?',
+		'VODRip': [ 'VOD.?RIP', 'VODR' ],
+		'WEB': 'WEB[._-]?(?:tv|dl|u?hd|rip|cap|flac)?',
+		'WOW tv': 'WOWTV', // (P2P)
 		'XBLA': 'XBLA', // Xbox Live Arcade
+		'YouTube Red': 'YTred', // (P2P)
 		// Misc Fallback
 		'CD': [ '\\d*cdr?\\d*', 'cd[._-]?rom' ], // Other CD
 		'DVD': '(?:Complete[._-])?\\d*dvd[_-]?[r\\d]?', // Just normal DVD
@@ -166,7 +206,7 @@ const patterns = {
 		'x265': 'x\\.?265',
 		'h264': 'h\\.?264',
 		'h265': 'h\\.?265',
-		'HEVC': 'HEVC',
+		'HEVC': '(?:HDR10)?HEVC',
 		'VP8': 'VP8',
 		'VP9': 'VP9',
 		'MP4': 'MP4',
@@ -176,7 +216,7 @@ const patterns = {
 		'CVD': 'CVD',
 		'CVCD': 'CVCD', // Compressed Video CD
 		'SVCD': 'X?SVCD',
-		'VC1': '(?:Bluray[._-])?VC1',
+		'VC1': '(?:Bluray[._-])?VC[._-]?1',
 		'WMV': 'WMV',
 		'MDVDR': 'MDVDR?',
 		'DVDR': 'DVD[R\\d]',
@@ -234,17 +274,30 @@ const patterns = {
 		'16BIT': '16BIT',
 		'160K': '16\\dk(?:bps)?',
 		'192K': '19\\dk(?:bps)?',
-		'AAC': 'AAC\\d*[._-]?\\d?',
-		'AC3': 'AC3(?![._-]Dubbed)',
+		'AAC': 'AAC(?:\\d)*',
+		'AC3': 'AC3(?:dub|dubbed|MD)?',
 		'AC3D': 'AC3D',
+		'EAC3': 'EAC3',
 		'EAC3D': 'EAC3D',
-		'DD2.0': 'dd.?2[._-]?0',
-		'DD5.1': [ 'dd.?5[._-]?1', '5[._-]1' ],
 		'Dolby Atmos': 'ATMOS',
-		'Dolby Digital': 'DOLBY[._-]?DIGITAL',
+		'Dolby Digital': [ 'DOLBY.?DIGITAL', 'dd.?\\d+' ],
+		'Dolby Digital Plus': [ 'DOLBY.?DIGITAL', 'ddp.?\\d' ],
+		'Dolby Digital Plus, Dolby Atmos': 'ddpa.?\\d',
 		'Dolby trueHD': '(?:Dolby)?[._-]?trueHD',
-		'DTS-HD MA': 'DTS[._-]?(?:HD|MA)?',
+		'DTS': 'DTSD?(?!.?ES|.?HD|.?MA)[._-]?\\d*',
+		'DTS-ES': 'DTS.?ES(?:.?Discrete)?',
+		'DTS-HD': 'DTS.?(?!MA)HD(?!.?MA)',
+		'DTS-HD MA': [ 'DTS.?HD.?MA', 'DTS.?MAD?' ],
+		'DTS:X': 'DTS[._-]?X',
 		'OGG': 'OGG',
+		// Channels
+		'2.0': [ 'd+2[._-]?0', '\\w*(?<!v[._-]?)2[._-]0' ],
+		'2.1': [ 'd+2[._-]?1', '\\w*(?<!v[._-]?)2[._-]1' ],
+		'3.1': [ 'd+3[._-]?1', '\\w*(?<!v[._-]?)3[._-]1' ],
+		'5.1': [ 'd+5[._-]?1', '\\w*(?<!v[._-]?)5[._-]1' ],
+		'7.1': [ 'd+7[._-]?1', '\\w*(?<!v[._-]?)7[._-]1' ],
+		'7.2': [ 'd+7[._-]?2', '\\w*(?<!v[._-]?)7[._-]2' ],
+		'9.1': [ 'd+9[._-]?1', '\\w*(?<!v[._-]?)9[._-]1' ],
 	},
 
 	// Game Console patterns
@@ -296,13 +349,14 @@ const patterns = {
 		'BlackBerry': 'Blackberry',
 		'BSD': '(?:Free|Net|Open)?BSD',
 		'HP-UX': 'HPUX', // Hewlett Packard Unix
-		'iOS': 'iOS',
+		'iOS': [ 'iOS', 'iPhone' ],
 		'Linux': 'Linux(?:es)?',
 		'macOS': 'mac([._-]?osx?)?',
 		'PalmOS': 'Palm[._-]?OS\\d*',
 		'Solaris': [ '(Open)?Solaris', 'SOL' ],
 		'SunOS': 'Sun(OS)?',
 		'Symbian': 'Symbian(?:OS\\d*[._-]?\\d*)?',
+		'Ubuntu': 'Ubuntu',
 		'Unix': 'Unix(All)?',
 		'WebOS': 'WebOS',
 		// Found these hillarious (but rule conform) windows tags for software releases:
@@ -323,7 +377,7 @@ const patterns = {
 		'de': [ 'German', 'GER', 'DE' ],
 		'dk': [ 'Danish', 'DK' ],
 		'el': [ 'Greek', 'GR' ],
-		'en': [ 'English', 'VOA', 'USA', 'AUS', 'UK' ],
+		'en': [ 'English', 'VOA', 'USA?', 'AUS', 'UK', 'GBR' ],
 		'es': [ 'Spanish', 'Espanol', 'ES', 'SPA', 'Latin[._-]Spanish' ],
 		'et': 'Estonian',
 		'fa': [ 'Persian', 'Iranian', 'IR' ],
@@ -332,6 +386,7 @@ const patterns = {
 		'fr': [ 'French', 'Fran[cç]ais', 'TRUEFRENCH', 'VFF', '(ST|VOS)?FR[EA]?' ],
 		'ga': 'Irish',
 		'he': 'Hebrew',
+		'hi': 'Hindi',
 		'ht': 'Creole',
 		'id': 'Indonesian',
 		'is': 'Icelandic',
@@ -363,7 +418,7 @@ const patterns = {
 		'vi': 'Vietnamese',
 		'zh': [ 'Chinese', 'CH[ST]' ],
 		// Misc
-		'multi': [ 'Multilingual', 'Multi[._-]?(?:languages?|lang|\\d*)?', 'EURO?P?A?E?', '[MD]L', 'DUAL' ],
+		'multi': [ 'Multilingual', 'Multi[._-]?(?:languages?|lang|\\d*)?', 'EURO?P?A?E?', '(?<!WEB[._-]?)[MD]L', 'DUAL' ],
 		'nordic': [ 'Nordic', 'SCANDiNAViAN' ]
 	},
 
@@ -372,7 +427,6 @@ const patterns = {
 		'3D': '3D',
 		'ABook': 'A(?:UDiO)?BOOK',
 		'Abridged': [ 'ABRIDGED', 'gekuerzte?(?:[._-](?:fassung|lesung))' ], // Audiobook
-		'AC3 Dubbed': 'ac3[._-]?dubbed',
 		'Addon': 'ADDON', // software
 		'Anime': 'ANiME',
 		'ARM': 'ARM', // software
@@ -385,18 +439,20 @@ const patterns = {
 		'Comic': 'COMIC',
 		'Convert': 'CONVERT',
 		'Cover': '(?:CUSTOM[._-]?|[a-z]+)?COVERS?',
-		'Incl. Crack': [ 'CRACK[._-]ONLY', '(?:incl|working)[._-](?:[a-zA-Z]+[._-])?crack' ], // software
 		'Chapterfix': 'CHAPTER[._-]?FIX', // Disc
+		'Incl. Crack': [ 'CRACK[._-]ONLY', '(?:incl|working)[._-](?:[a-zA-Z]+[._-])?crack' ], // software
 		'Cracked': 'CRACKED', // software
 		'Crackfix': 'CRACK[._-]?FIX', // software
+		'Criterion': 'CRITERION', // special movie rls
 		'Digipack': 'DIGIPAC?K?', // music
+		'Directors Cut': 'Directors?[._-]?cut',
 		'DIRFiX': 'DIR[._-]?FIX',
 		'DIZFiX': 'DIZ[._-]?FIX',
-		'DLC': '(?:incl[._-])?DLC(?![._-]?(?:Unlocker|Pack))?', // games
+		'DLC': '(?:incl[._-])?DLCS?(?![._-]?(?:Unlocker|Pack))?', // games
 		'DOC': 'D[O0][CX]',
 		'Doku': 'DO[CK]U',
-		'Dolby Vision': 'DV',
-		'Dubbed': [ '(?<!line[._-]|mic[._-]|micro[._-]|ac3[._-]|tv[._-])Dubbed', 'E[._-]?Dubbed', '(?!over|thunder)[a-z]+dub' ],
+		'Dolby Vision': [ 'DV', 'DoVi' ],
+		'Dubbed': [ '(?<!(?:line|mic|micro|tv)[._-])Dubbed', 'E[._-]?Dubbed', '(?!over|thunder)[a-z]+dub' ],
 		'eBook': 'EBOOK',
 		'Extended': 'EXTENDED(?:[._-]CUT)?',
 		'Festival': 'FESTIVAL',
@@ -405,11 +461,13 @@ const patterns = {
 		'Fontset': '(Commercial[._-])?FONT[._-]?SET',
 		'Fullscreen': 'FS', // Fullscreen
 		'FSK': 'FSK', // German rating system
+		'Hardcoded Subtitles': 'HC', // (P2P)
 		'HDLIGHT': 'HDLIGHT',
-		'HDR': 'HDR\\d*',
+		'HDR': 'HDR\\d*(?:hevc)?',
+		'HLG': 'HLG', // Hybrid log-gamma (like HDR)
 		'HOTFiX': 'HOT[._-]?FIX',
 		'HOU': 'HOU',
-		'HSBS': 'HSBS',
+		'HSBS': 'HS(?:BS)?', // Half side-by-side (3D format)
 		'Imageset': '(?:Full[._-]?)?(?:IMA?GE?|photo|foto)[._-]?SETS?',
 		'IMAX': 'IMAX',
 		'Internal': 'iNT(ERNAL)?',
@@ -422,7 +480,7 @@ const patterns = {
 		'Limited': 'LIMITED',
 		'Magazine': 'MAG(AZINE)?',
 		'Menufix': 'MENU[._-]?FIX',
-		'Micro dubbed': [ 'md', 'mic(ro)?[._-]?dubbed' ],
+		'Micro dubbed': [ '(?:ac3)?md', 'mic(ro)?[._-]?dubbed' ],
 		'MIPS': 'MIPS', // software (MIPS CPU)
 		'NFOFiX': 'NFO[._-]?FiX',
 		'OAR': 'OAR', // Original Aspect Ratio
@@ -434,6 +492,7 @@ const patterns = {
 		//'PACK': 'PACK',
 		'Incl. Patch': [ '(?:incl[._-])?(?:[a-z]+[._-])?patch(?:ed)?(?:[._-]only)', 'no[a-zA-Z]+[._-]patch(?:ed)?(?:[._-]only)' ], // software
 		'Paysite': 'PAYSITE', // xxx
+		'Portable': 'Portable', // Software
 		'Preair': 'PREAIR',
 		'Proper': '(?:REAL)?PROPER',
 		'Promo': 'PROMO',
@@ -456,9 +515,11 @@ const patterns = {
 		'SFVFix': 'SFV[._-]?FIX',
 		'SH3': 'SH3', // Software (SH3 CPU)
 		'Soundfix': 'SOUNDFIX',
+		'Special Edition': 'SE(?![._-]\d*)',
 		'STV': 'STV',
 		'Subbed': [ '[a-zA-Z]*SUB(?:BED|S)?', 'SUB[._-]?\\w+' ],
 		'Subfix': 'SUB[._-]?FIX',
+		'Superbit': 'Superbit',	// https://de.wikipedia.org/wiki/Superbit
 		'Syncfix': 'SYNC[._-]?FIX', // Video AUdio
 		'Theatrical': 'THEATRICAL',
 		'Trackfix': 'TRACK[._-]?FiX', // Music
@@ -503,18 +564,19 @@ const patterns = {
 
 
 	// Flags for identifying release type ( guessTypeByParsedAttributes )
-	flagsMovie : [ 'Dubbed', 'AC3 Dubbed', 'HDR', 'IMAX', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Remux', 'Subbed' ],
+	flagsMovie : [ 'Dubbed', 'AC3 Dubbed', 'HDR', 'IMAX', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Remux', 'Subbed', 'Directors Cut' ],
 	flagsEbook : [ 'EBOOK', 'MAGAZINE', 'COMIC', 'EPUB' ],
 	flagsMusic : [ 'OST' ],
-	flagsApps : [ 'CRACKED', 'REGGED', 'KEYGEN', 'PATCH', 'CRACKFIX', 'ISO', 'ARM', 'INTEL', 'x86', 'x64' ],
+	flagsApps : [ 'CRACKED', 'REGGED', 'KEYGEN', 'PATCH', 'CRACKFIX', 'ISO', 'ARM', 'INTEL', 'x86', 'x64', 'Portable' ],
 	flagsAnime : [ 'ANIME', 'OVA', 'ONA', 'OAD' ],
 	flagsXxx : [ 'XXX', 'JAV', 'Imageset' ],
 	// Formats
-	formatsVideo : [ 'AVC', 'VCD', 'SVCD', 'CVCD', 'XViD', 'DiVX', 'x264', 'x265', 'h264', 'h265', 'HEVC', 'MP4', 'MPEG', 'MPEG2', 'WMV' ],
+	formatsVideo : [ 'AVC', 'VCD', 'SVCD', 'CVCD', 'XViD', 'DiVX', 'x264', 'x265', 'h264', 'h265', 'HEVC', 'MP4', 'MPEG', 'MPEG2', 'VC1', 'WMV' ],
 	formatsMusic : [ 'FLAC', 'KONTAKT', 'MP3', 'OGG', 'WAV' ],
 	formatsMvid : [ 'MBluray', 'MDVDR', 'MViD' ],
 	// Sources
-	sourcesTv : [ 'ATVP', 'DSR', 'EDTV', 'HDTV', 'PDTV', 'SDTV', 'UHDTV' ]
+	sourcesTv : [ 'ATVP', 'DSR', 'EDTV', 'HDTV', 'PDTV', 'SDTV', 'UHDTV', 'Amazon' ],
+	sourcesGames : [ 'Console DVD', 'Nintendo eShop', 'XBLA' ]
 
 }
 
