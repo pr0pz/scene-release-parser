@@ -10,7 +10,7 @@ _Like it? I'd appreciate the support :)_
 
 [![Follow on Twitter](https://img.shields.io/static/v1?label=Follow%20on&message=Twitter&color=1DA1F2&logo=twitter&logoColor=fff)](https://twitter.com/pr0pz)
 [![Watch on Twitch](https://img.shields.io/static/v1?label=Watch%20on&message=Twitch&color=bf94ff&logo=twitch&logoColor=fff)](https://www.twitch.tv/the_propz)
-[![Join on Discord](https://img.shields.io/static/v1?label=Join%20on&message=Discord&color=7289da&logo=discord&logoColor=fff)](https://discord.gg/FtuYUFC5)
+[![Join on Discord](https://img.shields.io/static/v1?label=Join%20on&message=Discord&color=7289da&logo=discord&logoColor=fff)](https://discord.gg/d7GnhqqAXN)
 [![Donate on Ko-Fi](https://img.shields.io/static/v1?label=Donate%20on&message=Ko-Fi&color=ff5f5f&logo=kofi&logoColor=fff)](https://ko-fi.com/propz)
 
 ### __Description__
@@ -52,6 +52,7 @@ const release = ReleaseParser( '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Du
     date: null,
     season: 2,
     episode: 2,
+    disc: null,
     flags: [ 'READNFO', 'TV Dubbed' ],
     source: 'DVDRip',
     format: 'SVCD',
@@ -90,6 +91,7 @@ $ release-parser 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVC
         date: null,
         season: 2,
         episode: 2,
+        disc: null,
         flags: [ 'READNFO', 'TV Dubbed' ],
         source: 'DVDRip',
         format: 'SVCD',

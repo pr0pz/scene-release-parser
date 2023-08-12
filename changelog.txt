@@ -1,0 +1,165 @@
+version 1.2.0 ( updated 12.08.2023 )
++ Added language: Hungarian
++ Added WEBmux to WEB source (p2p)
++ Added Type = Sports instead of just TV
++ Added 'Disc' information for Complete Disc releases
++ Added TODO.md and changelog.txt
++ Added flag:
+	+ Audiopack
+	+ Upscaled UHD (p2p)
+	+ HDR10
+	+ HDR10+
+	+ Regraded (p2p)
+	+ New (p2p)
+	+ V1, V2, V3 (p2p)
+	+ Final
+	+ CPOP (Chinese Pop)
++ Added test cases
++ Added audio:
+	+ 10BIT
+	+ 24BIT
+	+ 44K
+	+ 48K
+	+ 96K
+	+ 176K
+	+ 'Dual Audio'
+	+ 'Triple Audio'
+~ Improved:
+	~ Changed music artist VA to 'Various' (like in discogs)
+	~ General Pattern recognition
+	~ Show title if year is placed before S00E00
+	~ Splitted up 480p and 576p from SD
+	~ iTunes source pattern
+	~ Recognition of multiple language codes
+	~ Dutch language pattern
+	~ Finnish language pattern
+	~ Icelandic language pattern
+	~ Turkish language pattern
+	~ Thai language pattern
+	~ Estonian language pattern
+	~ Minidisc source
+	~ HDDVD source
+	~ DAT source
+	~ BDR source
+- Removed
+	- Festival flag
+
+***
+
+version 1.1.0 ( updated 22.07.2023 )
++ Added Language: Hindi
++ Added iPhone to iOS matching
++ Added audio:
+	- different DTS Audio formats: DTS, DTS-ES, DTS-HD, DTS:X
+	- Audio channels as separate Audio formats: 2.0, 2.1, 3.1, 5.1, 7.1, 9.1
+	- EAC3
+	- DDP (Dolby Digital Plus)
++ Added Flags:
+	- SE = Special edition
+	- Criterion
+	- HLG (like HDR)
+	- Superbit
+	- HC (Hardcoded Subtitles, p2p)
++ Added Source: VODRip
++ Added OS: Ubuntu
++ Added pattern for sports to fix type to TV
++ Added p2p Sources:
+	- ABC (American Broadcasting Company)
+	- Amazon + Amazon Freevee
+	- BBC + BBC iPlayer (British Broadcasting Company)
+	- BMS (BookMyShow)
+	- CBS (CBS Corporation)
+	- CC (Comedy Central)
+	- CRAV (Crave)
+	- CR (Crunchyroll)
+	- DCU (DC Universe)
+	- DSNP (Disney Plus)
+	- DSNY (Disney Networks)
+	- DSCP (Discovery Plus)
+	- GPLAY (Google Play)
+	- HMAX (HBO Max)
+	- HDCAM
+	- HTSR (Hotstar)
+	- Hulu
+	- iT (iTunes)
+	- LGP (Lionsgate Play)
+	- MA (Movies Anywhere)
+	- MTV (MTV Networks)
+	- Mubi
+	- NBC (National Broadcasting Company)
+	- NF (Netflix)
+	- PMTP (Paramount Plus)
+	- PCOK (Peacock)
+	- SHO (Showtime)
+	- Stan
+	- STR (Starz)
+	- TBS (Turner Broadcasting System)
+	- WOWTV
+	- YTRed (YouTube Red)
+~ Improved:
+	- eBook: renamed 'episode' to 'issue' on toString method
+	- HDR pattern
+	- AAC pattern
+	- AC3 pattern
+	- CAM pattern
+	- all Dolby Digital Audio patterns
+	- DV pattern
+	- HDTC pattern
+	- HDDVD pattern
+	- UHDBD pattern
+	- MD pattern (mic dubbed)
+	- HEVC pattern
+	- VC1 pattern
+	- WEB source pattern
+	- Language detection for EN: US, GBR
+	- Type matching for game sources
+~ Fixed:
+	- App version matching
+	- App title matching
+	- WEB source matching
+
+***
+
+version 1.0.5 (updated 15.07.2023)
++ Added video codecs VP8 + VP9
+
+***
+
+version 1.0.4 (updated 29.06.2023)
++ Added Audio:
+	- DTS-HD MA
+	- Dolby Atmos
+	- Dolby trueHD
++ Added Video format: AVC
++ Added Source: UHDBD
++ Added Flags:
+	- Chapterfix
+	- IMAX
+	- Prooffix
+	- SFVFix
+	- Subfix
+	- Syncfix
++ Added language: Slovak
+~ Fixed HDR flag
+~ Fixed year parsing with multiple years in release name
+
+***
+
+version 1.0.3
++ Added 'Web Single' as source
++ Added cleanupAttributes method for cleaning up falsely parsed attributes
++ Added some more tests
+
+***
+
+version 1.0.2
+~ Improved README.md
+~ Improved package.json
+~ Removed package-lock.json
+
+***
+
+version 1.0.1
++ Added funding information 🤑
+~ Improved author information
+~ Improved small parts of the code

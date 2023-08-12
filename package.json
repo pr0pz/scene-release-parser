@@ -1,6 +1,6 @@
 {
 	"name": "release-parser",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "A library for parsing scene release names into human readable data.",
 	"main": "ReleaseParser.js",
 	"bin": "cli.js",
@@ -39,6 +39,6 @@
 	"homepage": "https://github.com/pr0pz/scene-release-parser#readme",
 	"devDependencies": {
 		"mocha": "^10.2.0",
-		"nodemon": "^2.0.22"
+		"nodemon": "^3.0.1"
 	}
 }

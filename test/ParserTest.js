@@ -4,5 +4,7 @@
 
 import ReleaseParser from '../ReleaseParser.js'
 
-console.log( '  [Parsed] ' + ReleaseParser( 'SurCode.DVD.Professional.DTS.Encoder.v1.0.21.Retail-iNTENSiON', 'Apps' ).toString() )
-console.log( '[Expected] Title: SurCode DVD Professional DTS Encoder / Group: iNTENSiON / Flags: Retail / Version: 1.0.21 / Type: App' +'\n' )
+// console.log( '  [Parsed] ' + ReleaseParser( 'D-Ron-The_World_Is_Yours-WEB-2017-RAGEMP3', 'MP3' ).toString() )
+// console.log( '[Expected] Artist: D-Ron / Title: The World Is Yours / Group: RAGEMP3 / Year: 2017 / Source: WEB / Type: Music' +'\n' )
+
+// console.log( ReleaseParser('', '').toString() )

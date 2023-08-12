@@ -10,11 +10,19 @@ describe( 'ReleaseParser', function()
 {
 	// All releases that needed to be tested.
 	// Game
-	it( 'Game', () =>
+	it( 'Game #1', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'Diablo_II_Resurrected_Update_v1.0.0.3_incl_Offline_Crack_NSW-VENOM', 'games' ).toString(),
 			'Title: Diablo II Resurrected / Group: VENOM / Flags: Incl. Crack, Update / Device: Nintendo Switch / Version: 1.0.0.3 / Type: Game'
+		)
+	})
+
+	it( 'Game #2 - Simple with device', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Madshot_NSW-VENOM', 'games' ).toString(),
+			'Title: Madshot / Group: VENOM / Device: Nintendo Switch / Type: Game'
 		)
 	})
 
@@ -128,7 +136,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Wonder.Woman.1984.2020.IMAX.German.UHDBD.2160p.DV.HDR10.HEVC.TrueHD.DL.Remux-pmHD', '0DAY' ).toString(),
-			'Title: Wonder Woman 1984 / Group: pmHD / Year: 2020 / Flags: Dolby Vision, HDR, IMAX, Remux / Source: UHDBD / Format: HEVC / Resolution: 2160p / Audio: Dolby trueHD / Language: German, Multilingual / Type: Movie'
+			'Title: Wonder Woman 1984 / Group: pmHD / Year: 2020 / Flags: Dolby Vision, HDR10, IMAX, Remux / Source: UHDBD / Format: HEVC / Resolution: 2160p / Audio: Dolby trueHD / Language: German, Multilingual / Type: Movie'
 		)
 	})
 
@@ -145,6 +153,22 @@ describe( 'ReleaseParser', function()
 		assert.equal(
 			ReleaseParser( 'Angel.Heart.1987.German.DTSMAD.5.1.DL.2160p.UHD.BluRay.HDR.DV.HEVC.Remux-HDSource', 'BluRay' ).toString(),
 			'Title: Angel Heart / Group: HDSource / Year: 1987 / Flags: Dolby Vision, HDR, Remux, UHD / Source: Bluray / Format: HEVC / Resolution: 2160p / Audio: DTS-HD MA, 5.1 / Language: German, Multilingual / Type: Movie'
+		)
+	})
+
+	it( 'Movies #10 - Multiple lang codes', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Animals.United.2010.Audiopack.Dk.No.Fi.DVDRip.XviD-DiGiCo', 'XVID' ).toString(),
+			'Title: Animals United / Group: DiGiCo / Year: 2010 / Flags: Audiopack / Source: DVDRip / Format: XViD / Language: Danish, Finnish, Norwegian / Type: Movie'
+		)
+	})
+
+	it( 'Movies #11 - No group at the end', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Intruders.Die.Aliens.Sind.Unter.Uns.1992.Uncut.German.AC3.DVDRiP.XviD', 'x265' ).toString(),
+			'Title: Intruders Die Aliens Sind Unter Uns / Group: NOGRP / Year: 1992 / Flags: Uncut / Source: DVDRip / Format: XViD / Audio: AC3 / Language: German / Type: Movie'
 		)
 	})
 
@@ -221,14 +245,60 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	
+	it( 'TV #10 - Year before Season + Episode', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Halo.2022.S01E06.POLISH.720p.WEB.H264-A4O', 'tv' ).toString(),
+			'Title: Halo / Group: A4O / Year: 2022 / Season: 1 / Episode: 6 / Source: WEB / Format: h264 / Resolution: 720p / Language: Polish / Type: TV'
+		)
+	})
+
+	it( 'TV #11 - Multiple lang in wrong format', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'New.Amsterdam.2018.2x12.14.Anni.2.Mesi.8.Giorni.ITA-ENG.1080p.WEBMux.x264-NovaRi', 'tv' ).toString(),
+			'Show: New Amsterdam / Title: 14 Anni 2 Mesi 8 Giorni / Group: NovaRi / Year: 2018 / Season: 2 / Episode: 12 / Source: WEB / Format: x264 / Resolution: 1080p / Language: English, Italian / Type: TV'
+		)
+	})
+
+	it( 'TV #11 - Multiple lang in wrong format', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'New.Amsterdam.2018.S02E13.In.the.Graveyard.1080p.AMZN.Webrip.x265.10bit.EAC3.5.1.JBENTTAoE', 'tv' ).toString(),
+			'Show: New Amsterdam / Title: In the Graveyard / Group: NOGRP / Year: 2018 / Season: 2 / Episode: 13 / Source: Amazon / Format: x265 / Resolution: 1080p / Audio: 10BIT, EAC3, 5.1 / Type: TV'
+		)
+	})
+
+	it( 'TV #12 - rls with comma', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'New.Amsterdam.2018.S02E12.14.Years,.2.Months,.8.Days.1080p.AMZN.Webrip.x265.10bit.EAC3.5.1.JBENTTAoE', 'tv' ).toString(),
+			'Show: New Amsterdam / Title: 14 Years 2 Months 8 Days / Group: NOGRP / Year: 2018 / Season: 2 / Episode: 12 / Source: Amazon / Format: x265 / Resolution: 1080p / Audio: 10BIT, EAC3, 5.1 / Type: TV'
+		)
+	})
+
+	it( 'TV #13 - Complete Disc instead of episode', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Tulsa.King.S01D03.German.ML.COMPLETE.PAL.DVD9-NAiB', 'DVDR' ).toString(),
+			'Title: Tulsa King / Group: NAiB / Season: 1 / Disc: 3 / Flags: Complete / Source: DVD / Format: DVDR / Resolution: PAL / Language: German, Multilingual / Type: TV'
+		)
+	})
+
+	it( 'TV #14 - Episode pattern at beginning of release name', () =>
+	{
+		assert.equal(
+			ReleaseParser( '4x4.Ule.ja.Umber.Autoga.Colombias.S01E09.EE.1080p.WEB.h264-EMX', 'PRE' ).toString(),
+			'Title: 4x4 Ule ja Umber Autoga Colombias / Group: EMX / Season: 1 / Episode: 9 / Source: WEB / Format: h264 / Resolution: 1080p / Language: Estonian / Type: TV'
+		)
+	})
 
 	// TV SPorts
 	it( 'TV Sports #1', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'NFL.2021.09.26.49ers.Vs.Packers.1080p.WEB.h264-SPORTSNET', 'tv' ).toString(),
-			'Show: NFL / Title: 49ers Vs. Packers / Group: SPORTSNET / Year: 2021 / Date: 26.09.2021 / Source: WEB / Format: h264 / Resolution: 1080p / Type: TV'
+			'Name: NFL / Title: 49ers Vs. Packers / Group: SPORTSNET / Year: 2021 / Date: 26.09.2021 / Source: WEB / Format: h264 / Resolution: 1080p / Type: Sports'
 		)
 	})
 
@@ -236,7 +306,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Formula1.2021.Russian.Grand.Prix.Highlights.1080p.HDTV.H264-DARKSPORT', 'tv' ).toString(),
-			'Show: Formula1 / Title: Russian Grand Prix Highlights / Group: DARKSPORT / Year: 2021 / Source: HDTV / Format: h264 / Resolution: 1080p / Type: TV'
+			'Name: Formula1 / Title: Russian Grand Prix Highlights / Group: DARKSPORT / Year: 2021 / Source: HDTV / Format: h264 / Resolution: 1080p / Type: Sports'
 		)
 	})
 
@@ -244,7 +314,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'WWE.Friday.Night.Smackdown.2021-09-10.German.HDTVRiP.x264-SPORTY', 'tv' ).toString(),
-			'Title: WWE Friday Night Smackdown / Group: SPORTY / Year: 2021 / Date: 10.09.2021 / Source: HDTV / Format: x264 / Language: German / Type: TV'
+			'Name: WWE Friday Night Smackdown / Group: SPORTY / Year: 2021 / Date: 10.09.2021 / Source: HDTV / Format: x264 / Language: German / Type: Sports'
 		)
 	})
 
@@ -252,11 +322,17 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Formula1.2023.Hungarian.Grand.Prix.Practice.Two.1080p.WEB.h264-VERUM', 'X264' ).toString(),
-			'Show: Formula1 / Title: Hungarian Grand Prix Practice Two / Group: VERUM / Year: 2023 / Source: WEB / Format: h264 / Resolution: 1080p / Type: TV'
+			'Name: Formula1 / Title: Hungarian Grand Prix Practice Two / Group: VERUM / Year: 2023 / Source: WEB / Format: h264 / Resolution: 1080p / Type: Sports'
 		)
 	})
 
-	
+	it( 'TV Sports #5 - False NEW flag', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'MLB.2023.08.09.New.York.Yankees.vs.Chicago.White.Sox.720p.WEB.h264-SPORTSNET', 'TV-X264' ).toString(),
+			'Name: MLB / Title: New York Yankees vs. Chicago White Sox / Group: SPORTSNET / Year: 2023 / Date: 09.08.2023 / Source: WEB / Format: h264 / Resolution: 720p / Type: Sports'
+		)
+	})
 
 	// Anime
 	it( 'Anime #1', () =>
@@ -288,7 +364,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'The.Dells.vs.The.Dramatics.LP-(1974)-diss', 'MP3' ).toString(),
-			'Title: The Dells vs. The Dramatics / Group: diss / Year: 1974 / Source: LP / Type: Music'
+			'Title: The Dells vs. The Dramatics LP / Group: diss / Year: 1974 / Type: Music'
 		)
 	})
 
@@ -304,7 +380,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Victoria_feat._Sledge-Wanna_Be_(More_Than_Your_Lover)-(DRR-20-1_CD-M)-CDM-FLAC-1998-WRE', 'mp3' ).toString(),
-			'Artist: Victoria feat. Sledge / Song: Wanna Be (More Than Your Lover) / Group: WRE / Year: 1998 / Source: CD Single / Format: FLAC / Type: Music'
+			'Artist: Victoria feat. Sledge / Title: Wanna Be (More Than Your Lover) / Group: WRE / Year: 1998 / Source: Maxi CD / Format: FLAC / Type: Music'
 		)
 	})
 
@@ -353,6 +429,38 @@ describe( 'ReleaseParser', function()
 		assert.equal(
 			ReleaseParser( 'Kraftwerk_-_Live_in_Melbourne_(Australia_29.01.2003)-2CD-Bootleg-2003-BFHMP3', 'mp3' ).toString(),
 			'Artist: Kraftwerk / Title: Live in Melbourne (Australia 29 01 2003) / Group: BFHMP3 / Year: 2003 / Date: 29.01.2003 / Source: Bootleg / Type: Music'
+		)
+	})
+
+	it( 'Music #10 - Dont parse source from extra title', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Gilles_Peterson--BBC_Radio_6_Music-DVBS-08-05-2023-OMA', 'mp3' ).toString(),
+			'Artist: Gilles Peterson / Title: BBC Radio 6 Music / Group: OMA / Year: 2023 / Date: 08.05.2023 / Source: DVB / Type: Music'
+		)
+	})
+
+	it( 'Music #11 - Dont parse flag from extra title', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Vicetone_-_The_World_Has_A_Heartbeat_(Incl._Extended_Mix)-(30022913)-WEB-2023-JUSTiFY_iNT', 'mp3' ).toString(),
+			'Artist: Vicetone / Title: The World Has A Heartbeat (Incl. Extended Mix) / Group: JUSTiFY_iNT / Year: 2023 / Source: WEB / Type: Music'
+		)
+	})
+
+	it( 'Music #12 - Dont parse source from extra title', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Victoria_feat._Sledge-Wanna_Be_(More_Than_Your_Lover)-(DRR-20-1_CD-M)-CDM-FLAC-1998-WRE', 'mp3' ).toString(),
+			'Artist: Victoria feat. Sledge / Title: Wanna Be (More Than Your Lover) / Group: WRE / Year: 1998 / Source: Maxi CD / Format: FLAC / Type: Music'
+		)
+	})
+
+	it( 'Music #13 - Try to exclude catalogue stuff', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'VA-The_Collapse_Of_Future_Vol_10_Part_1-TCOF10P1-WEB-2023-WAV', 'mp3' ).toString(),
+			'Artist: Various / Title: The Collapse Of Future Vol. 10 Part 1 / Group: WAV / Year: 2023 / Source: WEB / Type: Music'
 		)
 	})
 
@@ -421,7 +529,7 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Ebook #8 - Other version of issue number', () =>
+	it( 'Ebook #9 - Other version of issue number', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'Simpsons.Comics.Ausgabe.15.Januar.1998.German.Comic.eBook-HS', 'ebook' ).toString(),
@@ -429,7 +537,7 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Ebook #9 - title + title_extra + special date formatting (15 Januar 2004)', () =>
+	it( 'Ebook #10 - title + title_extra + special date formatting (15 Januar 2004)', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'Concorde.-.Die.Traumer.15.Januar.2004.Presseheft.German.Ebook-Elements', 'ebook' ).toString(),
@@ -437,7 +545,7 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Ebook #10 - Basic book with author and book title', () =>
+	it( 'Ebook #11 - Basic book with author and book title', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'Gerd.Postel.-.Gestaendnisse.Eines.Falschen.Doktors.German.Ebook-Elements', 'ebook' ).toString(),
@@ -445,7 +553,7 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Ebook #11 - Issue is 0', () =>
+	it( 'Ebook #12 - Issue is 0', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'IDW.-.Machete.No.0.2010.Hybrid.Comic.eBook-BitBook', 'ebook' ).toString(),

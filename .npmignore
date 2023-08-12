@@ -3,6 +3,8 @@
 # Extra excludes from npm package
 /test
 README.md
+TODO.MD
+changelog.txt
 
 # dependencies
 /node_modules
