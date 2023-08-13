@@ -1,9 +1,13 @@
 #!/usr/bin/env node
-
-// Import Parser
 import ReleaseParser from './ReleaseParser.js'
-// Get some Infos from package.json
 import pckg from './package.json' assert { type: 'json' }
+
+/**
+ * CLI interface for ReleaseParser
+ * 
+ * @author Wellington Estevo
+ * @version 1.2.1
+ */
 
 // Skip first two args
 // https://nodejs.org/en/knowledge/command-line/how-to-parse-command-line-arguments/

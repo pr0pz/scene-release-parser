@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.2.0
+ * @version 1.2.1
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -749,12 +749,20 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			type = 'Font'
 		}
 		// Games = if device was found or game related flags
-		else if ( get( 'device' ) || hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) || hasAttribute( patterns.sourcesGames, 'source' ) )
+		else if (
+			get( 'device' ) ||
+			hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) ||
+			hasAttribute( patterns.sourcesGames, 'source' ) )
 		{
 			type = 'Game'
 		}
 		// App = if os is set or software (also game) related flags
-		else if ( ( get( 'version' ) || hasAttribute( patterns.flagsApps, 'flags' ) ) && !hasAttribute( patterns.formatsVideo, 'format' ) )
+		else if (
+			(
+				get( 'os' ) ||
+				get( 'version' ) ||
+				hasAttribute( patterns.flagsApps, 'flags' )
+			) && !hasAttribute( patterns.formatsVideo, 'format' ) )
 		{
 			type = 'App'
 		}
@@ -826,394 +834,370 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		// Some vars for better debugging which regex pattern was used
 		let [ regexPattern, regexUsed, matches ] = ''
 
-		// We only break if we have some results.
-		// If the case doenst't deliver results, it runs till default
-		// which is the last escape and should deliver something.
-		switch ( type )
+		// Music artist + release title (album/single/track name, etc.)
+		if ( type === 'music' || type === 'abook' || type === 'musicvideo' )
 		{
-			// Music artist + release title (album/single/track name, etc.)
-			case 'music':
-			case 'abook':
-			case 'musicvideo':
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_MUSIC
+			regexUsed = 'REGEX_TITLE_MUSIC'
 
-				// Setup regex pattern
-				regexPattern = patterns.REGEX_TITLE_MUSIC
-				regexUsed = 'REGEX_TITLE_MUSIC'
+			if ( type === 'abook' )
+			{
+				regexPattern = patterns.REGEX_TITLE_ABOOK
+				regexUsed = 'REGEX_TITLE_ABOOK'
+			}
+			else if ( type === 'musicvideo' )
+			{
+				regexPattern = patterns.REGEX_TITLE_MVID
+				regexUsed = 'REGEX_TITLE_MVID'
+			}
 
-				if ( type === 'abook' )
+			// Search and replace pattern in regex pattern for better matching
+			regexPattern = cleanupPattern( releaseName, regexPattern, [ 'audio', 'flags', 'format', 'group', 'language', 'source' ] )
+
+			// Special check for date:
+			// If date is inside brackets with more words, it's part of the title.
+			// If not, then we should consider and replace the regex date patterns inside the main regex pattern.
+			if ( ! releaseNameCleaned.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
+				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'regex_date', 'regex_date_monthname', 'year' ] )
+
+			// Match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+			if ( matches )
+			{
+				// Full match
+				title = matches[1]
+
+				// Split the title in the respective parts
+				let titleArray = title.split( '-' )
+
+				if ( titleArray )
 				{
-					regexPattern = patterns.REGEX_TITLE_ABOOK
-					regexUsed = 'REGEX_TITLE_ABOOK'
-				}
-				else if ( type === 'musicvideo' )
-				{
-					regexPattern = patterns.REGEX_TITLE_MVID
-					regexUsed = 'REGEX_TITLE_MVID'
-				}
+					// First value is the artist = title
+					// We need the . for proper matching cleanup episode.
+					title = cleanup( '.' + titleArray[0], 'episode' )
 
-				// Search and replace pattern in regex pattern for better matching
-				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'audio', 'flags', 'format', 'group', 'language', 'source' ] )
+					// Unset first item before the loop
+					titleArray.splice( 0, 1 )
+					
+					// Separator
+					let separator = type === 'abook' ? ' - ' : '-'
 
-				// Special check for date:
-				// If date is inside brackets with more words, it's part of the title.
-				// If not, then we should consider and replace the regex date patterns inside the main regex pattern.
-				if ( ! releaseNameCleaned.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
-					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'regex_date', 'regex_date_monthname', 'year' ] )
-
-				// Match title
-				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-				if ( matches )
-				{
-					// Full match
-					title = matches[1]
-
-					// Split the title in the respective parts
-					let titleArray = title.split( '-' )
-
-					if ( titleArray )
+					// Loop remaining parts and set title extra
+					titleArray.forEach( ( titlePart, index ) =>
 					{
-						// First value is the artist = title
-						// We need the . for proper matching cleanup episode.
-						title = cleanup( '.' + titleArray[0], 'episode' )
-
-						// Unset first item before the loop
-						titleArray.splice( 0, 1 )
 						
-						// Separator
-						let separator = type === 'abook' ? ' - ' : '-'
-
-						// Loop remaining parts and set title extra
-						titleArray.forEach( ( titlePart, index ) =>
+						// We need the . for proper matching cleanup episode.
+						titlePart = cleanup( '.' + titlePart + '.', 'episode' )
+						titlePart = titlePart.replace( /^\.|\.$/gm,'' )
+						
+						if ( titlePart )
 						{
-							
-							// We need the . for proper matching cleanup episode.
-							titlePart = cleanup( '.' + titlePart + '.', 'episode' )
-							titlePart = titlePart.replace( /^\.|\.$/gm,'' )
-							
-							if ( titlePart )
-							{
-								// First index is ok
-								if (
-									index === 0 ||
+							// First index is ok
+							if (
+								index === 0 ||
+								(
+									// Other indexes...
+									index > 0 && 
 									(
-										// Other indexes...
-										index > 0 && 
-										(
-											// ...only with certain chars
-											titlePart.includes( '_' ) ||
-											titlePart.includes( ')' ) ||
-											titlePart.isNumeric()
-										)
+										// ...only with certain chars
+										titlePart.includes( '_' ) ||
+										titlePart.includes( ')' ) ||
+										titlePart.isNumeric()
 									)
 								)
-								{
-									titleExtra = titleExtra ? titleExtra + separator + titlePart : titlePart
-								}
+							)
+							{
+								titleExtra = titleExtra ? titleExtra + separator + titlePart : titlePart
 							}
-						} )
-					}
-
-					break
+						}
+					} )
 				}
+			}
 
-				// Jump to default if no title found
-				if ( !title ) type = 'default'
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
 
-			// Software (Game + Apps)
-			case 'game':
-			case 'app':
+		// Software (Game + Apps)
+		if ( type === 'game' || type === 'app' )
+		{
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_APP
+			regexUsed = 'REGEX_TITLE_APP'
 
-				// Setup regex pattern
-				regexPattern = patterns.REGEX_TITLE_APP
-				regexUsed = 'REGEX_TITLE_APP'
+			// Search and replace pattern in regex pattern for better matching
+			//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'version' ] )
+			regexPattern = cleanupPattern( releaseName, regexPattern, [ 'device', 'os' ] )
+
+			// Match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+			if ( matches ) title = matches[1]
+
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
+
+		// TV series or Sports
+		if ( type === 'tv' || type === 'sports' )
+		{
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_TV.toRegExp()
+			regexUsed = 'REGEX_TITLE_TV'
+
+			// Only needed here for releases that have episodes
+			// Maybe year is before episode and have to be removed
+			let releaseNameNoYear = cleanup( releaseNameCleaned, [ 'year' ] )
+
+			// Match title
+			matches = releaseNameNoYear.match( regexPattern )
+
+			// Check for matches with regex title tv
+			if ( matches )
+			{
+				title = matches[1]
+
+				// Build pattern and try to get episode title
+				// So search and replace needed data to match properly.
+				regexPattern = patterns.REGEX_TITLE_TV_EPISODE
+				regexUsed += ' + REGEX_TITLE_TV_EPISODE'
 
 				// Search and replace pattern in regex pattern for better matching
-				//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'device', 'flags', 'format', 'group', 'language', 'os', 'version' ] )
-				//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'version' ] )
-				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'device' ] )
+				//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
+				releaseNameCleaned = cleanup( releaseNameCleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
 
-				// Match title
+				// Match episode title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-				if ( matches )
-				{
-					title = matches[1]
-					break
-				}
-
-				// Jump to default if no title found
-				if ( !title ) type = 'default'
-
-			// TV series or Sports
-			case 'tv':
-			case 'sports':
-
-				// Setup regex pattern
-				regexPattern = patterns.REGEX_TITLE_TV.toRegExp()
-				regexUsed = 'REGEX_TITLE_TV'
-
-				// Only needed here for releases that have episodes
-				// Maybe year is before episode and have to be removed
-				let releaseNameNoYear = cleanup( releaseNameCleaned, [ 'year' ] )
-
-				// Match title
-				matches = releaseNameNoYear.match( regexPattern )
-
-				// Check for matches with regex title tv
-				if ( matches )
-				{
-					title = matches[1]
-
-					// Build pattern and try to get episode title
-					// So search and replace needed data to match properly.
-					regexPattern = patterns.REGEX_TITLE_TV_EPISODE
-					regexUsed += ' + REGEX_TITLE_TV_EPISODE'
-
-					// Search and replace pattern in regex pattern for better matching
-					//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
-					releaseNameCleaned = cleanup( releaseNameCleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
-
-					// Match episode title
-					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-					titleExtra = matches && matches[1] !== '.' ? matches[1] : ''
-
-					break
-				}
-				// Try to match Sports match
-				else
-				{
-					// Setup regex pattern
-					regexPattern = patterns.REGEX_TITLE_TV_DATE
-					regexUsed = 'REGEX_TITLE_TV_DATE'
-
-					// Search and replace pattern in regex pattern for better matching
-					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'regex_date', 'year' ] )
-
-					// Match Dated/Sports match title
-					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-					if ( matches )
-					{
-						// 1st match = event (nfl, mlb, etc.)
-						title = matches[1]
-						// 2nd match = specific event name (eg. team1 vs team2)
-						titleExtra = matches && matches[2] ? matches[2] : ''
-
-						break
-
-					}
-				}
-
-				// Jump to default if no title found
-				if ( !title ) type = 'default'
-
-			case 'anime':
-
-				// Setup regex pattern
-				regexPattern = patterns.REGEX_TITLE_TV
-				regexUsed = 'REGEX_TITLE_TV'
-
-				// Match title
-				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-				// Check for matches with regex title tv
-				if ( matches )
-				{
-					title = matches[1]
-
-					// Build pattern and try to get episode title
-					// So search and replace needed data to match properly.
-					regexPattern = patterns.REGEX_TITLE_TV_EPISODE
-					regexUsed += ' + REGEX_TITLE_TV_EPISODE'
-
-					// Search and replace pattern in regex pattern for better matching
-					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
-
-					// Match episode title
-					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-					titleExtra = matches && matches[1] ? matches[1] : ''
-
-					break
-
-				}
-
-				// Jump to default if no title found
-				if ( !title ) type = 'default'
-
-			// XXX
-			case 'xxx':
-
-				// Setup regex pattern
-				regexPattern = get( 'date' ) ? patterns.REGEX_TITLE_XXX_DATE : patterns.REGEX_TITLE_XXX
-				regexUsed = get( 'date' ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX'
-
-				// Search and replace pattern in regex pattern for better matching
-				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] )
-
-				// Match title
-				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-				if ( matches )
-				{
-					// 1st Match = Publisher, Website, etc.
-					title = matches[1]
-					// 2nd Match = Specific release name (movie/episode/model name, etc.)
-					titleExtra = matches[6] ? matches[6] : ''
-
-					break
-				}
-
-				// Jump to default if no title found
-				if ( !title ) type = 'default'
-
-			// Ebook
-			case 'ebook':
-
-				// Setup regex pattern
-				regexPattern = patterns.REGEX_TITLE_EBOOK
-				regexUsed = 'REGEX_TITLE_EBOOK'
-
-				// Cleanup release name for better matching
-				releaseNameCleaned = cleanup( releaseNameCleaned, 'episode' )
-
-				// Search and replace pattern in regex pattern for better matching
-				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'regex_date', 'regex_date_monthname', 'year' ] )
-
-				// Match title
-				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-				
-				if ( matches )
-				{
-					// Full match
-					title = matches[1]
-
-					// Split the title in the respective parts
-					let titleArray = title.split( '-' )
-
-					if ( titleArray )
-					{
-						// First value is the artist = title
-						title = titleArray[0]
-						// Unset this before the loop
-						titleArray.splice( 0, 1 )
-						// Loop remaining parts and set title extra
-						titleArray.forEach( ( titlePart ) =>
-						{
-							if ( titlePart )
-								titleExtra = titleExtra ? titleExtra + ' - ' + titlePart : titlePart
-						} )
-					}
-					break
-				}
-
-				// Jump to default if no title found
-				if ( !title ) type = 'default'
-
-			// Font
-			case 'font':
-
-				// Setup regex pattern
-				regexPattern = patterns.REGEX_TITLE_FONT
-				regexUsed = 'REGEX_TITLE_FONT'
-
-				// Cleanup release name for better matching
-				releaseNameCleaned = cleanup( releaseNameCleaned, [ 'version', 'os', 'format' ] )
-
-				// Match title
-				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-				if ( matches )
-				{
-					title = matches[1]
-					break
-				}
-
-				// Jump to default if no title found
-				if ( !title ) type = 'default'
-
-			// Movie
-			case 'default':
-			default:
-
+				titleExtra = matches && matches[1] !== '.' ? matches[1] : ''
+			}
+			// Try to match Sports match
+			else
+			{
 				// Setup regex pattern
 				regexPattern = patterns.REGEX_TITLE_TV_DATE
 				regexUsed = 'REGEX_TITLE_TV_DATE'
 
 				// Search and replace pattern in regex pattern for better matching
-				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
-
-				// Cleanup release name for better matching
-				if ( type === 'xxx' )
-					releaseNameCleaned = cleanup( releaseNameCleaned, [ 'episode', 'monthname', 'daymonth' ] )
-
-				// Try first date format
-				// NFL.2021.01.01.Team1.vs.Team2.1080p...
-				regexPattern = regexPattern.replace( '%dateformat%', '(?:\\d+[._-]){3}' )
+				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'regex_date', 'year' ] )
 
 				// Match Dated/Sports match title
 				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-				if ( matches && matches[2] )
+				if ( matches )
 				{
 					// 1st match = event (nfl, mlb, etc.)
 					title = matches[1]
 					// 2nd match = specific event name (eg. team1 vs team2)
-					titleExtra = matches[2]
+					titleExtra = matches && matches[2] ? matches[2] : ''
 				}
-				else
+			}
+
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
+
+		// ANime
+		if ( type === 'anime' )
+		{
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_TV
+			regexUsed = 'REGEX_TITLE_TV'
+
+			// Match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+			// Check for matches with regex title tv
+			if ( matches )
+			{
+				title = matches[1]
+
+				// Build pattern and try to get episode title
+				// So search and replace needed data to match properly.
+				regexPattern = patterns.REGEX_TITLE_TV_EPISODE
+				regexUsed += ' + REGEX_TITLE_TV_EPISODE'
+
+				// Search and replace pattern in regex pattern for better matching
+				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+
+				// Match episode title
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+				titleExtra = matches && matches[1] ? matches[1] : ''
+			}
+
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
+
+		// XXX
+		if ( type === 'xxx' )
+		{
+			// Setup regex pattern
+			regexPattern = get( 'date' ) ? patterns.REGEX_TITLE_XXX_DATE : patterns.REGEX_TITLE_XXX
+			regexUsed = get( 'date' ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX'
+
+			// Search and replace pattern in regex pattern for better matching
+			regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] )
+
+			// Match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+			if ( matches )
+			{
+				// 1st Match = Publisher, Website, etc.
+				title = matches[1]
+				// 2nd Match = Specific release name (movie/episode/model name, etc.)
+				titleExtra = matches[6] ? matches[6] : ''
+			}
+
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
+
+		// Ebook
+		if ( type === 'ebook' )
+		{
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_EBOOK
+			regexUsed = 'REGEX_TITLE_EBOOK'
+
+			// Cleanup release name for better matching
+			releaseNameCleaned = cleanup( releaseNameCleaned, 'episode' )
+
+			// Search and replace pattern in regex pattern for better matching
+			regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'regex_date', 'regex_date_monthname', 'year' ] )
+
+			// Match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+			
+			if ( matches )
+			{
+				// Full match
+				title = matches[1]
+
+				// Split the title in the respective parts
+				let titleArray = title.split( '-' )
+
+				if ( titleArray )
 				{
-					// Setup regex pattern
-					regexPattern = patterns.REGEX_TITLE_MOVIE
-					regexUsed = 'REGEX_TITLE_MOVIE'
+					// First value is the artist = title
+					title = titleArray[0]
+					// Unset this before the loop
+					titleArray.splice( 0, 1 )
+					// Loop remaining parts and set title extra
+					titleArray.forEach( ( titlePart ) =>
+					{
+						if ( titlePart )
+							titleExtra = titleExtra ? titleExtra + ' - ' + titlePart : titlePart
+					} )
+				}
+			}
 
-					// Search and replace pattern in regex pattern for better matching
-					regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year', 'audio' ] )
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
 
-					// Match title
+		// Font
+		if ( type === 'font' )
+		{
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_FONT
+			regexUsed = 'REGEX_TITLE_FONT'
+
+			// Cleanup release name for better matching
+			releaseNameCleaned = cleanup( releaseNameCleaned, [ 'version', 'os', 'format' ] )
+
+			// Match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+			if ( matches ) title = matches[1]
+
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
+
+		// Movie
+		if ( type === 'default' || !title )
+		{
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_TV_DATE
+			regexUsed = 'REGEX_TITLE_TV_DATE'
+
+			// Search and replace pattern in regex pattern for better matching
+			regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source' ] )
+
+			// Cleanup release name for better matching
+			if ( type === 'xxx' )
+				releaseNameCleaned = cleanup( releaseNameCleaned, [ 'episode', 'monthname', 'daymonth' ] )
+
+			// Try first date format
+			// NFL.2021.01.01.Team1.vs.Team2.1080p...
+			regexPattern = regexPattern.replace( '%dateformat%', '(?:\\d+[._-]){3}' )
+
+			// Match Dated/Sports match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+			if ( matches && matches[2] )
+			{
+				// 1st match = event (nfl, mlb, etc.)
+				title = matches[1]
+				// 2nd match = specific event name (eg. team1 vs team2)
+				titleExtra = matches[2]
+			}
+			else
+			{
+				// Setup regex pattern
+				regexPattern = patterns.REGEX_TITLE_MOVIE
+				regexUsed = 'REGEX_TITLE_MOVIE'
+
+				// Search and replace pattern in regex pattern for better matching
+				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'format', 'language', 'resolution', 'source', 'year', 'audio' ] )
+
+				// Match title
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+				if ( matches )
+				{
+					title = matches[1]
+
+					// Try to get extra title after year (some cases)
+					//regexPattern = cleanupPattern( releaseNameCleaned, patterns.REGEX_TITLE_MOVIE_EXTRA, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source', 'year' ] )
+					/*regexPattern = cleanupPattern( releaseNameCleaned, patterns.REGEX_TITLE_MOVIE_EXTRA, [ 'year' ] )
+					regexUsed += ' + REGEX_TITLE_MOVIE_EXTRA'
+
+					// Remove the unneeded stuff from release name
+					releaseNameCleaned = cleanup( releaseNameCleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
+
+					console.log( regexPattern )
+					console.log( releaseNameCleaned )
+
+					// Match episode title
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
-					if ( matches )
-					{
-						title = matches[1]
-
-						// Try to get extra title after year (some cases)
-						//regexPattern = cleanupPattern( releaseNameCleaned, patterns.REGEX_TITLE_MOVIE_EXTRA, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source', 'year' ] )
-						/*regexPattern = cleanupPattern( releaseNameCleaned, patterns.REGEX_TITLE_MOVIE_EXTRA, [ 'year' ] )
-						regexUsed += ' + REGEX_TITLE_MOVIE_EXTRA'
-
-						// Remove the unneeded stuff from release name
-						releaseNameCleaned = cleanup( releaseNameCleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
-
-						console.log( regexPattern )
-						console.log( releaseNameCleaned )
-
-						// Match episode title
-						matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-						titleExtra = matches && matches[1] !== '.' ? matches[1] : ''*/
-					}
-					// No matches? Try simplest regex pattern.
-					else
-					{
-						// Some very old (or very wrong named) releases dont have a group at the end.
-						// But I still wanna match them, so we check for the '-'.
-						regexPattern = patterns.REGEX_TITLE
-						regexUsed = 'REGEX_TITLE'
-
-						// This should be default, because we found the '-'.
-						if ( releaseNameCleaned.includes( '-' ) )
-							regexPattern += '-'
-
-						// Match title
-						matches = releaseNameCleaned.match( ( '/^' + regexPattern + '/i' ).toRegExp() )
-
-						// If nothing matches here, this release must be da real shit!
-						title = matches ? matches[1] : ''
-					}
+					titleExtra = matches && matches[1] !== '.' ? matches[1] : ''*/
 				}
+				// No matches? Try simplest regex pattern.
+				else
+				{
+					// Some very old (or very wrong named) releases dont have a group at the end.
+					// But I still wanna match them, so we check for the '-'.
+					regexPattern = patterns.REGEX_TITLE
+					regexUsed = 'REGEX_TITLE'
+
+					// This should be default, because we found the '-'.
+					if ( releaseNameCleaned.includes( '-' ) )
+						regexPattern += '-'
+
+					// Match title
+					matches = releaseNameCleaned.match( ( '/^' + regexPattern + '/i' ).toRegExp() )
+
+					// If nothing matches here, this release must be da real shit!
+					title = matches ? matches[1] : ''
+				}
+			}
 		}
 
 		// Sanitize title
@@ -1518,27 +1502,20 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				{
 					attributes.forEach( ( attribute ) =>
 					{
-						if ( Array.isArray( attribute ) )
-						{
-							attribute.forEach( ( value ) =>
-							{
-								// Exception for OS
-								if ( information === 'os' )
-									value = '(?:for[._-])?' + value
-
-								// We need to replace all findings with double dots for proper matching later on.
-								releaseName = releaseName.replace( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp(), '..' )
-							} )
-						}
-						else
+						// Transform all values to array
+						attribute = !Array.isArray( attribute ) ? [ attribute ] : attribute
+						attribute.forEach( ( value ) =>
 						{
 							// Exception for OS
 							if ( information === 'os' )
-								attribute = '(?:for[._-])?' + attribute
+								value = '(?:for[._-])?' + value
 
 							// We need to replace all findings with double dots for proper matching later on.
-							releaseName = releaseName.replace( ( '/[._(-]' + attribute + '[._)-]/i' ).toRegExp(), '..' )
-						}
+							releaseName = releaseName.replace( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp(), '..' )
+							// Replace format at the end if no group name
+							if ( information === 'format' )
+								releaseName = releaseName.replace( ( '/[._]' + value + '$/i' ).toRegExp(), '..' )
+						} )
 					} )
 				}
 			}
@@ -1699,6 +1676,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 					attributes.forEach( ( attribute ) =>
 					{
+						attribute = !Array.isArray( attribute ) ? [ attribute ] : attribute
 						if ( Array.isArray( attribute ) )
 						{
 							attribute.forEach( ( value ) =>
@@ -1706,10 +1684,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 								value = information === 'os' ? '(?:for[._-])?' + value : value
 
 								// And check what exactly pattern matches the given release name.
-								let matches = releaseName.match( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp() )
+								//let matches = releaseName.match( ( '/[._(\\-]' + value + '[._)\\-]/i' ).toRegExp() )
 
 								// We have a match? ...
-								if ( matches )
+								//if ( matches )
 									// Put to values and separate by | if needed.
 									values = values ? values + '|' + value : value
 							} )

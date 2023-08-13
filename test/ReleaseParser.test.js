@@ -1,10 +1,13 @@
+import ReleaseParser from '../ReleaseParser.js'
+import assert from 'assert'
+
 /**
  * This is the main test file.
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
+ * 
+ * @author Wellington Estevo
+ * @version 1.2.1
  */
-
-import ReleaseParser from '../ReleaseParser.js'
-import assert from 'assert'
 
 describe( 'ReleaseParser', function()
 {
@@ -80,6 +83,14 @@ describe( 'ReleaseParser', function()
 		assert.equal(
 			ReleaseParser( 'Schweighofer.Win1A.Lohn.v23.10.4.0.German.WinALL.Incl.Keygen-BLiZZARD', 'Apps' ).toString(),
 			'Title: Schweighofer Win1A Lohn / Group: BLiZZARD / Flags: KEYGEN / Os: Windows / Version: 23.10.4.0 / Language: German / Type: App'
+		)
+	})
+
+	it( 'Apps #8 - Remove OS from rls name', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ).toString(),
+			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App'
 		)
 	})
 

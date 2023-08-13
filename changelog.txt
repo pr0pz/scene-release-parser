@@ -1,3 +1,10 @@
+version 1.2.1 ( updated 13.08.2023 )
+~ Improved App/Game title recognition
+~ Improved Anime title recognition
++ Added test case
+
+***
+
 version 1.2.0 ( updated 12.08.2023 )
 + Added language: Hungarian
 + Added WEBmux to WEB source (p2p)
