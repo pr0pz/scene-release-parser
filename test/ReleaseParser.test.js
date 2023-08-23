@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.2.1
+ * @version 1.2.2
  */
 
 describe( 'ReleaseParser', function()
@@ -220,7 +220,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Dark.Net.S01E06.DOC.SUBFRENCH.720p.WEBRip.x264-TiMELiNE', 'tv' ).toString(),
-			'Title: Dark Net / Group: TiMELiNE / Season: 1 / Episode: 6 / Flags: DOC, Subbed / Source: WEB / Format: x264 / Resolution: 720p / Type: TV'
+			'Title: Dark Net / Group: TiMELiNE / Season: 1 / Episode: 6 / Flags: Docu, Subbed / Source: WEB / Format: x264 / Resolution: 720p / Type: TV'
 		)
 	})
 
@@ -244,7 +244,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( '72.Cutest.Animals.S01E0.German.DL.Doku.1080p.WEB.x264-BiGiNT', 'tv' ).toString(),
-			'Title: 72 Cutest Animals / Group: BiGiNT / Season: 1 / Episode: 0 / Flags: Doku / Source: WEB / Format: x264 / Resolution: 1080p / Language: German, Multilingual / Type: TV'
+			'Title: 72 Cutest Animals / Group: BiGiNT / Season: 1 / Episode: 0 / Flags: Docu / Source: WEB / Format: x264 / Resolution: 1080p / Language: German, Multilingual / Type: TV'
 		)
 	})
 
@@ -304,6 +304,14 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
+	it( 'TV #15 - Docu with episode', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Speer.Et.Hitler.L.Architecte.Du.Diable.E03.FINAL.DOC.FRENCH.PDTV.XViD-BAWLS', 'tv-xvid' ).toString(),
+			'Title: Speer Et Hitler L Architecte Du Diable / Group: BAWLS / Episode: 3 / Flags: Docu, Final / Source: PDTV / Format: XViD / Language: French / Type: TV'
+		)
+	})
+
 	// TV SPorts
 	it( 'TV Sports #1', () =>
 	{
@@ -344,6 +352,16 @@ describe( 'ReleaseParser', function()
 			'Name: MLB / Title: New York Yankees vs. Chicago White Sox / Group: SPORTSNET / Year: 2023 / Date: 09.08.2023 / Source: WEB / Format: h264 / Resolution: 720p / Type: Sports'
 		)
 	})
+
+	it( 'TV Sports #6 - DTM', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'DTM.2019.05.19.Zolder.2.Rennen.GERMAN.HDTVRiP.x264-SKYHD', 'TV-X264' ).toString(),
+			'Name: DTM / Title: Zolder 2 Rennen / Group: SKYHD / Year: 2019 / Date: 19.05.2019 / Source: HDTV / Format: x264 / Language: German / Type: Sports'
+		)
+	})
+
+	
 
 	// Anime
 	it( 'Anime #1', () =>

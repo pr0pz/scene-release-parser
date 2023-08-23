@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.2.1
+ * @version 1.2.2
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -629,6 +629,24 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		}
 	}
 
+	/**
+	 * Parse Sports type.
+	 *
+	 * @private
+	 * @return {bool}
+	 */
+	const isSports = () =>
+	{
+		let isSports = false
+		patterns.SPORTS.forEach( value =>
+		{
+			let pattern = ( '/^' + value + '[._-]/i' ).toRegExp()
+			if ( get( 'release' ).match( pattern ) )
+				isSports = true
+		})
+		return isSports
+	}
+
 
 	/**
 	 * Parse the release type by section.
@@ -658,40 +676,40 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	const guessTypeByParsedAttributes = () =>
 	{
 		let type = ''
-
+		
+		// Match sports events
+		if ( isSports() )
+		{
+			type = 'Sports'
+		}
+		// Ebook related flags
+		else if ( hasAttribute( patterns.flagsEbook, 'flags' ) )
+		{
+			type = 'eBook'
+		}
+		// Abook flag
+		else if ( hasAttribute( 'ABOOK', 'flags' ) )
+		{
+			type = 'ABook'
+		}
+		// Anime related flags
+		else if ( hasAttribute( patterns.flagsAnime, 'flags' ) )
+		{
+			type = 'Anime'
+		}
+		// XXX related flags
+		else if ( hasAttribute( patterns.flagsXxx, 'flags' ) )
+		{
+			type = 'XXX'
+		}
 		// Do We have an episode?
-		if ( get( 'episode' ) || get( 'season' ) || hasAttribute( patterns.sourcesTv, 'source' ) ) 
+		else if ( get( 'episode' ) || get( 'season' ) || hasAttribute( patterns.sourcesTv, 'source' ) ) 
 		{
 			// Default to TV
 			type = 'TV'
 
-			// Match sports events
-			if ( releaseName.match( patterns.REGEX_SPORTS.toRegExp() ) )
-			{
-				type = 'Sports'
-			}
-			// Anime (can have episodes) = if we additionaly have an anime flag in rls name
-			else if ( hasAttribute( patterns.flagsAnime, 'flags' ) )
-			{
-				type = 'Anime'
-			}
-			// Ebook (can have episodes) = if we additionaly have an ebook flag in rls name
-			else if ( hasAttribute( patterns.flagsEbook, 'flags' ) )
-			{
-				type = 'eBook'
-			}
-			// Abook (can have episodes) = if we additionaly have an abook flag in rls name
-			else if ( hasAttribute( 'ABOOK', 'flags' ) )
-			{
-				type = 'ABook'
-			}
-			// Imageset (set number)
-			else if ( hasAttribute( patterns.flagsXxx, 'flags' ) )
-			{
-				type = 'XXX'
-			}
 			// Description with date inside brackets is nearly always music or musicvideo
-			else if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
+			if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
 			{
 				type = 'MusicVideo'
 			}
@@ -701,22 +719,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		{
 			type = get( 'resolution' ) ? 'MusicVideo' : 'Music'
 		}
-		// Match sports events
-		else if ( releaseName.match( patterns.REGEX_SPORTS.toRegExp() ) )
-		{
-			type = 'Sports'
-		}
 		// Has date and a resolution? probably TV
 		else if ( get( 'date' ) && get( 'resolution' ) )
 		{
 			// Default to TV
 			type = 'TV'
-
-			// Could be an xxx movie
-			if ( hasAttribute( patterns.flagsXxx, 'flags' ) )
-			{
-				type = 'XXX'
-			}
 		}
 		// Check for MVid formats
 		else if ( hasAttribute( patterns.formatsMvid, 'format' ) )
@@ -733,16 +740,6 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		{
 			type = 'Music'
 		}
-		// Ebook = ebook related flag
-		else if ( hasAttribute( patterns.flagsEbook, 'flags' ) )
-		{
-			type = 'eBook'
-		}
-		// Abook = Abook related flag
-		else if ( hasAttribute( 'ABOOK', 'flags' ) )
-		{
-			type = 'ABook'
-		}
 		// Font = Font related flag
 		else if ( hasAttribute( [ 'FONT', 'FONTSET' ], 'flags' ) )
 		{
@@ -751,7 +748,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		// Games = if device was found or game related flags
 		else if (
 			get( 'device' ) ||
-			hasAttribute( [ 'DLC', 'DLC Unlocker' ], 'flags' ) ||
+			hasAttribute( patterns.flagsGames, 'flags' ) ||
 			hasAttribute( patterns.sourcesGames, 'source' ) )
 		{
 			type = 'Game'
@@ -765,11 +762,6 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			) && !hasAttribute( patterns.formatsVideo, 'format' ) )
 		{
 			type = 'App'
-		}
-		// Porn = if JAV flag
-		else if ( hasAttribute( patterns.flagsXxx, 'flags' ) )
-		{
-			type = 'XXX'
 		}
 
 		return type
@@ -1252,13 +1244,18 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				// Some special flags
 				if ( type === 'flags' )
 				{
-					// Final flag is only right if language comes right after
-					if ( attrKey === 'Final' )
-						pattern = cleanupPattern( get( 'release' ), pattern, 'language' )
-					
-					// New Flag is only right if followed by some movie informations
-					if ( attrKey === 'New' || attrKey === 'V2' || attrKey === 'V3' )
-						pattern = cleanupPattern( get( 'release' ), pattern, [ 'format', 'source', 'language', 'resolution' ] )
+					// Special flags that should only match if followed by specific information
+					if (
+						attrKey === 'Final' ||
+						attrKey === 'New' ||
+						attrKey === 'V2' ||
+						attrKey === 'V3' ||
+						attrKey === 'Cover' ||
+						attrKey === 'Trainer'
+					)
+					{
+						pattern = cleanupPattern( get( 'release' ), pattern, [ 'flags', 'format', 'source', 'language', 'resolution' ] )
+					}
 				}
 
 				// All separators
@@ -1718,7 +1715,10 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const cleanupAttributes = () =>
 	{
-		if ( get( 'type' ) === 'Movie' )
+		let type = get( 'type' ).toLowerCase()
+		let flags = get( 'flags' )
+
+		if ( type === 'movie' )
 		{			
 			// Remove version if it's a movie (falsely parsed from release name)
 			if ( get( 'version' ) !== null )
@@ -1726,7 +1726,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				set( 'version', null )
 			}
 		}
-		else if ( get( 'type' ) === 'App' )
+		else if ( type === 'app' )
 		{
 			// Remove audio if it's an App (falsely parsed from release name)
 			if ( get( 'audio' ) !== null )
@@ -1740,12 +1740,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				set( 'source', null )
 			}
 		}
-		else if ( get( 'type' ) === 'eBook' )
+		else if ( type === 'ebook' )
 		{
 			if ( get( 'format' ) === 'Hybrid' )
 			{
 				// Remove Hybrid flag is format already Hybrid
-				let flags = get( 'flags' )
 				if ( flags.length && flags.indexOf( 'Hybrid' ) >= 0 )
 				{
 					flags.splice( flags.indexOf( 'Hybrid' ), 1 )
@@ -1753,6 +1752,17 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				}
 			}
 		}
+
+		if ( type !== 'apps' && type !== 'game' && hasAttribute( 'Trainer', 'flags' ) )
+		{
+			// Remove Trainer if not app or game
+			if ( flags.length && flags.indexOf( 'Trainer' ) >= 0 )
+			{
+				flags.splice( flags.indexOf( 'Trainer' ), 1 )
+				set( 'flags', flags )
+			}
+		}
+
 
 		// Remove NEW flag if part of title
 		/*if ( hasAttribute( 'New', 'flags' ) )
@@ -1879,6 +1889,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	{
 		if ( name in data )
 		{
+			value = Array.isArray( value ) && value.length === 0 ? null : value
 			data[ name ] = value
 			return true
 		}
@@ -1902,8 +1913,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	parseResolution()		// For Video rls: Resolution (720, 1080p...)
 	parseAudio()			// For Video rls: Audio format
 	parseLanguage()			// Object with language code as key and name as value (in english)
+
 	parseSource()			// Source (2nd time, for right web source)
 	parseFlags()			// Flags (2nd time)
+	parseLanguage()			// Language (2nd time)
+
 	parseType( section )
 	parseTitle()			// Title and extra title
 	cleanupAttributes()

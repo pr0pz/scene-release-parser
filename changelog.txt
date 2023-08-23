@@ -1,3 +1,24 @@
+version 1.2.2 ( updated 23.08.2023 )
++ Added more sports:
+	+ DTM
+	+ Porsche Carrera Cup
+	+ Porsche Sprint
+	+ AEW
+	+ WRC
++ Added TRAiNER flag
++ Added Game flags
++ Added 1920p resolution
+~ Improved
+	- Cover flag matching
+	- Docu flag matching
+	- FInal flag matching
+	- type matching
+~ Changed DOC flag to DOX (Games, Apps)
+~ Changed DOKU to DOCU (internationalised)
+~ Changed sports matching
+
+***
+
 version 1.2.1 ( updated 13.08.2023 )
 ~ Improved App/Game title recognition
 ~ Improved Anime title recognition
