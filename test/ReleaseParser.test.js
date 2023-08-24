@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.2.2
+ * @version 1.2.3
  */
 
 describe( 'ReleaseParser', function()
@@ -107,7 +107,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Sweet.Home.Alabama.SCREENER.Line.Dubbed.German.VCD-TGSC', 'Screener' ).toString(),
-			'Title: Sweet Home Alabama / Group: TGSC / Flags: Line dubbed / Source: DVD Screener / Format: VCD / Language: German / Type: Movie'
+			'Title: Sweet Home Alabama / Group: TGSC / Flags: Line dubbed / Source: Screener / Format: VCD / Language: German / Type: Movie'
 		)
 	})
 

@@ -1,3 +1,22 @@
+version 1.2.3 ( updated 24.08.2023 )
+~ Improved
+	~ Screener matching
+	~ Subbed matching
+	~ French language
+	~ Music type matching
+	~ Episode matching
+	~ EP source matching
++ Added
+	+ Cuefix flag
+	+ Screener source (bluray, dvd and vhs)
+	+ Ringtone flag
+	+ 3GP format
+- Removed
+	- Bluray screener source
+	- DVD screener source
+
+***
+
 version 1.2.2 ( updated 23.08.2023 )
 + Added more sports:
 	+ DTM

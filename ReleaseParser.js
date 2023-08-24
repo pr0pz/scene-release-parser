@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.2.2
+ * @version 1.2.3
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -612,7 +612,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				}
 				else
 				{
-					episode = sanitize( episode.replace( /[_\.]/, '-' ) )
+					episode = sanitize( episode.replace( /[aA_\.]+/, '-' ) )
 				}
 				set( 'episode', episode )
 			}
@@ -682,15 +682,23 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		{
 			type = 'Sports'
 		}
-		// Ebook related flags
-		else if ( hasAttribute( patterns.flagsEbook, 'flags' ) )
-		{
-			type = 'eBook'
-		}
 		// Abook flag
 		else if ( hasAttribute( 'ABOOK', 'flags' ) )
 		{
 			type = 'ABook'
+		}
+		// Music related sources
+		else if (
+			hasAttribute( patterns.sourcesMusic, 'source' ) ||
+			hasAttribute( patterns.flagsMusic, 'flags' )
+		)
+		{
+			type = 'Music'
+		}
+		// Ebook related flags
+		else if ( hasAttribute( patterns.flagsEbook, 'flags' ) )
+		{
+			type = 'eBook'
 		}
 		// Anime related flags
 		else if ( hasAttribute( patterns.flagsAnime, 'flags' ) )
@@ -735,8 +743,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		{
 			type = 'Movie'
 		}
-		// Music = if we found some music related flags
-		else if ( hasAttribute( patterns.flagsMusic, 'flags' ) || hasAttribute( patterns.formatsMusic, 'format' ) && !get( 'version' ) )
+		// Music if music format and no version
+		else if ( hasAttribute( patterns.formatsMusic, 'format' ) && !get( 'version' ) )
 		{
 			type = 'Music'
 		}
@@ -804,6 +812,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 						break
 					}
 				}
+
+				if ( type !== '' ) break;
 			}
 		}
 
@@ -1752,8 +1762,14 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				}
 			}
 		}
+		// Remove episode and season from music release, falsely parsed
+		else if ( type === 'music' )
+		{
+			if ( get( 'episode' ) ) set( 'episode', null )
+			if ( get( 'season' ) ) set( 'season', null )
+		}
 
-		if ( type !== 'apps' && type !== 'game' && hasAttribute( 'Trainer', 'flags' ) )
+		if ( type !== 'app' && type !== 'game' && hasAttribute( 'Trainer', 'flags' ) )
 		{
 			// Remove Trainer if not app or game
 			if ( flags.length && flags.indexOf( 'Trainer' ) >= 0 )
