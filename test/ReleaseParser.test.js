@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.2.3
+ * @version 1.2.4
  */
 
 describe( 'ReleaseParser', function()
@@ -639,6 +639,15 @@ describe( 'ReleaseParser', function()
 			'Publisher: NaughtyAmerica.com / Title: Sloan Harper Sean Lawless Dirty Wives Club / Group: FuGLi / Year: 2017 / Date: 12.10.2017 / Flags: Imageset, XXX / Type: XXX'
 		)
 	})
+
+	it( 'XXX #2 - XXX with episode and special flags', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Lustery.E727.Leo.And.Madly.A.Happy.Ending.For.Him.XXX.VERTICAL.HRp.MP4-WRB', 'XXX' ).toString(),
+			'Publisher: Lustery / Title: Leo And Madly A Happy Ending For Him / Group: WRB / Episode: 727 / Flags: HR, Vertical, XXX / Format: MP4 / Type: XXX'
+		)
+	})
+
 
 	// MusicVideo
 	it( 'MusicVideo #1 - Recorded on a live show with special date (like normal music live recording)', () =>

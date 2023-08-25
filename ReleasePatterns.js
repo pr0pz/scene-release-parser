@@ -2,7 +2,7 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.2.3
+ * @version 1.2.4
  */
 
 // Reusable vars
@@ -102,7 +102,7 @@ const patterns =
 		// Subs
 		'Subs': 'subs?(?:pack)?',
 		// XXX Sections
-		'XXX': [ 'xxx', 'imgset' ],
+		'XXX': [ 'xxx', 'imgset', 'imageset' ],
 		// Movie Sections
 		'Movie': [ 'movie', '(?!tv).*26[45]', 'bluray', 'dvdr', 'xvid', 'divx' ],
 	},
@@ -202,8 +202,8 @@ const patterns =
 		'MiniDisc': [ 'md', 'minidisc' ], // Needs to be at the end, since some music releases has MD as source, but normally is MicDubbed for movies, so would wrongfully parse
 		// Misc Fallback
 		'CD': [ '\\d*cdr?\\d*', 'cd[._-]?rom' ], // Other CD
-		'DVD': '(Complete[._-])?\\d*dvd[_-]?[r\\d]?', // Just normal DVD
-		'Bluray': [ 'blu[._-]?ray', '\\d*bdr' ],
+		'DVD': '(Complete.)?\\d*dvd[_-]?[r\\d]?', // Just normal DVD
+		'Bluray': [ 'bl?u.?r[ae]y', '\\d*bdr' ],
 		'RiP': 'rip', // If no other rip matches
 		// Parse EP source last, it's part of the name if other source given
 		'EP': [ 'EP', '7.?inch' ],
@@ -230,12 +230,12 @@ const patterns =
 		'CVD': 'CVD',
 		'CVCD': 'CVCD', // Compressed Video CD
 		'SVCD': 'X?SVCD',
-		'VC1': '(?:Bluray[._-])?VC[._-]?1',
+		'VC1': '(?:Blu.?ray.)?VC.?1',
 		'WMV': 'WMV',
 		'MDVDR': 'MDVDR?',
 		'DVDR': 'DVD[R\\d]',
-		'MBluray': '(Complete[._-])?MBLURAY',
-		'Bluray': '(complete[._-]?)?bluray',
+		'MBluray': '(Complete.?)?MBLURAY',
+		'Bluray': '(complete.?)?bluray',
 		'MViD': 'MViD',
 		'3GP': '3gp',
 		// Ebook formats
@@ -250,16 +250,16 @@ const patterns =
 		'PDF': 'PDF',
 		// Music formats
 		'DAISY': 'DAISY', // Audiobook
-		'FLAC': '(?:WEB[._-]?)?FLAC',
+		'FLAC': '(?:WEB.?)?FLAC',
 		'KONTAKT': 'KONTAKT',
 		'MP3': 'MP3',
 		'WAV': 'WAV',
 		// Software format
-		'ISO': '(?:Bootable[._-])?ISO',
+		'ISO': '(?:Bootable.)?ISO',
 		// Font format
 		'CrossPlatform': 'Cross(?:Format|Platform)',
-		'OpenType': 'Open[._-]?Type',
-		'TrueType': 'True[._-]?Type',
+		'OpenType': 'Open.?Type',
+		'TrueType': 'True.?Type',
 		// Software/Game format
 		'Java Platform, Micro Edition': 'j2me(?:v\\d*)?',
 		'Java': 'JAVA',
@@ -435,7 +435,7 @@ const patterns =
 		'pt-BR': [ 'Brazilian(?:.portuguese)?', 'BR' ],
 		'ro': 'Romanian',
 		'ru': [ 'Russian', 'RU' ],
-		'sk': [ 'Slovak', 'SK', 'SLO', 'Slovenian' ],
+		'sk': [ 'Slovak', 'SK', 'SLO', 'Slovenian', 'SI' ],
 		'sv': [ 'Swedish', 'SW?E' ],
 		'sw': 'Swahili',
 		'tg': 'Tajik',
@@ -501,6 +501,7 @@ const patterns =
 		'HLG': 'HLG', // Hybrid log-gamma (like HDR)
 		'HOTFiX': 'HOT[._-]?FIX',
 		'HOU': 'HOU',
+		'HR': 'HRp?.(%format%|%source%|%year%|%flags%)', // High resolution
 		'HSBS': 'HS(?:BS)?', // Half side-by-side (3D format)
 		'Hybrid': 'HYBRID',
 		'Imageset': '(?:Full[._-]?)?(?:IMA?GE?|photo|foto).?SETS?',
@@ -546,7 +547,7 @@ const patterns =
 		'RERiP': 're.?rip',
 		'Restored': 'RESTORED',
 		'Retail': 'RETAIL',
-		'Ringtone': 'rtone',
+		'Ringtone': 'rtones?',
 		'Samplefix': 'SAMPLE.?FIX',
 		'SDR': 'SDR',
 		'Serial': 'SERIAL(?!.Killer)?', // Software
@@ -577,9 +578,10 @@ const patterns =
 		'Untouched': 'UNTOUCHED',
 		'USK': 'USK', // German rating system
 		'Update': '(WITH[._-])?UPDATE',
-		'V1': 'V1[._-](%format%|%language%|%source%|%resolution%)',
-		'V2': 'V2[._-](%format%|%language%|%source%|%resolution%)',
-		'V3': 'V3[._-](%format%|%language%|%source%|%resolution%)',
+		'V1': 'V1.(%format%|%language%|%source%|%resolution%)',
+		'V2': 'V2.(%format%|%language%|%source%|%resolution%)',
+		'V3': 'V3.(%format%|%language%|%source%|%resolution%)',
+		'Vertical': 'Vertical.(hrp?|xxx|%format%|%source%|%resolution%)',
 		'VKI': 'VKI', // Variable Keyframe Intervals
 		'VR': 'VR', // Virtual reality
 		'VR180': 'VR180', // Virtual reality video format with a 180° panorama
@@ -631,17 +633,17 @@ const patterns =
 		'caf',				// African
 		'afc.asian',		// Asian
 		// Racing
-		'Formul[ae].?[1234E]',
+		'Formul[ae].?[1234E].\\d{4}',
 		'F\\d.\\d{4}',
 		'Superleague.Formula',	
 		'Nascar.(?:cup|truck|xfinity)',
-		'Indycar',
+		'Indycar\\.(series|racing|\\d{4})',
 		'Porsche.(Carrera|sprint)',
 		'DTM.(\\d{2,4}|spa|lauszitzring|gp\\d+|\\d+.lauf)',
 		'wrc.(?:fia|\\d{4})', // Rallye
 		'Supercars.championship',
 		'W.series.\\d{4}',
-		'Moto.?(GP|[123])',
+		'Moto.?(GP|\\d).\\d{4}',
 		// Cycling
 		'Cycling.(?:volta|giro|tour|strade|paris|criterium|liege|fleche|amstel|la.vuelta)', // International
 		'giro.d.italia', // Italy
@@ -665,9 +667,9 @@ const patterns =
 		'wwe.(?:nxt|friday|this|main|monday|wrestlemania)',
 		'aew.(?:collision|dynamite|dark)',
 		// Hockey
-		'NHL',
+		'NHL\\.(?:\\d{4}|stanley.cup|playoffs)',
 		// Baseball
-		'MLB',
+		'MLB.(?:\\d{4}|spring|world.series|pre.?season|playoffs|ws|alcs)',
 		// Boxing
 		'boxing.\\d{4}.\\d{2}.\\d{2}',
 		// Sumo

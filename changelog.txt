@@ -1,3 +1,17 @@
+version 1.2.4 ( updated 25.08.2023 )
+~ Improved
+	~ Sports parsing: MLB, NHL, Formula X, Indycar, Moto X
+	~ Slovenian language
+	~ Bluray source
+	~ XXX type title parsing
+	~ Ringtone flag
++ Added
+	+ HR flag
+	+ Vertical flag
+	+ Test case
+
+***
+
 version 1.2.3 ( updated 24.08.2023 )
 ~ Improved
 	~ Screener matching

@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.2.3
+ * @version 1.2.4
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -1037,22 +1037,56 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		// XXX
 		if ( type === 'xxx' )
 		{
-			// Setup regex pattern
-			regexPattern = get( 'date' ) ? patterns.REGEX_TITLE_XXX_DATE : patterns.REGEX_TITLE_XXX
-			regexUsed = get( 'date' ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX'
-
-			// Search and replace pattern in regex pattern for better matching
-			regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] )
-
-			// Match title
-			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
-
-			if ( matches )
+			if ( get( 'episode' ) )
 			{
-				// 1st Match = Publisher, Website, etc.
-				title = matches[1]
-				// 2nd Match = Specific release name (movie/episode/model name, etc.)
-				titleExtra = matches[6] ? matches[6] : ''
+				// Setup regex pattern
+				regexPattern = patterns.REGEX_TITLE_TV.toRegExp()
+				regexUsed = 'REGEX_TITLE_TV'
+
+				// Match title
+				matches = releaseNameCleaned.match( regexPattern )
+
+				// Check for matches with regex title tv
+				if ( matches )
+				{
+					title = matches[1]
+
+					// Build pattern and try to get episode title
+					// So search and replace needed data to match properly.
+					regexPattern = patterns.REGEX_TITLE_TV_EPISODE
+					regexUsed += ' + REGEX_TITLE_TV_EPISODE'
+
+					// Search and replace pattern in regex pattern for better matching
+					//regexPattern = cleanupPattern( releaseName, regexPattern, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
+					releaseNameCleaned = cleanup( releaseNameCleaned, [ 'audio', 'flags', 'format', 'language', 'resolution', 'source' ] )
+
+					// Match episode title
+					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+					titleExtra = matches && matches[1] !== '.' ? matches[1] : ''
+				}
+			}
+
+			// Default pattern
+			if ( !title )
+			{
+				// Setup regex pattern
+				regexPattern = get( 'date' ) ? patterns.REGEX_TITLE_XXX_DATE : patterns.REGEX_TITLE_XXX
+				regexUsed = get( 'date' ) ? 'REGEX_TITLE_XXX_DATE' : 'REGEX_TITLE_XXX'
+
+				// Search and replace pattern in regex pattern for better matching
+				regexPattern = cleanupPattern( releaseName, regexPattern, [ 'flags', 'year', 'language', 'source', 'regex_date', 'regex_date_monthname' ] )
+
+				// Match title
+				matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+				if ( matches )
+				{
+					// 1st Match = Publisher, Website, etc.
+					title = matches[1]
+					// 2nd Match = Specific release name (movie/episode/model name, etc.)
+					titleExtra = matches[6] ? matches[6] : ''
+				}
 			}
 
 			// Jump to default if no title found
@@ -1261,6 +1295,9 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 						attrKey === 'V2' ||
 						attrKey === 'V3' ||
 						attrKey === 'Cover' ||
+						attrKey === 'Docu' ||
+						attrKey === 'HR' ||
+						attrKey === 'Vertical' ||
 						attrKey === 'Trainer'
 					)
 					{
