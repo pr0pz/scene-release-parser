@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.2.4
+ * @version 1.3.0
  */
 
 describe( 'ReleaseParser', function()
@@ -91,6 +91,14 @@ describe( 'ReleaseParser', function()
 		assert.equal(
 			ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ).toString(),
 			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App'
+		)
+	})
+
+	it( 'Apps #9 - Symbian App - dont falsely parse episode and season', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'PocketTorch.AquaCalendar.V1.v1.2.N3650.NGAGE.SX1.S60.SymbianOS.READ.NFO.Cracked-aSxPDA', 'NGAGE' ).toString(),
+			'Title: PocketTorch AquaCalendar / Group: aSxPDA / Flags: Cracked, READNFO / Device: Nokia N-Gage / Os: Symbian / Version: 1.v1 / Type: App'
 		)
 	})
 
@@ -182,6 +190,15 @@ describe( 'ReleaseParser', function()
 			'Title: Intruders Die Aliens Sind Unter Uns / Group: NOGRP / Year: 1992 / Flags: Uncut / Source: DVDRip / Format: XViD / Audio: AC3 / Language: German / Type: Movie'
 		)
 	})
+
+	it( 'Movies #12 - Flags in title, dont parse episode', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Der.Herr.Der.Ringe.Die.Gefaehrten.SPECIAL.EXTENDED.EDITION.2001.German.DL.1080p.BluRay.AVC.READ.NFO.PROPER-AVCBD', 'BLURAY-AVC' ).toString(),
+			'Title: Der Herr Der Ringe Die Gefaehrten / Group: AVCBD / Year: 2001 / Flags: Extended, Proper, READNFO, Special Edition / Source: Bluray / Format: AVC / Resolution: 1080p / Language: German, Multilingual / Type: Movie'
+		)
+	})
+
 
 	// TV
 	it( 'TV #1 - Multiple episodes: 01-02', () =>
@@ -387,6 +404,24 @@ describe( 'ReleaseParser', function()
 			'Title: Pokemon 23 Der Film Geheimnisse des Dschungels / Group: STARS / Year: 2020 / Flags: Anime / Source: Bluray / Format: x264 / Resolution: 1080p / Audio: EAC3D / Language: German, Multilingual / Type: Anime'
 		)
 	})
+
+	it( 'Anime #4 - Some rare flags and sources', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Romance.Is.In.The.Flash.Of.The.Sword.II.EP01.FANSUBFRENCH.HENTAi.RAWRiP.XViD-Lolicon', 'subs' ).toString(),
+			'Title: Romance Is In The Flash Of The Sword II / Group: Lolicon / Episode: 1 / Flags: Hentai, Subbed / Source: RAWRiP / Format: XViD / Type: Anime'
+		)
+	})
+
+	it( 'Anime #5 - Extra title example', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Spy.x.Family.E04.Elterngespraech.an.der.Eliteschule.German.2022.ANiME.DL.BDRiP.x264-STARS', 'anime' ).toString(),
+			'Show: Spy x Family / Title: Elterngespraech an der Eliteschule / Group: STARS / Year: 2022 / Episode: 4 / Flags: Anime / Source: BDRip / Format: x264 / Language: German, Multilingual / Type: Anime'
+		)
+	})
+
+	
 
 	// Music
 	it( 'Music #1', () =>
@@ -658,11 +693,19 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'MusicVideo #1 - Same as above, other date formatting', () =>
+	it( 'MusicVideo #2 - Same as above, other date formatting', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'David_Guetta_ft_Nicki_Minaj_and_FloRida-Where_Them_Girls_At_(Americas_Got_Talent_08-31-11)-HDTV-720p-X264-2011-2LC', 'mvid' ).toString(),
 			'Artist: David Guetta ft. Nicki Minaj and FloRida / Title: Where Them Girls At (Americas Got Talent 08-31-11) / Group: 2LC / Year: 2011 / Date: 31.08.2011 / Source: HDTV / Format: x264 / Resolution: 720p / Type: MusicVideo'
+		)
+	})
+
+	it( 'MusicVideo #3 - Dont parse DAT as source', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'T-Pain_ft_Kehlani-I_Like_Dat_(Jimmy_Kimmel_Live_2021-06-09)-DDC-720p-x264-2021-SRPx', 'TV-HD-X264' ).toString(),
+			'Artist: T / Title: Pain ft. Kehlani-I Like Dat (Jimmy Kimmel Live 2021-06-09) / Group: SRPx / Year: 2021 / Date: 09.06.2021 / Source: DDC / Format: x264 / Resolution: 720p / Type: MusicVideo'
 		)
 	})
 })
