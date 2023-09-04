@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.3.0
+ * @version 1.3.1
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -402,12 +402,15 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseDevice = () =>
 	{
-		let device = parseAttribute( patterns.DEVICE )
-		if ( device )
+		if ( !isBookware() )
 		{
-			// Only one device allowed, get last parsed occurence, may be the right one
-			device = Array.isArray( device ) ? device[ device.length - 1 ] : device
-			set( 'device', device )
+			let device = parseAttribute( patterns.DEVICE )
+			if ( device )
+			{
+				// Only one device allowed, get last parsed occurence, may be the right one
+				device = Array.isArray( device ) ? device[ device.length - 1 ] : device
+				set( 'device', device )
+			}
 		}
 	}
 
@@ -456,11 +459,21 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseVersion = () =>
 	{
-		// Cleanup release name for better matching
-		let releaseNameCleaned = cleanup( releaseName, [ 'flags', 'device' ] )
-		let regexPattern = '/[._-]' + patterns.REGEX_VERSION + '[._-]/i'
-		let matches = releaseNameCleaned.match( ( regexPattern ).toRegExp() )
-		if ( matches ) set( 'version', matches[1].trim( '.' ) )
+		let matches = null
+		if ( isBookware() )
+		{
+			// Cleanup release name for better matching
+			let regexPattern = '/[._-]' + patterns.REGEX_VERSION_BOOKWARE + '[._-]/i'
+			matches = get( 'release' ).match( ( regexPattern ).toRegExp() )
+		}
+		else
+		{
+			// Cleanup release name for better matching
+			let releaseNameCleaned = cleanup( releaseName, [ 'flags', 'device' ] )
+			let regexPattern = '/[._-]' + patterns.REGEX_VERSION + '[._-]/i'
+			matches = releaseNameCleaned.match( ( regexPattern ).toRegExp() )
+		}
+		if ( matches !== null ) set( 'version', matches[1].trim( '.' ) )
 	}
 
 
@@ -471,9 +484,33 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseSource = () =>
 	{
-		let source = parseAttribute( patterns.SOURCE, 'source' )
+		let source = null
+		if ( isBookware() )
+		{
+			patterns.BOOKWARE.every( value =>
+			{
+				let matches = get( 'release' ).match( ( '/^' + value + '[._-]/i' ).toRegExp() )
 
-		if ( source )
+				if ( matches )
+				{
+					source = matches[0].trim( '.' );
+
+					// If source is all uppercase = capitalize
+					if ( source === source.toUpperCase() )
+					{
+						source = source.capitalizeWords()
+					}
+					return false
+				}
+				return true
+			})
+		}
+		else
+		{
+			source = parseAttribute( patterns.SOURCE, 'source' )
+		}
+
+		if ( source !== null )
 		{
 			// Only one source allowed, so get first parsed occurence (should be the right one)
 			source = Array.isArray( source ) ? source[0] : source
@@ -489,13 +526,16 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseFormat = () =>
 	{
-		let format = parseAttribute( patterns.FORMAT, 'format' )
-
-		if ( format )
+		if ( !isBookware() )
 		{
-			// Only one source allowed, so get first parsed occurence (should be the right one)
-			format = Array.isArray( format ) ? format[0] : format
-			set( 'format', format )
+			let format = parseAttribute( patterns.FORMAT, 'format' )
+
+			if ( format )
+			{
+				// Only one source allowed, so get first parsed occurence (should be the right one)
+				format = Array.isArray( format ) ? format[0] : format
+				set( 'format', format )
+			}
 		}
 	}
 
@@ -507,13 +547,16 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseResolution = () =>
 	{
-		let resolution = parseAttribute( patterns.RESOLUTION )
-
-		if ( resolution )
+		if ( !isBookware() )
 		{
-			// Only one resolution allowed, so get first parsed occurence (should be the right one)
-			resolution = Array.isArray( resolution ) ? resolution[0] : resolution
-			set( 'resolution', resolution )
+			let resolution = parseAttribute( patterns.RESOLUTION )
+
+			if ( resolution )
+			{
+				// Only one resolution allowed, so get first parsed occurence (should be the right one)
+				resolution = Array.isArray( resolution ) ? resolution[0] : resolution
+				set( 'resolution', resolution )
+			}
 		}
 	}
 
@@ -525,8 +568,12 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseAudio = () =>
 	{
-		let audio = parseAttribute( patterns.AUDIO )
-		if ( audio ) set( 'audio', audio )
+		if ( !isBookware() )
+		{
+			let audio = parseAttribute( patterns.AUDIO )
+			if ( audio ) set( 'audio', audio )
+
+		}
 	}
 
 
@@ -537,8 +584,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseOs = () =>
 	{
-		let os = parseAttribute( patterns.OS )
-		if ( os ) set( 'os', os )
+		if ( !isBookware() )
+		{
+			let os = parseAttribute( patterns.OS )
+			if ( os ) set( 'os', os )
+		}
 	}
 
 
@@ -549,28 +599,31 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	 */
 	const parseSeason = () =>
 	{
-		let matches = releaseName.match( patterns.REGEX_SEASON.toRegExp() )
-
-		if ( matches )
+		if ( !isBookware() )
 		{
-			// key 1 = 1st pattern, key 2 = 2nd pattern
-			let season = matches[1] ? matches[1] : null
-			season = !season && matches[2] ? matches[2] : season
+			let matches = releaseName.match( patterns.REGEX_SEASON.toRegExp() )
 
-			if ( season )
+			if ( matches )
 			{
-				set( 'season', parseInt( season ) )
-	
-				// We need to exclude some nokia devices, would be falsely parsed as season (S40 or S60)
-				if (
-					( season == '40' || season == '60' ) &&
-					(
-						get( 'os' ) === 'Symbian' ||
-						releaseName.match( ( '/[._-]N(7650|66\\d0|36\\d0)[._-]/i' ).toRegExp() )
-					)
-				)
+				// key 1 = 1st pattern, key 2 = 2nd pattern
+				let season = matches[1] ? matches[1] : null
+				season = !season && matches[2] ? matches[2] : season
+
+				if ( season )
 				{
-					set( 'season', null )
+					set( 'season', parseInt( season ) )
+		
+					// We need to exclude some nokia devices, would be falsely parsed as season (S40 or S60)
+					if (
+						( season == '40' || season == '60' ) &&
+						(
+							get( 'os' ) === 'Symbian' ||
+							releaseName.match( ( '/[._-]N(7650|66\\d0|36\\d0)[._-]/i' ).toRegExp() )
+						)
+					)
+					{
+						set( 'season', null )
+					}
 				}
 			}
 		}
@@ -589,7 +642,8 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			get( 'os' ) !== 'Symbian' &&
 			get( 'device' ) !== 'Playstation' &&
 			!releaseName.match( ( '/[._-]N(7650|66\\d0|36\\d0)[._-]/i' ).toRegExp() ) &&
-			!hasAttribute( [ 'Special Edition', 'Extended' ], 'flags' )
+			!hasAttribute( [ 'Special Edition', 'Extended' ], 'flags' ) &&
+			!isBookware()
 		)
 		{
 			let regexPattern = ( '/[._-]' + patterns.REGEX_EPISODE + '[._-]/i' ).toRegExp()
@@ -630,6 +684,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		}
 	}
 
+
 	/**
 	 * Parse Sports type.
 	 *
@@ -646,6 +701,29 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				isSports = true
 		})
 		return isSports
+	}
+
+
+	/**
+	 * Parse Bookware type.
+	 *
+	 * @private
+	 * @return {bool}
+	 */
+	const isBookware = () =>
+	{
+		if ( get( 'release' ).match( ( '/[._(-]bookware[._)-]/i' ).toRegExp() ) )
+			return true
+
+		let isBookware = false
+		patterns.BOOKWARE.forEach( value =>
+		{
+			let pattern = ( '/^' + value + '[._-]/i' ).toRegExp()
+			if ( get( 'release' ).match( pattern ) )
+				isBookware = true
+		})
+
+		return isBookware
 	}
 
 
@@ -678,8 +756,13 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	{
 		let type = ''
 		
+		// Match bookware
+		if ( isBookware() )
+		{
+			type = 'Bookware'
+		}
 		// Match sports events
-		if ( isSports() )
+		else if ( isSports() )
 		{
 			type = 'Sports'
 
@@ -1208,6 +1291,25 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			if ( !title ) type = 'default'
 		}
 
+		// Bookware
+		if ( type === 'bookware' )
+		{
+			// Setup regex pattern
+			regexPattern = patterns.REGEX_TITLE_BOOKWARE
+			regexUsed = 'REGEX_TITLE_BOOKWARE'
+
+			// Cleanup release name for better matching
+			releaseNameCleaned = cleanup( releaseNameCleaned, [ 'language', 'version' ] )
+
+			// Match title
+			matches = releaseNameCleaned.match( regexPattern.toRegExp() )
+
+			if ( matches ) title = matches[1]
+
+			// Jump to default if no title found
+			if ( !title ) type = 'default'
+		}
+
 		// Movie
 		if ( type === 'default' || !title )
 		{
@@ -1591,7 +1693,14 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 						break
 
 					case 'version':
-						attributes.push( patterns.REGEX_VERSION )
+						if ( isBookware() )
+						{
+							attributes.push( patterns.REGEX_VERSION_BOOKWARE )
+						}
+						else
+						{
+							attributes.push( patterns.REGEX_VERSION )
+						}
 						break
 					
 					case 'year':
@@ -1615,6 +1724,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 							// We need to replace all findings with double dots for proper matching later on.
 							releaseName = releaseName.replace( ( '/[._(-]' + value + '[._)-]/i' ).toRegExp(), '..' )
+
 							// Replace format at the end if no group name
 							if ( information === 'format' )
 								releaseName = releaseName.replace( ( '/[._]' + value + '$/i' ).toRegExp(), '..' )
@@ -1863,6 +1973,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		{
 			if ( get( 'episode' ) ) set( 'episode', null )
 			if ( get( 'season' ) ) set( 'season', null )
+		}
+		// Bookware
+		else if ( type === 'bookware' )
+		{
+			set( 'flags', null )
 		}
 
 		if ( type !== 'app' && type !== 'game' && hasAttribute( 'Trainer', 'flags' ) )

@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.3.0
+ * @version 1.3.1
  */
 
 describe( 'ReleaseParser', function()
@@ -49,20 +49,12 @@ describe( 'ReleaseParser', function()
 	it( 'Apps #3', () =>
 	{
 		assert.equal(
-			ReleaseParser( 'PluralSight.Microsoft.Azure.Network.Engineer-secure.And.Monitor.Networks.Bookware-KNiSO', '0day' ).toString(),
-			'Title: PluralSight Microsoft Azure Network Engineer-secure And Monitor Networks / Group: KNiSO / Flags: Bookware / Type: App'
-		)
-	})
-
-	it( 'Apps #4', () =>
-	{
-		assert.equal(
 			ReleaseParser( 'Aviano.Update.v1.03-ANOMALY', '0day' ).toString(),
 			'Title: Aviano / Group: ANOMALY / Flags: Update / Version: 1.03 / Type: App'
 		)
 	})
 
-	it( 'Apps #5', () =>
+	it( 'Apps #4', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'QUIZWARE.PRACTICE.TESTS.FOR.COMPUTER.ASSOCIATES.CERTIFICATIONS.V4.84-JGT', 'ebook' ).toString(),
@@ -70,7 +62,7 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Apps #6 - Movie Source and Audio in rls name', () =>
+	it( 'Apps #5 - Movie Source and Audio in rls name', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'SurCode.DVD.Professional.DTS.Encoder.v1.0.21.Retail-iNTENSiON', 'Apps' ).toString(),
@@ -78,7 +70,7 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Apps #7 - OS in rls name', () =>
+	it( 'Apps #6 - OS in rls name', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'Schweighofer.Win1A.Lohn.v23.10.4.0.German.WinALL.Incl.Keygen-BLiZZARD', 'Apps' ).toString(),
@@ -86,7 +78,7 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Apps #8 - Remove OS from rls name', () =>
+	it( 'Apps #7 - Remove OS from rls name', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ).toString(),
@@ -94,11 +86,36 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'Apps #9 - Symbian App - dont falsely parse episode and season', () =>
+	it( 'Apps #8 - Symbian App - dont falsely parse episode and season', () =>
 	{
 		assert.equal(
 			ReleaseParser( 'PocketTorch.AquaCalendar.V1.v1.2.N3650.NGAGE.SX1.S60.SymbianOS.READ.NFO.Cracked-aSxPDA', 'NGAGE' ).toString(),
 			'Title: PocketTorch AquaCalendar / Group: aSxPDA / Flags: Cracked, READNFO / Device: Nokia N-Gage / Os: Symbian / Version: 1.v1 / Type: App'
+		)
+	})
+
+	// Bookware
+	it( 'Bookware #1', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'PluralSight.Microsoft.Azure.Network.Engineer-secure.And.Monitor.Networks.Bookware-KNiSO', '0day' ).toString(),
+			'Title: Microsoft Azure Network Engineer-secure And Monitor Networks / Group: KNiSO / Source: PluralSight / Type: Bookware'
+		)
+	})
+
+	it( 'Bookware #2 - With language', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'UDEMY.Desarrollando.el.Sistema.SysCarteleria.v2.Visual.FoxPro.SPANISH.BOOKWARE-iLEARN', 'PRE' ).toString(),
+			'Title: Desarrollando el Sistema SysCarteleria v2 Visual FoxPro / Group: iLEARN / Source: Udemy / Language: Spanish / Type: Bookware'
+		)
+	})
+
+	it( 'Bookware #3 - With version (update)', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'PluralSight.Angular.Getting.Started.UPDATED.20220706.Bookware-KNiSO', 'PRE' ).toString(),
+			'Title: Angular Getting Started / Group: KNiSO / Source: PluralSight / Version: 20220706 / Type: Bookware'
 		)
 	})
 

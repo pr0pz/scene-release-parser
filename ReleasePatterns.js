@@ -2,7 +2,7 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.3.0
+ * @version 1.3.1
  */
 
 // Reusable vars
@@ -20,7 +20,7 @@ const patterns =
 	// %varname% will be replaced with the parsed valued for better macthing.
 
 	// Find language (old: (?!sub))
-	REGEX_LANGUAGE : '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i',
+	REGEX_LANGUAGE : '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|bookware|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i',
 	// Find date
 	REGEX_DATE : regexDate,
 	// Special date with month name: 24th January 2002 / Sep. 2000 day 5 / January 2000 1
@@ -59,6 +59,8 @@ const patterns =
 	// Good for general Software releases (also Games)
 	//REGEX_TITLE_APP : '/^' + regexTitle + '[._(-]+(?:' + regexVersionText + '[._)-]?\\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/i', // ungreedy
 	REGEX_TITLE_APP : '/^' + regexTitle + '[._(-]+(' + regexVersion + '|%device%|%os%|%source%|%resolution%|%language%)[._)-]/i', // ungreedy
+	// Bookware
+	REGEX_TITLE_BOOKWARE : '/^\\w+[._-]' + regexTitle + '[._(-]bookware[._)-]/i',
 	// Good for all kind of series (also Anime)
 	REGEX_TITLE_TV : '/^' + regexTitle + '[._-]' + regexEpisodeTv + '/i', // ungreedy
 	REGEX_TITLE_TV_EPISODE : '/' + regexEpisodeTv + '[._-](?:' + regexTitle + '[._(-]+)?\\.+/i', // ungreedy
@@ -70,6 +72,7 @@ const patterns =
 	// Extract software version
 	REGEX_VERSION_TEXT : regexVersionText,
 	REGEX_VERSION : regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?![._-]gage))',
+	REGEX_VERSION_BOOKWARE : 'updated?[._-](\\d{8})',
 
 
 	// Type patterns.
@@ -81,6 +84,8 @@ const patterns =
 		'Anime': 'anime',
 		// Software Sections
 		'App': [ 'app', '0day', 'pda' ],
+		// Bookware
+		'Bookware': 'bookware',
 		// Ebook
 		'eBook': 'book',
 		// Font
@@ -113,7 +118,7 @@ const patterns =
 		'BDRip': 'b[dr]+[._-]?rip',
 		'BookMyShow': 'BMS', // (P2P)
 		'Bootleg': '(?<!MBluRay.)(?:LIVE|\\d*cd)?.?BOOTLEG',
-		'CABLE': 'cable',
+		'CABLE': 'cable.\\d+',
 		'CAM': '(?:new)?cam([._-]?rip)?',
 		'CBS': 'CBS', // CBS Corporation (P2P)
 		'CD Album': '\\d*cda', // CD Album
@@ -460,7 +465,6 @@ const patterns =
 		'ARM': 'ARM', // software
 		'Audiopack': 'Audio.?pack', // Only audio releases for movies
 		'Beta': 'BETA', // software
-		'Bookware': 'BOOKWARE', // software
 		'Boxset': 'BOXSET',
 		'Chapterfix': 'CHAPTER[._-]?FIX', // Disc
 		'Cheats': 'Cheats', // games
@@ -619,23 +623,29 @@ const patterns =
 		'a-league',			// Australia
 		'Premier.?League',	// England (also Darts)
 		'La.?Liga',			// Spain
-		'Bundesliga\\.\\d{4}', // Germany
+		'(?:fussball.\\d.|\\d.)?Bundesliga\\.\\d{4}', // Germany
+		'dfb.pokal.\\d{4}',	// Germany
 		'Eredivisie',		// Netherlands
 		'Ligue.?1',			// France
-		'Seria.?A',			// Italy
+		'Serie.?A',			// Italy
 		'FA.Cup',			// England
 		'EPL',				// England
 		'EFL.(?:\\d{1,4}|cup|championship)', // England
+		'WSL',				// England women
+		'SPFL',				// Scottish
 		'MLS',				// USA
+		'NWSL',				// USA women
 		'CSL',				// China
-		'fifa.(?:world.cup|women|fotbolls|wm|U\\d+)', // International
+		'fifa.(?:world.cup|women|fotbolls|futsal|wm|U\\d+)', // International
 		'(?:international.)?football.(?:australia|womens|sydney|friendly|ligue1|serie.a|uefa|conference|league)', // International
-		'(?:womens.)?UEFA',	// European
+		'(?:womens.)?UEFA.(champions|cl|cup|euro|europa|super.?cup|Bajnokok|european|pokal|futsal|el|under\\d+|u\\d+|womens|em|\\d{4})',	// European
+		'UCL',				// UEFA Champions League
 		'UEL',				// UEFA Europa league
 		'concacaf',			// North and Middle America
 		'conmebol',			// South America
 		'caf',				// African
 		'afc.asian',		// Asian
+		'match.of.the.day',	// Misc football
 		// Racing
 		'Formul[ae].?[1234E].\\d{4}',
 		'F\\d.\\d{4}',
@@ -670,20 +680,52 @@ const patterns =
 		// Wrestle
 		'wwe.(?:nxt|friday|this|main|monday|wrestlemania)',
 		'aew.(?:collision|dynamite|dark)',
+		'New.Japan.Pro-Wrestling',
+		'Game.changer.wrestling',
 		// Hockey
 		'NHL\\.(?:\\d{4}|stanley.cup|playoffs)',
 		// Baseball
 		'MLB.(?:\\d{4}|spring|world.series|pre.?season|playoffs|ws|alcs)',
 		// Boxing
 		'boxing.\\d{4}.\\d{2}.\\d{2}',
-		// Sumo
 		'Grand.Sumo',
+		'UFC.\\d+',
+		// Olympics
+		'\\w+.winter.(paralympics|olympics)',
 		// Tennis
-		'wimbledon.(?:tennis.)?\\d{4}',
+		'wimbledon.(?:tennis.)?\d{4}',
+		'us.open.\d{4}',
+		'french.open(?:.tennis)?.\d{4}',
+		'australien.open',
+		'WTA.\d{4}',
 		// eSports
 		'LPL.PRO',
 		// World cup of whatever
 		'World.cup'
+	],
+
+
+	// Bookware/elearning platforms
+	BOOKWARE : [
+		'Artstation',
+		'Ask.video',
+		'Bassgorilla',
+		'CG.?Circuit',
+		'CreativeLive',
+		'Digital.tutors',
+		'Foundation.patreon',
+		'Groove3',
+		'Gumroad',
+		'LinkedIn(?:.learning)?',
+		'Lynda(?:.com)?',
+		'Mixwiththemasters',
+		'PluralSight',
+		'Retouching.Academy',
+		'Skillshare',
+		'Sonic.academy',
+		'Syngress',
+		'Video2Brain',
+		'Udemy'
 	],
 
 
@@ -702,7 +744,7 @@ const patterns =
 	// Sources
 	sourcesGames : [ 'Console DVD', 'Nintendo eShop', 'XBLA' ],
 	sourcesMovies : [ 'Bluray', 'CAM', 'DVD', 'HDCAM', 'HDTC', 'Screener', 'Telecine', 'Telesync', 'UHDBD' ],
-	sourcesMusic : [ 'AUD', 'CD Album', 'CD EP', 'CD Single', 'DAT Tape', 'DVDA', 'EP', 'FM', 'LP', 'Maxi CD', 'Maxi Single', 'MP3 CD', 'Tape', 'VLS', 'Vinyl', 'Web Single' ],
+	sourcesMusic : [ 'AUD', 'Cable', 'CD Album', 'CD EP', 'CD Single', 'DAT Tape', 'DVDA', 'EP', 'FM', 'LP', 'Maxi CD', 'Maxi Single', 'MP3 CD', 'Tape', 'VLS', 'Vinyl', 'Web Single' ],
 	sourcesMvid : [ 'DDC', 'MBluray', 'MDVDR' ],
 	sourcesTv : [ 'ATVP', 'DSR', 'EDTV', 'HDTV', 'PDTV', 'SDTV', 'UHDTV', 'ABC', 'BBC iPlayer', 'CBS', 'Comedy Central', 'DC Universe', 'Discovery Plus', 'HBO Max', 'Hulu', 'MTV Networks', 'NBC', 'TBS' ],
 }
