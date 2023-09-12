@@ -1,3 +1,65 @@
+version 1.4.0 ( updated 12.09.2023 )
++ Added
+	+ Bookware: CBT Nuggets, TutsPlus, Macprovideo.com, Mycodeteacher.com, TrainSignal, Infiniteskills, Kelby training, CGWorkshop, CG COokie, train simple, SKillfeed, Teamtreehouse, ostraining, PSD tutorials, Career Academy, Cloud Academy
+	+ Sports: Allsvenskan, Elitserien, Copa America, Fussbal Laenderspiel, DFL Supercup
+	+ Test cases
+	+ Flags: M2TS (video container)
+	+ Added first batch of Game groups for better matching
+	+ Added first bacth of Apps (Software in general) groups for better matching
+~ Improved
+	- Music type matching
+	- Audiobook flag
+	- SBD as music source
+	- SDTV source parsed after web if 'TV' in release title
+	- FONT type
+	- TS source
+	- HDTV source
+	- Moved UHD and Upscaled UHD to resolution and away from flags
+	- Hentai is now XXX flag and not Anime ;)
+	- Changed 'Console DVD' to 'Console Disc' source
+	- Console Disc patterns
+	- Added PSN to games source
+	- Disc pattern, includes now CD and DVD
+	- HDDVD pattern
+	- DVD source and format pattern
+	- Sports patterns: La Liga, Bundesliga, EPL, FX
+	- VCD format
+	- SVCD format
+	- CD format
+	- Wii device pattern
+	- DiVX format, added codecs: SBC (Divx video codec), MM4 (Divx video codec), VKI
+	- Directos Cut flag
+	- Sega Dreamcast pattern, so no conflict with Direcots Cut flag
+	- Removed 'SOL' from Solaris OS pattern
+- Removed
+	- VKI flag
+	- WS device, conflicts with WS flag (widescreen)
+
+***
+
+version 1.3.1 ( updated 04.09.2023 )
+~ Improved
+	~ Sports: Seria A, Bundesliga, UEFA
++ Added
+	+ Sports:
+		- NWSL (USA womens football)
+		- SPFL (Scottish football)
+		- DFB Pokal (Germany football)
+		- New Japan Pro-Wrestling
+		- Game changer wrestling
+		- UFC (Fighting)
+		- Match of the day (misc football)
+		- UCL (uefa cl)
+		- WSL (England womens football)
+		- WTA (Tennis)
+		- fifa futsal
+	+ Bookware type
+	+ Bookware sources
+- Removed
+	- Bookware flag
+
+***
+
 version 1.3.0 ( updated 02.09.2023 )
 ~ Improved
 	~ Episode and season matching prevention for older app/games releases

@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.3.1
+ * @version 1.4.0
  */
 
 describe( 'ReleaseParser', function()
@@ -26,6 +26,22 @@ describe( 'ReleaseParser', function()
 		assert.equal(
 			ReleaseParser( 'Madshot_NSW-VENOM', 'games' ).toString(),
 			'Title: Madshot / Group: VENOM / Device: Nintendo Switch / Type: Game'
+		)
+	})
+
+	it( 'Game #3 - Console disc', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'NFL_Madden_2007_USA_BLUERAY_PS3-PARADOX', 'PS3' ).toString(),
+			'Title: NFL Madden 2007 / Group: PARADOX / Year: 2007 / Source: Console Disc / Device: Playstation 3 / Language: English / Type: Game'
+		)
+	})
+
+	it( 'Game #4 - Console disc', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Super_Smash_Bros_Brawl_DVD5_PAL_VC_SMD_Wii-WiiLeet', 'Wii' ).toString(),
+			'Title: Super Smash Bros Brawl / Group: WiiLeet / Disc: 5 / Format: DVDR / Resolution: PAL / Device: Nintendo WII / Type: Game'
 		)
 	})
 
@@ -50,7 +66,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Aviano.Update.v1.03-ANOMALY', '0day' ).toString(),
-			'Title: Aviano / Group: ANOMALY / Flags: Update / Version: 1.03 / Type: App'
+			'Title: Aviano / Group: ANOMALY / Flags: Update / Version: 1.03 / Type: Game'
 		)
 	})
 
@@ -82,7 +98,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Broforce.Forever.MacOS-I_KnoW', 'Pre' ).toString(),
-			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: App'
+			'Title: Broforce Forever / Group: I_KnoW / Os: macOS / Type: Game'
 		)
 	})
 
@@ -124,7 +140,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Harry.Potter.und.die.Kammer.des.Schreckens.TS.Line.Dubbed.German.INTERNAL.VCD.CD2.REPACK-TGSC', 'Apps' ).toString(),
-			'Title: Harry Potter und die Kammer des Schreckens / Group: TGSC / Flags: Internal, Line dubbed, Repack / Source: Telesync / Format: VCD / Language: German / Type: Movie'
+			'Title: Harry Potter und die Kammer des Schreckens / Group: TGSC / Disc: 2 / Flags: Internal, Line dubbed, Repack / Source: Telesync / Format: VCD / Language: German / Type: Movie'
 		)
 	})
 
@@ -140,7 +156,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Die.Bourne.Verschwoerung.German.2004.INTERNAL.No.Bock.uff.Proper.READ.NFO.AC3.Dubbed.DL.DVDR-Cinemaniacs', 'DVDR' ).toString(),
-			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: Dubbed, Internal, Proper, READNFO / Source: DVD / Format: DVDR / Audio: AC3 / Language: German, Multilingual / Type: Movie'
+			'Title: Die Bourne Verschwoerung / Group: Cinemaniacs / Year: 2004 / Flags: Dubbed, Internal, Proper, READNFO / Format: DVDR / Audio: AC3 / Language: German, Multilingual / Type: Movie'
 		)
 	})
 
@@ -164,7 +180,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Batman.v.Superman.Dawn.of.Justice.2016.IMAX.German.DL.TrueHD.Atmos.DUBBED.2160p.UHD.BluRay.x265-GSG9', 'PRE' ).toString(),
-			'Title: Batman v Superman Dawn of Justice / Group: GSG9 / Year: 2016 / Flags: Dubbed, IMAX, UHD / Source: Bluray / Format: x265 / Resolution: 2160p / Audio: Dolby Atmos, Dolby trueHD / Language: German, Multilingual / Type: Movie'
+			'Title: Batman v Superman Dawn of Justice / Group: GSG9 / Year: 2016 / Flags: Dubbed, IMAX / Source: Bluray / Format: x265 / Resolution: 2160p / Audio: Dolby Atmos, Dolby trueHD / Language: German, Multilingual / Type: Movie'
 		)
 	})
 
@@ -188,7 +204,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Angel.Heart.1987.German.DTSMAD.5.1.DL.2160p.UHD.BluRay.HDR.DV.HEVC.Remux-HDSource', 'BluRay' ).toString(),
-			'Title: Angel Heart / Group: HDSource / Year: 1987 / Flags: Dolby Vision, HDR, Remux, UHD / Source: Bluray / Format: HEVC / Resolution: 2160p / Audio: DTS-HD MA, 5.1 / Language: German, Multilingual / Type: Movie'
+			'Title: Angel Heart / Group: HDSource / Year: 1987 / Flags: Dolby Vision, HDR, Remux / Source: Bluray / Format: HEVC / Resolution: 2160p / Audio: DTS-HD MA, 5.1 / Language: German, Multilingual / Type: Movie'
 		)
 	})
 
@@ -326,7 +342,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Tulsa.King.S01D03.German.ML.COMPLETE.PAL.DVD9-NAiB', 'DVDR' ).toString(),
-			'Title: Tulsa King / Group: NAiB / Season: 1 / Disc: 3 / Flags: Complete / Source: DVD / Format: DVDR / Resolution: PAL / Language: German, Multilingual / Type: TV'
+			'Title: Tulsa King / Group: NAiB / Season: 1 / Disc: 3 / Flags: Complete / Format: DVDR / Resolution: PAL / Language: German, Multilingual / Type: TV'
 		)
 	})
 
