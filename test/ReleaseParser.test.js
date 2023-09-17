@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.4.0
+ * @version 1.4.1
  */
 
 describe( 'ReleaseParser', function()
@@ -109,6 +109,15 @@ describe( 'ReleaseParser', function()
 			'Title: PocketTorch AquaCalendar / Group: aSxPDA / Flags: Cracked, READNFO / Device: Nokia N-Gage / Os: Symbian / Version: 1.v1 / Type: App'
 		)
 	})
+
+	it( 'Apps #9 - Win stuff', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'TweakNow.PowerPack.2003.Professional.v1.2.Win.98.ME.2K.XP.RETAIL-iPA', 'APPS' ).toString(),
+			'Title: TweakNow PowerPack 2003 Professional / Group: iPA / Year: 2003 / Flags: Retail / Os: Windows / Version: 1.2 / Type: App'
+		)
+	})
+
 
 	// Bookware
 	it( 'Bookware #1', () =>
@@ -566,7 +575,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'IDW.-.Witch.And.Wizard.Battle.For.Shadowland.2012.Hybrid.Comic.eBook-BitBook', 'ebook' ).toString(),
-			'Author: IDW / Title: Witch And Wizard Battle For Shadowland / Group: BitBook / Year: 2012 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: IDW / Title: Witch And Wizard Battle For Shadowland / Group: BitBook / Year: 2012 / Flags: Comic / Format: Hybrid / Type: eBook'
 		)
 	})
 
@@ -574,7 +583,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'La.Gazzetta.Dello.Sport.09.28.2021.iTALiAN.RETAiL.eBook-DiVER', 'ebook' ).toString(),
-			'Title: La Gazzetta Dello Sport / Group: DiVER / Year: 2021 / Date: 28.09.2021 / Flags: eBook, Retail / Language: Italian / Type: eBook'
+			'Title: La Gazzetta Dello Sport / Group: DiVER / Year: 2021 / Date: 28.09.2021 / Flags: Retail / Language: Italian / Type: eBook'
 		)
 	})
 
@@ -582,7 +591,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Scootering.September.2021.HYBRiD.MAGAZiNE.eBook-PAPERCLiPS', 'ebook' ).toString(),
-			'Title: Scootering / Group: PAPERCLiPS / Year: 2021 / Date: 01.09.2021 / Flags: eBook, Magazine / Format: Hybrid / Type: eBook'
+			'Title: Scootering / Group: PAPERCLiPS / Year: 2021 / Date: 01.09.2021 / Flags: Magazine / Format: Hybrid / Type: eBook'
 		)
 	})
 
@@ -590,7 +599,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Viper.Comics.-.Ichabod.Jones.Monster.Hunter.No.04.2012.Hybrid.Comic.eBook-BitBook', 'ebook' ).toString(),
-			'Author: Viper Comics / Title: Ichabod Jones Monster Hunter / Group: BitBook / Year: 2012 / Issue: 4 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: Viper Comics / Title: Ichabod Jones Monster Hunter / Group: BitBook / Year: 2012 / Issue: 4 / Flags: Comic / Format: Hybrid / Type: eBook'
 		)
 	})
 
@@ -598,7 +607,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'EDGE.No.314.2018.HYBRiD.MAGAZiNE.eBook-PAPERCLiPS', 'ebook' ).toString(),
-			'Title: EDGE / Group: PAPERCLiPS / Year: 2018 / Issue: 314 / Flags: eBook, Magazine / Format: Hybrid / Type: eBook'
+			'Title: EDGE / Group: PAPERCLiPS / Year: 2018 / Issue: 314 / Flags: Magazine / Format: Hybrid / Type: eBook'
 		)
 	})
 
@@ -606,7 +615,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Prog.N119.2021.RETAiL.MAGAZiNE.eBook-PRiNTER', 'ebook' ).toString(),
-			'Title: Prog / Group: PRiNTER / Year: 2021 / Issue: 119 / Flags: eBook, Magazine, Retail / Type: eBook'
+			'Title: Prog / Group: PRiNTER / Year: 2021 / Issue: 119 / Flags: Magazine, Retail / Type: eBook'
 		)
 	})
 
@@ -614,7 +623,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Die.Enwor.Saga.Band.05.-.Das.Schwarze.Schiff.German.Ebook-Elements', 'ebook' ).toString(),
-			'Author: Die Enwor Saga / Title: Das Schwarze Schiff / Group: Elements / Issue: 5 / Flags: eBook / Language: German / Type: eBook'
+			'Author: Die Enwor Saga / Title: Das Schwarze Schiff / Group: Elements / Issue: 5 / Language: German / Type: eBook'
 		)
 	})
 
@@ -622,7 +631,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'The.Amazing.Spiderman.Issue.501.January.2004.Comic.eBook-Dementia', 'ebook' ).toString(),
-			'Title: The Amazing Spiderman / Group: Dementia / Year: 2004 / Date: 01.01.2004 / Issue: 501 / Flags: Comic, eBook / Type: eBook'
+			'Title: The Amazing Spiderman / Group: Dementia / Year: 2004 / Date: 01.01.2004 / Issue: 501 / Flags: Comic / Type: eBook'
 		)
 	})
 
@@ -630,7 +639,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Simpsons.Comics.Ausgabe.15.Januar.1998.German.Comic.eBook-HS', 'ebook' ).toString(),
-			'Title: Simpsons Comics / Group: HS / Year: 1998 / Date: 01.01.1998 / Issue: 15 / Flags: Comic, eBook / Language: German / Type: eBook'
+			'Title: Simpsons Comics / Group: HS / Year: 1998 / Date: 01.01.1998 / Issue: 15 / Flags: Comic / Language: German / Type: eBook'
 		)
 	})
 
@@ -638,7 +647,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Concorde.-.Die.Traumer.15.Januar.2004.Presseheft.German.Ebook-Elements', 'ebook' ).toString(),
-			'Author: Concorde / Title: Die Traumer / Group: Elements / Year: 2004 / Date: 15.01.2004 / Flags: eBook / Language: German / Type: eBook'
+			'Author: Concorde / Title: Die Traumer / Group: Elements / Year: 2004 / Date: 15.01.2004 / Language: German / Type: eBook'
 		)
 	})
 
@@ -646,7 +655,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Gerd.Postel.-.Gestaendnisse.Eines.Falschen.Doktors.German.Ebook-Elements', 'ebook' ).toString(),
-			'Author: Gerd Postel / Title: Gestaendnisse Eines Falschen Doktors / Group: Elements / Flags: eBook / Language: German / Type: eBook'
+			'Author: Gerd Postel / Title: Gestaendnisse Eines Falschen Doktors / Group: Elements / Language: German / Type: eBook'
 		)
 	})
 
@@ -654,7 +663,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'IDW.-.Machete.No.0.2010.Hybrid.Comic.eBook-BitBook', 'ebook' ).toString(),
-			'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Issue: 0 / Flags: Comic, eBook / Format: Hybrid / Type: eBook'
+			'Author: IDW / Title: Machete / Group: BitBook / Year: 2010 / Issue: 0 / Flags: Comic / Format: Hybrid / Type: eBook'
 		)
 	})
 
@@ -663,7 +672,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Otfried_Preussler_-_Der_Hotzenplotz_Geht_Um-F04-(Audiobook)-DE-2001-S8', 'Abook' ).toString(),
-			'Author: Otfried Preussler / Title: Der Hotzenplotz Geht Um / Group: S8 / Year: 2001 / Episode: 4 / Flags: ABook / Language: German / Type: ABook'
+			'Author: Otfried Preussler / Title: Der Hotzenplotz Geht Um / Group: S8 / Year: 2001 / Episode: 4 / Language: German / Type: ABook'
 		)
 	})
 
@@ -671,7 +680,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'York-2CD-ABOOK-DE-2001-sUppLeX', 'abook' ).toString(),
-			'Title: York / Group: sUppLeX / Year: 2001 / Flags: ABook / Source: CD / Language: German / Type: ABook'
+			'Title: York / Group: sUppLeX / Year: 2001 / Source: CD / Language: German / Type: ABook'
 		)
 	})
 
@@ -679,7 +688,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Die_Drei_Fragezeichen--Folge_212_und_der_weisse_Leopard-AUDIOBOOK-WEB-DE-2021-OMA', 'abook' ).toString(),
-			'Author: Die Drei Fragezeichen / Title: und der weisse Leopard / Group: OMA / Year: 2021 / Episode: 212 / Flags: ABook / Source: WEB / Language: German / Type: ABook'
+			'Author: Die Drei Fragezeichen / Title: und der weisse Leopard / Group: OMA / Year: 2021 / Episode: 212 / Source: WEB / Language: German / Type: ABook'
 		)
 	})
 
@@ -687,7 +696,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Perry_Rhodan-SE_117_Duell_Der_Erbfeinde-ABOOK-DE-MP3CD-2021-FLUiD', 'abook' ).toString(),
-			'Author: Perry Rhodan / Title: Duell Der Erbfeinde / Group: FLUiD / Year: 2021 / Episode: 117 / Flags: ABook / Source: MP3 CD / Language: German / Type: ABook'
+			'Author: Perry Rhodan / Title: Duell Der Erbfeinde / Group: FLUiD / Year: 2021 / Episode: 117 / Source: MP3 CD / Language: German / Type: ABook'
 		)
 	})
 
@@ -695,7 +704,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Jan_Tenner_Der_Neue_Superheld-F20_Rueckkehr_Ins_Reich_Der_Azzarus-Audiobook-DE-2021-VOiCE', 'abook' ).toString(),
-			'Author: Jan Tenner Der Neue Superheld / Title: Rueckkehr Ins Reich Der Azzarus / Group: VOiCE / Year: 2021 / Episode: 20 / Flags: ABook / Language: German / Type: ABook'
+			'Author: Jan Tenner Der Neue Superheld / Title: Rueckkehr Ins Reich Der Azzarus / Group: VOiCE / Year: 2021 / Episode: 20 / Language: German / Type: ABook'
 		)
 	})
 

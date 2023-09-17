@@ -2,17 +2,17 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.4.0
+ * @version 1.4.1
  */
 
 // Reusable vars
 const regexYear = '(19\\d[\\dx]|20\\d[\\dx])'
 const regexDate = '(\\d{2}|\\d{4})[._-](\\d{2})[._-](\\d{2}|\\d{4})'
 const regexTitle = '([\\w.()-]+?)' // last ? = JS fix for ungreedy
-const regexEpisodeTv = '(?<!^)(?:(?:(?:[ST]|saison)\\d+)?[._-]?(?:ep?|o[av]+[._-]?|d|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
+const regexEpisodeTv = '(?<!^)(?:(?:(?:[ST]|saison|staffel)\\d+)?[._-]?(?:ep?|o[av]+[._-]?|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
 const regexVersionText = '(?:v(?:ersione?)?|Updated?[._-]?v?|Build)'
-const regexVersion = regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?![._-]gage))'
-const regexDisc = '(?:s\\d+)?(?:d|di[cks][cks]|cd|dvd)[._-]?(\\d+)'
+const regexVersion = regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?!.gage))'
+const regexDisc = '(?:s\\d+[._-]?)?(?:d|di[cks][cks]|cd|dvd)[._-]?(\\d+)'
 
 const patterns =
 {
@@ -21,7 +21,7 @@ const patterns =
 	// %varname% will be replaced with the parsed valued for better macthing.
 
 	// Find language (old: (?!sub))
-	REGEX_LANGUAGE : '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|bookware|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i',
+	REGEX_LANGUAGE : '/[._(-]%language_pattern%[._)-][._(-]?(?:%source%|%format%|%audio%|%flags%|%year%|%os%|%device%|%resolution%|bookware|[ae]book|(?:us|gbr|eng|nl|fi|fr|no|dk|de|se|ice)|multi|ml[._)-]|dl[._)-]|dual[._-]|%group%)/i',
 	// Find date
 	REGEX_DATE : regexDate,
 	// Special date with month name: 24th January 2002 / Sep. 2000 day 5 / January 2000 1
@@ -32,21 +32,22 @@ const patterns =
 	REGEX_YEAR_SIMPLE: regexYear,
 	REGEX_YEAR : '/(?=[(._-]' + regexYear + '[)._-])/gi',
 	// Extract group
-	REGEX_GROUP : '/-(\\w+)$/i',
+	REGEX_GROUP : '/-([\\w.]+)$/i',
 	// Extract OS
 	//REGEX_OS : ''
 	// Episode pattern matches: S01E01 / 1x01 / E(PS)1 / OVA1 / F123 / Folge_123 / Episode 1 / Issue 1 etc.
 	// Good for tv and audiobook rls
-	REGEX_EPISODE : '(?:(?:s\\d+[._-]?)?(?:s?ep?|o[av]+[._-]?|f(?:olge[._-])?|band[._-]?|issue[._-]?|ausgabe[._-]?|n(?!7650|66\\d0|36\\d0|.?GAGE)[or]?[._-]?|eps[._-]?|episode[._-]?|(?:silber[._-])?edition[._-]?|sets?[._-]?)([\\d_-]+)|(?:\\d+x)(\\d+))',
+	REGEX_EPISODE : '(?:(?:s\\d+[._-]?)?(?:ep?|eps[._-]?|episode[._-]?|o[av]+[._-]?|f(?:olge[._-]?)?)([\\d_-]+)|(?:\\d+x)(\\d+))',
+	REGEX_EPISODE_OTHER : '(?:ep?|se[._-]?|eps[._-]?|episode[._-]?|f(?:olge[._-]?)?|band[._-]?|issue[._-]?|ausgabe[._-]?|n[or]?[._-]?|(?:silber[._-])?edition[._-]?|sets?[._-]?)([\\d_-]+)',
 	REGEX_EPISODE_TV : regexEpisodeTv,
 	// For Disc numbers: Disc1 / DVD1 / CD1 / (S01)D01
 	REGEX_DISC : regexDisc,
 	// Season pattern matches: S01E01 / 1x01 / S01D01
-	REGEX_SEASON : '/[._-](?:(?:[ST]|saison|staffel)(\\d+)[._-]?(?:[EDP]+\\d+)?|(\\d+)(?:x\\d+))[._-]/i',
+	REGEX_SEASON : '/[._-](?:(?:[ST]|saison|staffel)[._-]?(\\d+)[._-]?(?:(?:ep?|eps[._-]?|episode[._-]?|f(?:olge[._-]?)|d|di[cks][cks]|cd|dvd)\\d+)?|(\\d+)(?:x\\d+))[._-]/i',
 	// Basic title pattern
 	REGEX_TITLE : regexTitle,
 	// Good for Ebooks
-	REGEX_TITLE_EBOOK : '/^' + regexTitle + '[._(-]+(?:%year%|%language%|%flags%|%format%|%regex_date%|%regex_date_monthname%)[._)-]/i', // ungreedy
+	REGEX_TITLE_EBOOK : '/^' + regexTitle + '[._(-]+(?:%year%|%language%|%flags%|%format%|%regex_date%|%regex_date_monthname%|ebook})[._)-]/i', // ungreedy
 	// Good for Fonts
 	REGEX_TITLE_FONT : '/^' + regexTitle + '-/i',
 	// Good for Movies
@@ -55,7 +56,7 @@ const patterns =
 	// Music pattern matches: Author_2.0_(Name)-Track_album_title_2.0_-_track_bla_(Extended_edition)-...
 	// Good for music releases and Audiobooks
 	REGEX_TITLE_MUSIC : '/^' + regexTitle + '(?:\\([\\w-]+\\))?[._-]+(?:\\(?%source%\\)?|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/i', // ungreedy
-	REGEX_TITLE_ABOOK : '/^' + regexTitle + '[._(-]+(?:%source%[._)-]?|%year%|%group%|%audio%|%flags%|%format%|%language%[._)-])/i', // ungreedy
+	REGEX_TITLE_ABOOK : '/^' + regexTitle + '[._(-]+(?:%source%[._)-]?|A(?:UDiO?)?BOOKs?|%year%|%group%|%audio%|%flags%|%format%|%language%)[._)-]/i', // ungreedy
 	REGEX_TITLE_MVID : '/^' + regexTitle + '[._(-]+(?:%source%|%year%|%group%|%audio%|%flags%|%format%|%regex_date%|%regex_date_monthname%|%language%[._)-])/i', // ungreedy
 	// Good for general Software releases (also Games)
 	//REGEX_TITLE_APP : '/^' + regexTitle + '[._(-]+(?:' + regexVersionText + '[._)-]?\\d|%language%|%flags%|%device%|%format%|%os%|%group%|%source%)/i', // ungreedy
@@ -72,7 +73,7 @@ const patterns =
 	REGEX_TITLE_XXX_DATE : '/^' + regexTitle + '[._(-]+(?:%regex_date%|%regex_date_monthname%)[._)-]+' + regexTitle + '[._(-]+(?:%flags%|%language%[._)-])/i', // ungreedy
 	// Extract software version
 	REGEX_VERSION_TEXT : regexVersionText,
-	REGEX_VERSION : regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?![._-]gage))',
+	REGEX_VERSION : regexVersionText + '[._-]?(\\d[\\d.]+[a-z\\d]{0,3}(?![._-]gage))',
 	REGEX_VERSION_BOOKWARE : 'updated?[._-](\\d{8})',
 
 
@@ -203,7 +204,7 @@ const patterns =
 		'Line': 'line(?![._-]dubbed)',
 		'CD': [ '\\d*cdr?\\d*', 'cd.?(?:rom|rip)', '(retail.?|m)cd' ], // Other CD
 		'DVD': [ '\\d+dvd[r\\d]?', 'dvd' ], // Just normal DVD
-		'Bluray': [ 'bl?u.?r[ae]y', '\\d*bdr' ],
+		'Bluray': [ '(?<!complete.(uhd.)?)bl?u.?r[ae]y', '\\d*bdr' ],
 		'SDTV': '(?:sd)?tv(?:[._-]?rip)?',
 		'RiP': 'rip', // If no other rip matches
 		'BBC': 'BBC', // British Broadcasting Company (P2P)
@@ -273,9 +274,6 @@ const patterns =
 
 	// Video resolution patterns
 	RESOLUTION : {
-		'SD': 'SD',
-		'NTSC': 'NTSC', // = 480p
-		'PAL': 'PAL', // = 576p
 		'480p': '480p',
 		'576p': '576p',
 		'720p': '720p',
@@ -291,6 +289,9 @@ const patterns =
 		'4320p': '4320p',
 		'UHD': 'UHD',
 		'Upscaled UHD': 'UpsUHD',
+		'NTSC': 'NTSC', // = 480p
+		'PAL': 'PAL', // = 576p
+		'SD': 'SD',
 	},
 
 	// Audio quality patterns
@@ -360,8 +361,8 @@ const patterns =
 		'Playstation Portable': 'PSP',
 		'Playstation Vita': 'PSV',
 		'Pocket PC': 'PPC\\d*',
-		'Sega Dreamcast': [ 'DC', 'DREAMCAST' ],
-		'Sega Mega CD': [ 'MCD', 'MEGACD' ],
+		'Sega Dreamcast': [ 'DC$', 'DREAMCAST' ],
+		'Sega Mega CD': 'MEGACD',
 		'Sega Mega Drive': 'SMD',
 		'Sega Saturn': 'SATURN',
 		'Tiger Telematics Gizmondo': 'GIZMONDO',
@@ -385,17 +386,17 @@ const patterns =
 		'HP-UX': 'HPUX', // Hewlett Packard Unix
 		'iOS': [ 'iOS', 'iPhone' ],
 		'Linux': 'Linux(?:es)?',
-		'macOS': 'mac([._-]?osx?)?',
-		'PalmOS': 'Palm[._-]?OS\\d*',
+		'macOS': [ 'mac.(retail|iso|all|regged|incl|french|german|multi\\w+)', 'mac$', 'ma?c[._-]?os[x\\d]?', 'osx' ],
+		'PalmOS': 'Palm.?OS\\d*',
 		'Solaris': '(Open)?Solaris',
-		'SunOS': 'SunOS',
+		'SunOS': 'Sun.?OS',
 		'Symbian': 'Symbian(?:OS\\d*[._-]?\\d*)?',
 		'Ubuntu': 'Ubuntu',
-		'Unix': 'Unix(All)?',
+		'Unix': 'Unix(.?All)?',
 		'WebOS': 'WebOS',
 		// Found these hillarious (but rule conform) windows tags for software releases:
 		// win9xnt2000 / WinNT2kXPvista / Win2kXP2k3Vista / winxp98nt2kse / win2kxpvista / Win2KXP2003Vista / WinXP2k3Vista2k8
-		'Windows': 'win(?:(?:[\\d]+[\\dxk]?|nt|all|dows|xp|vista|[msp]e)?[._-]?){0,6}',
+		'Windows': 'win(?:[.]?(?:[\\d]+[\\dxk]?|nt|all|dows|x[xp]|vista|[msp]e)){1,6}',
 		'Windows CE': 'wince',
 		'Windows Mobile': 'wm\\d+([._-]?se)?',
 	},
@@ -465,7 +466,6 @@ const patterns =
 	// Release flags patterns
 	FLAGS : {
 		'3D': '3D',
-		'ABook': 'A(?:UDiO?)?BOOKS?\\d*',
 		'Abridged': [ 'ABRIDGED', 'gekuerzte?(?:.(?:fassung|lesung))' ], // Audiobook
 		'Addon': 'ADDON', // software
 		'Anime': 'ANiME',
@@ -477,7 +477,7 @@ const patterns =
 		'Cheats': 'Cheats', // games
 		'Chrono': 'CHRONO',
 		'Colorized': 'COLORIZED',
-		'Comic': 'COMIC',
+		'Comic': 'COMICS?(.ebook(.\\d+)?)?$',
 		'Complete': 'Complete',
 		'Convert': 'CONVERT',
 		'Cover': '(?:(?:CUST?OM|%language%|%format%|%source%|%resolution%|scans?|disc|ps[\\dp]*|xbox\\d*|gamecube|gc|unrated|\\d*DVD\\w+|hig?h?.?res|int|front|retail|\\d+dpi|r\\d+|original)[._-]?)COVERS?',
@@ -496,7 +496,6 @@ const patterns =
 		'Docu': 'DO[CK]U?',
 		'Dolby Vision': [ 'DV', 'DoVi' ],
 		'Dubbed': [ '(?<!(?:line|mic|micro|tv).)Dubbed', 'E.?Dubbed', '(?!over|thunder)[a-z]+dub' ],
-		'eBook': 'EBOOK',
 		'Extended': 'EXTENDED(?:.CUT|.Edition)?(?!.MIX)',
 		'Final': 'FINAL[._-]?(%language%|%flags%)?',
 		'FiX': '(?<!hot.|sample.|nfo.|rar.|dir.|crack.|sound.|track.|diz.|menu.)FiX(?:.?only)?',
@@ -564,7 +563,7 @@ const patterns =
 		'Retail': 'RETAIL',
 		'Ringtone': 'rtones?',
 		'Samplefix': 'SAMPLE.?FIX',
-		'SDR': 'SDR',
+		'Scrubbed': 'scrubbed', // "scrubbing" refers to removing garbage or empty data from a game dump'SDR': 'SDR',
 		'Serial': 'SERIAL(?!.Killer)?', // Software
 		'SFVFix': 'SFV.?FIX',
 		'SH3': 'SH3', // Software (SH3 CPU)
@@ -636,19 +635,20 @@ const patterns =
 		'Eredivisie',		// Netherlands
 		'Ligue.?1',			// France
 		'Serie.?A',			// Italy
-		'FA.Cup',			// England
+		'FA.?Cup',			// England
 		'(?:fussball.)?EPL',				// England
 		'EFL.(?:\\d{1,4}|cup|championship)', // England
 		'WSL',				// England women
 		'SPFL',				// Scottish
-		'MLS',				// USA
-		'NWSL',				// USA women
-		'CSL',				// China
-		'fifa.(?:world.cup|women|fotbolls|futsal|wm|U\\d+)', // International
+		'Fodbold',			// Danish
+		'MLS.\\d{4}',		// USA
+		'NWSL.\\d{4}',		// USA women
+		'CSL.\\d{4}',		// China
+		'fifa.(?:world.cup|women|fotbolls|futsal|wm|U\\d+).\\d{4}', // International
 		'(?:international.)?football.(?:australia|womens|sydney|friendly|ligue1|serie.a|uefa|conference|league)', // International
 		'(?:womens.)?UEFA.(champions|cl|cup|euro|europa|super.?cup|Bajnokok|european|pokal|futsal|el|under\\d+|u\\d+|womens|em|\\d{4})',	// European
-		'UCL',				// UEFA Champions League
-		'UEL',				// UEFA Europa league
+		'UCL.\\d+',			// UEFA Champions League
+		'UEL.\\d{4}',				// UEFA Europa league
 		'concacaf',			// North and Middle America
 		'conmebol',			// South America
 		'copa.?america',
@@ -657,16 +657,20 @@ const patterns =
 		'match.of.the.day',	// Misc football
 		// Racing
 		'Formul[ae].?[1234E].\\d{4}',
+		'Formel.?[1234E].\\d{4}',
 		'(?:british.)?F\\d.\\d{4}',
 		'Superleague.Formula',	
 		'Nascar.(?:cup|truck|xfinity)',
 		'Indycar\\.(series|racing|\\d{4})',
 		'Porsche.(Carrera|sprint)',
-		'DTM.(\\d{2,4}|spa|lauszitzring|gp\\d+|\\d+.lauf)',
+		'DTM.(\\d{2,4}|spa|lauszitzring|gp\\d+|\\d+.lauf)', // Deutsche Tourenwagen Masters
 		'wrc.(?:fia|\\d{4})', // Rallye
 		'Supercars.championship',
+		'V8.Supercars',
 		'W.series.\\d{4}',
 		'Moto.?(GP|\\d).\\d{4}',
+		'Volkswagen.Racing.Cup',
+		'DTC.\\d{4}', // Danish Touringcar Championship
 		// Cycling
 		'Cycling.(?:volta|giro|tour|strade|paris|criterium|liege|fleche|amstel|la.vuelta)', // International
 		'giro.d.italia', // Italy
@@ -679,36 +683,25 @@ const patterns =
 		'IPL',	// India
 		'NRL',	// Australasian
 		// Basketball
-		'NBA.(?:East|West|Finals)',
-		'WNBA.\\d{4}',
-		'Eurocup',
+		'NBA.(?:East|West|Finals)', 'WNBA.\\d{4}', 'Eurocup',
 		// Cricket
 		'T20',
 		'BBL',	// Australia
 		// American Football
 		'NFL.(?:pre.?season|super.bowl|pro.bowl|conference|divisional|wild.card|[an]fc|football|week\\d+|\\d{4})',
 		// Wrestle
-		'wwe.(?:nxt|friday|this|main|monday|wrestlemania)',
-		'aew.(?:collision|dynamite|dark)',
-		'New.Japan.Pro-Wrestling',
-		'Game.changer.wrestling',
+		'wwe.(?:nxt|friday|this|main|monday|wrestlemania)', 'aew.(?:collision|dynamite|dark)', 'New.Japan.Pro-Wrestling', 'Game.changer.wrestling',
 		// Icehockey
 		'NHL\\.(?:\\d{4}|stanley.cup|playoffs)',
 		'Elitserien', 	// Swedish icehockey
 		// Baseball
 		'MLB.(?:\\d{4}|spring|world.series|pre.?season|playoffs|ws|alcs)',
 		// Boxing
-		'boxing.\\d{4}.\\d{2}.\\d{2}',
-		'Grand.Sumo',
-		'UFC.\\d+',
+		'boxing.\\d{4}.\\d{2}.\\d{2}', 'Grand.Sumo', 'UFC.(\\d+|on.espn|fight.night)',
 		// Olympics
 		'\\w+.winter.(paralympics|olympics)',
 		// Tennis
-		'wimbledon.(?:tennis.)?\\d{4}',
-		'us.open.\\d{4}',
-		'french.open(?:.tennis)?.\\d{4}',
-		'australien.open',
-		'WTA.\\d{4}',
+		'wimbledon.(?:tennis.)?\\d{4}', 'us.open.\\d{4}', 'french.open(?:.tennis)?.\\d{4}', 'australien.open', 'WTA.\\d{4}',
 		// eSports
 		'LPL.PRO',
 		// World cup of whatever
@@ -722,17 +715,17 @@ const patterns =
 	],
 
 	GROUPS_GAMES : [
-		'0x0007', '0x0815', '1C', 'ABSiSO', 'ACTiVATED', 'ADDONiA', 'ALiAS', 'ANOMALY', 'AVENGED', 'BACKLASH', 'bADkARMA', 'Bamboocha', 'BAT', 'BAZOOKA', 'BiTE', 'CLS', 'COGENT', 'DARKSiDERS', 'DELiGHT', 'DINOByTES', 'DOGE', 'DVNiSO', 'ENiGMA', 'FANiSO', 'FAS', 'FASiSO', 'FASDOX', 'FCKDRM', 'FLT', 'FLTDOX', 'GENESIS', 'GOW', 'GREENPEACE', 'HATRED', 'HEiST', 'HI2U', 'HOODLUM', 'I_KnoW', 'iNLAWS', 'iTWINS', 'JAGDOX', 'JAGUAR', 'OUTLAWS', 'PiKMiN', 'PiMoCK', 'PiZZADOX', 'PLAZA', 'POSTMORTEM', 'PRELUDE', 'PROPHET', 'PUSSYCAT', 'TENOKE', 'THG', 'TiNYiSO', 'TRSi', 'TSC', 'RELOADED', 'Razor1911', 'RazorDOX', 'RUNE', 'SCRUBS', 'SiLENTGATE', 'SiMPLEX', 'SKIDROW', 'SMACKs', 'SPLATTER', 'SPLATTERKiNGS', 'STEAMPUNKS', 'SUXXORS', 'VACE', 'VENGEANCE', 'ViTALiTY', 'VREX', 'Unleashed', 'ZEKE'
+		'0x0007', '0x0815', '1C', 'ABSiSO', 'ACTiVATED', 'ADDONiA', 'ALiAS', 'ANOMALY', 'AUGETY', 'AVENGED', 'BACKLASH', 'bADkARMA', 'Bamboocha', 'BAT', 'BAZOOKA', 'BiTE', 'BLASTCiTY', 'BREWS', 'CiFE', 'CLS', 'COGENT', 'DARKSiDERS', 'DELiGHT', 'DINOByTES', 'DOGE', 'DVNiSO', 'ENiGMA', 'FANiSO', 'FAS', 'FASiSO', 'FASDOX', 'FCKDRM', 'FLT', 'FLTDOX', 'GENESIS', 'GOW', 'GREENPEACE', 'HATRED', 'HEiST', 'HI2U', 'HOODLUM', 'HR', 'I_KnoW', 'iNLAWS', 'iTWINS', 'JAGDOX', 'JAGUAR', 'LiGHTFORCE', 'LUMA', 'MONEV', 'NiiNTENDO', 'NNSSWW', 'OUTLAWS', 'PiKMiN', 'PiMoCK', 'PiZZADOX', 'PLAZA', 'POSTMORTEM', 'PRELUDE', 'PROPHET', 'PS5B', 'PUSSYCAT', 'TENOKE', 'THG', 'TiNYiSO', 'TRSi', 'TSC', 'RELOADED', 'Razor1911', 'RazorDOX', 'RUNE', 'SCRUBS', 'SiLENTGATE', 'SiMPLEX', 'SKIDROW', 'SMACKs', 'SPLATTER', 'SPLATTERKiNGS', 'STEAMPUNKS', 'SUXXORS', 'VACE', 'VENGEANCE', 'VENOM', 'ViTALiTY', 'VREX', 'Unleashed', 'YOUCANTNUKE', 'ZEKE'
 	],
 
 	GROUPS_APPS : [
-		'ACME', 'AMPED', 'BLiZZARD', 'BTCR', 'BTCRiSO', 'CAFE', 'CaviaR', 'CODEX', 'CORE', 'CRD', 'CYGiSO', 'DARKLEASH', 'DIGERATI', 'DVT', 'ECLiPSE', 'EMBRACE', 'EPS', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'iNTENSiON', 'ISO', 'LAXiTY', 'LND', 'Lz0', 'Lz0PDA', 'MASCHiNE', 'MAGNiTUDE', 'MSGPDA', 'MYTH', 'NGEN', 'ORiON', 'PARADOX', 'PGC', 'rG', 'RINDVIEH', 'RLTS', 'SCOTCH', 'SONiTUS', 'TBE', 'TE', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'ViRiLiTY', 'UCF', 'XFORCE'
+		'ACME', 'AMPED', 'BLiZZARD', 'BTCR', 'BTCRiSO', 'CAFE', 'CaviaR', 'CODEX', 'CORE', 'CRD', 'CYGiSO', 'DARKLEASH', 'DIGERATI', 'DVT', 'ECLiPSE', 'EMBRACE', 'EPS', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'iNTENSiON', 'ISO', 'ISOBelix', 'LAXiTY', 'LND', 'Lz0', 'Lz0PDA', 'MASCHiNE', 'MAGNiTUDE', 'MSGPDA', 'MYTH', 'NGEN', 'ORiON', 'PARADOX', 'PGC', 'rG', 'RINDVIEH', 'RLTS', 'SCOTCH', 'SONiTUS', 'TBE', 'TE', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'ViRiLiTY', 'UCF', 'XFORCE'
 	],
 
 
 	// Flags for identifying release type ( guessTypeByParsedAttributes )
 	flagsMovie : [ 'Dubbed', 'AC3 Dubbed', 'HDR', 'HDR10', 'HDR10+', 'IMAX', 'Line dubbed', 'Micro dubbed', 'THEATRICAL', 'UNCUT', 'Remux', 'Subbed', 'Directors Cut' ],
-	flagsEbook : [ 'EBOOK', 'MAGAZINE', 'COMIC', 'EPUB' ],
+	flagsEbook : [ 'Magazine', 'Comic', 'ePUB' ],
 	flagsMusic : [ 'CPOP', 'OST' ],
 	flagsApps : [ 'CRACKED', 'REGGED', 'KEYGEN', 'Incl. Patch', 'CRACKFIX', 'ISO', 'ARM', 'INTEL', 'x86', 'x64', 'Portable' ],
 	flagsGames : [ 'DLC', 'TRAiNER' ],

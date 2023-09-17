@@ -1,3 +1,24 @@
+version 1.4.1 ( updated 17.09.2023 )
++ Added
+	+ Sports: Fodbold (danish), Volkswagen Racing Cup, DTC (danish), V8 Supercars
+	+ Flag: Scrubbed
+	+ Game groups: AUGETY, BLASTCiTY, BREWS, CiFE, CODEX, HR, LiGHTFORCE, LUMA, MONEV, NiiNTENDO, NNSSWW, PS5B, RAZOR, VENOM, YOUCANTNUKE
+	+ App groups: ISOBelix
+~ Improved
+	- MacOS pattern
+	- Windows OS matching
+	- NGC pattern
+	- Ebook type matching
+	- Comic flag
+	- Sports: MLS, NWSL, CSL, UEL, UCL, Copa America, CAF
+	- Season pattern
+	- Divided episode pattern for better matching
+- Removed
+	- ebook flag, changed to type recognition
+	- abook flag, changed to type recognition
+
+***
+
 version 1.4.0 ( updated 12.09.2023 )
 + Added
 	+ Bookware: CBT Nuggets, TutsPlus, Macprovideo.com, Mycodeteacher.com, TrainSignal, Infiniteskills, Kelby training, CGWorkshop, CG COokie, train simple, SKillfeed, Teamtreehouse, ostraining, PSD tutorials, Career Academy, Cloud Academy
