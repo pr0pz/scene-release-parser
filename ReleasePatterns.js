@@ -2,7 +2,7 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.4.1
+ * @version 1.4.2
  */
 
 // Reusable vars
@@ -126,7 +126,7 @@ const patterns =
 		'CAM': '(?:new)?cam([._-]?rip)?',
 		'CBS': 'CBS', // CBS Corporation (P2P)
 		'CD Album': '\\d*cda', // CD Album
-		'CD EP': 'cdep',
+		'CD EP': '\\d*cd.?ep',
 		'CD Single': [ 'cds', '(?:cd[._-]?)single' ], // CD Single
 		'Comedy Central': 'CC', // (P2P)
 		'Console Disc': [ 'xbox.*dvd[r\\d]*', 'dvd[r\\d]*.*xbox', 'cd.*xbox', 'ps2.?dvd[r\\d]*', 'ps3.?bd[r\\d]*', '(?:blue?ray).*ps3', 'xbox360.?dvd[r\\d]*', 'Wii[iu]?(.?dvd[r\\d]?)' ],
@@ -220,7 +220,7 @@ const patterns =
 		'XViD': 'XV?iD',
 		// Type of Divx codecs:
 		// SBC (Smart bitrate control), VKI (Variable Keyframe Intervals), MM4
-		'DiVX': [ 'DiVX\\d*', 'VKI', 'SBC', 'MM4' ],
+		'DiVX': [ '(?:DV)?DiVX\\d*', 'VKI', 'SBC', 'MM4' ],
 		'x264': 'x\\.?264',
 		'x265': 'x\\.?265',
 		'h264': 'h\\.?264',
@@ -364,15 +364,15 @@ const patterns =
 		'Sega Dreamcast': [ 'DC$', 'DREAMCAST' ],
 		'Sega Mega CD': 'MEGACD',
 		'Sega Mega Drive': 'SMD',
-		'Sega Saturn': 'SATURN',
+		'Sega Saturn': 'SATURN$',
 		'Tiger Telematics Gizmondo': 'GIZMONDO',
 		'VTech V.Flash': 'VVD',
 		'Microsoft Xbox': 'xbox(?:.?dvdr?i?p?\\d?|rip|full|cd|manual|pack)?',
 		'Microsoft Xbox One': 'XBOXONE',
 		'Microsoft Xbox360': [ 'XBOX.?360(?:.?dvd)?', 'X360' ],
 		// Higher prio (last has higher prio) for Wii + NDS, because of virtual console and release titles containing older consoles
-		'Nintendo DS': 'N3?DS(?:.dsi)?',
-		'Nintendo 3DS': '(?:vc[._](?:\\w+[._])?)?3DS(?!.max|max|.max\\d|max\\d)(?:ware)?',
+		'Nintendo DS': '3?DS(?:.dsi)?',
+		'Nintendo 3DS': '(?:vc[._](?:\\w+[._])?|new|n)?3DS(?!.max|max|.max\\d|max\\d)(?:ware)?',
 		'Nintendo WII': '(?:vc[._](?:\\w+[._])?)?Wiii?(.?dvd[r\\d]?|clone|ware)?', 
 		'Nintendo WII-U': '(?:vc[._](?:\\w+[._])?)?WII[._-]?U',
 	},
@@ -459,7 +459,7 @@ const patterns =
 		'vi': 'Vietnamese',
 		'zh': [ 'Chinese', 'CH[ST]' ],
 		// Misc
-		'multi': [ 'Multilingual', 'Multi.?(?:languages?|lang|\\d*)?', 'EURO?P?A?E?', '(?<!WEB.?)[MD]L', 'DUAL(?!.Audio)' ],
+		'multi': [ 'Multilingual', 'Multi.?(?:languages?|lang|lingual|\\d*)?', 'EURO?P?A?E?', '(?<!WEB.?)[MD]L', 'DUAL(?!.Audio)' ],
 		'nordic': [ 'Nordic', 'SCANDiNAViAN' ]
 	},
 
@@ -581,7 +581,7 @@ const patterns =
 		'Trackfix': 'TRACK.?FiX', // Music
 		'Trailer': 'TRAILER',
 		'TRAiNER': 'Trainer(?!.XXX)(?:.(?:%flags%))?', // Games
-		'Tutorial': 'TUTORIAL',
+		'Tutorial': 'TUT(?:ORIALS?)?',
 		'TV Dubbed': 'tv.?dubbed',
 		'Unabridged': [ 'UNABRIDGED', 'Ungekuerzt' ], // Audiobook
 		'Uncensored': 'UNCENSORED',
@@ -656,21 +656,12 @@ const patterns =
 		'afc.asian',		// Asian
 		'match.of.the.day',	// Misc football
 		// Racing
-		'Formul[ae].?[1234E].\\d{4}',
-		'Formel.?[1234E].\\d{4}',
-		'(?:british.)?F\\d.\\d{4}',
-		'Superleague.Formula',	
-		'Nascar.(?:cup|truck|xfinity)',
-		'Indycar\\.(series|racing|\\d{4})',
-		'Porsche.(Carrera|sprint)',
+		'Formul[ae].?[1234E].\\d{4}', 'Formel.?[1234E].\\d{4}', '(?:british.)?F\\d.\\d{4}', 'Superleague.Formula', 'Nascar.(?:cup|truck|xfinity|monster|raceday|camping|america|sprint|nextel|busch|\\d{4})', 'Indycar\\.(series|racing|\\d{4})',
 		'DTM.(\\d{2,4}|spa|lauszitzring|gp\\d+|\\d+.lauf)', // Deutsche Tourenwagen Masters
-		'wrc.(?:fia|\\d{4})', // Rallye
-		'Supercars.championship',
-		'V8.Supercars',
-		'W.series.\\d{4}',
-		'Moto.?(GP|\\d).\\d{4}',
-		'Volkswagen.Racing.Cup',
 		'DTC.\\d{4}', // Danish Touringcar Championship
+		'wrc.(?:fia|\\d{4})', // Rallye
+		'Supercars.championship', 'V8.Supercars.\\d{4}', 'Porsche.(Carrera|sprint)', 'Volkswagen.Racing.Cup', 'W.series.\\d{4}',
+		'Moto.?(GP|\\d).\\d{4}',
 		// Cycling
 		'Cycling.(?:volta|giro|tour|strade|paris|criterium|liege|fleche|amstel|la.vuelta)', // International
 		'giro.d.italia', // Italy
@@ -679,29 +670,29 @@ const patterns =
 		'UCI',	// International
 		// Rugby
 		'rugby.\\d{4}',
-		'(?:Super.|international.)?rugby(.world.cup|.championship|.pacific|.aupiki|.league|.league.test.match)',
-		'IPL',	// India
-		'NRL',	// Australasian
+		'(?:Super.|international.)?rugby(.world.cup|.championship|.pacific|.aupiki|.league.(?:test.match|anzak|challenge|nsw|four|toyota|trans|state|super|womens|international|world|\\d{4}))',
+		'IPL.\\d{4}',		 // India
+		'NRL.(\\d{4}|state)', // Australasian
 		// Basketball
 		'NBA.(?:East|West|Finals)', 'WNBA.\\d{4}', 'Eurocup',
 		// Cricket
-		'T20',
-		'BBL',	// Australia
+		'T20', 'BBL.\\d{4}',
 		// American Football
 		'NFL.(?:pre.?season|super.bowl|pro.bowl|conference|divisional|wild.card|[an]fc|football|week\\d+|\\d{4})',
 		// Wrestle
-		'wwe.(?:nxt|friday|this|main|monday|wrestlemania)', 'aew.(?:collision|dynamite|dark)', 'New.Japan.Pro-Wrestling', 'Game.changer.wrestling',
+		'wwe.(?:nxt|friday|this|main|monday|wrestlemania|velocity|raw|smackdown|confidential|heat)', 'aew.(?:collision|dynamite|dark)', 'New.Japan.Pro.Wrestling', 'NJPW', 'Game.changer.wrestling',
 		// Icehockey
 		'NHL\\.(?:\\d{4}|stanley.cup|playoffs)',
 		'Elitserien', 	// Swedish icehockey
 		// Baseball
 		'MLB.(?:\\d{4}|spring|world.series|pre.?season|playoffs|ws|alcs)',
-		// Boxing
-		'boxing.\\d{4}.\\d{2}.\\d{2}', 'Grand.Sumo', 'UFC.(\\d+|on.espn|fight.night)',
+		// Fighting
+		'(hbo.|uk.)?boxing.\\d{4}.\\d{2}.\\d{2}', 'Grand.Sumo', 'UFC.(\\d+|on.espn|fight.night)',
 		// Olympics
-		'\\w+.winter.(paralympics|olympics)',
+		'(\\w+.)?(?:winter|summer).(paralympics|olympics)',
+		'\\w+.(paralympics|olympics)',
 		// Tennis
-		'wimbledon.(?:tennis.)?\\d{4}', 'us.open.\\d{4}', 'french.open(?:.tennis)?.\\d{4}', 'australien.open', 'WTA.\\d{4}',
+		'wimbledon.(?:tennis.)?\\d{4}', 'us.open.\\d{4}', 'french.open(?:.tennis)?.\\d{4}', 'australian.open', 'WTA.\\d{4}',
 		// eSports
 		'LPL.PRO',
 		// World cup of whatever
@@ -711,15 +702,15 @@ const patterns =
 
 	// Bookware/elearning platforms
 	BOOKWARE : [
-		'Artstation', 'Ask.?video', 'Bassgorilla', 'Career.Academy', 'CBT.?Nuggets', 'CG.?(Circuit|workshops?|cookie)', 'Cloud.academy', 'CreativeLive', 'Digital.?tutors', 'Foundation.patreon', 'Groove3', 'Gumroad', 'Infinite.?skills', 'Kelby.?Training', 'LinkedIn(?:.learning)?', 'Lynda(?:.com)?', 'MacProVideo.com', 'Mixwiththemasters', 'Mycodeteacher.com', 'ostraining', 'packt', 'PluralSight', 'PSD.tutorials', 'Retouching.Academy', 'Skillshare', 'skillfeed', 'Sonic.academy', 'Syngress', 'teamtreehouse', 'Trainsignal', 'Train.?simple', 'Tutsplus', 'Video2Brain', 'Videomaker.com', 'Udemy(?:.com)?'
+		'Actualtests', 'Artstation', 'Ask.?video', 'Bassgorilla', 'Career.Academy', 'CBT.?Nuggets', 'CG.?(Circuit|workshops?|cookie)', 'Cloud.academy', 'CreativeLive', 'Digital.?tutors', 'Fravo', 'Foundation.patreon', 'Groove3', 'Gumroad', 'Infinite.?skills', 'Kelby.?Training', 'LinkedIn(?:.learning)?', 'Lynda(?:.com)?', 'MacProVideo.com', 'Mixwiththemasters', 'Mycodeteacher.com', 'ostraining', 'packt', 'Pass4sure', 'PluralSight', 'PSD.tutorials', 'Retouching.Academy', 'Skillshare', 'skillfeed', 'Skillsoft', 'Sonic.academy', 'Syngress', 'teamtreehouse', 'Testking', 'Testnow', 'Trainsignal', 'Train.?simple', 'Tutsplus', 'Video2Brain', 'Videomaker.com', 'Udemy(?:.com)?'
 	],
 
 	GROUPS_GAMES : [
-		'0x0007', '0x0815', '1C', 'ABSiSO', 'ACTiVATED', 'ADDONiA', 'ALiAS', 'ANOMALY', 'AUGETY', 'AVENGED', 'BACKLASH', 'bADkARMA', 'Bamboocha', 'BAT', 'BAZOOKA', 'BiTE', 'BLASTCiTY', 'BREWS', 'CiFE', 'CLS', 'COGENT', 'DARKSiDERS', 'DELiGHT', 'DINOByTES', 'DOGE', 'DVNiSO', 'ENiGMA', 'FANiSO', 'FAS', 'FASiSO', 'FASDOX', 'FCKDRM', 'FLT', 'FLTDOX', 'GENESIS', 'GOW', 'GREENPEACE', 'HATRED', 'HEiST', 'HI2U', 'HOODLUM', 'HR', 'I_KnoW', 'iNLAWS', 'iTWINS', 'JAGDOX', 'JAGUAR', 'LiGHTFORCE', 'LUMA', 'MONEV', 'NiiNTENDO', 'NNSSWW', 'OUTLAWS', 'PiKMiN', 'PiMoCK', 'PiZZADOX', 'PLAZA', 'POSTMORTEM', 'PRELUDE', 'PROPHET', 'PS5B', 'PUSSYCAT', 'TENOKE', 'THG', 'TiNYiSO', 'TRSi', 'TSC', 'RELOADED', 'Razor1911', 'RazorDOX', 'RUNE', 'SCRUBS', 'SiLENTGATE', 'SiMPLEX', 'SKIDROW', 'SMACKs', 'SPLATTER', 'SPLATTERKiNGS', 'STEAMPUNKS', 'SUXXORS', 'VACE', 'VENGEANCE', 'VENOM', 'ViTALiTY', 'VREX', 'Unleashed', 'YOUCANTNUKE', 'ZEKE'
+		'0x0007', '0x0815', '1C', 'ABSiSO', 'ACTiVATED', 'ADDONiA', 'ALiAS', 'ANOMALY', 'AUGETY', 'AVENGED', 'BACKLASH', 'bADkARMA', 'Bamboocha', 'BAT', 'BAZOOKA', 'BFHiSO', 'BiTE', 'BLASTCiTY', 'BReWErS', 'BREWS', 'BREWZ', 'CiFE', 'CLONECD', 'CLS', 'CODEX', 'COGENT', 'CUBiC', 'CXZiSO', 'DARKSiDERS', 'DARKZER0', 'DELiGHT', 'DEViANCE', 'DINOByTES', 'DOGE', 'DVN', 'DVNiSO', 'DYNAMIX', 'ENiGMA', 'FANiSO', 'FAS', 'FASiSO', 'FASDOX', 'FCKDRM', 'FLT', 'FLTDOX', 'GENESIS', 'gimpsRus', 'GMiSO', 'GOW', 'GREENPEACE', 'HATRED', 'HBD', 'HEiST', 'HI2U', 'HOODLUM', 'HR', 'HYBRID', 'I_KnoW', 'iMMERSiON', 'iNLAWS', 'iTWINS', 'JAGDOX', 'JAGUAR', 'LiGHTFORCE', 'LUMA', 'MONEV', 'MYSTERY', 'MYTH', 'NiiNTENDO', 'NNSSWW', 'OUTLAWS', 'PiKMiN', 'PiMoCK', 'PiZZA', 'PiZZADOX', 'PLAZA', 'POSTMORTEM', 'PRELUDE', 'PROPHET', 'PS5B', 'PUSSYCAT', 'PWZ', 'TENOKE', 'TENOKE1', 'THG', 'TiNYiSO', 'TRSi', 'TSC', 'RELOADED', 'RAZOR', 'Razor1911', 'RAZORCD', 'RazorDOX', 'ReVOLVeR', 'RiTUEL', 'RUNE', 'SCRUBS', 'SiLENTGATE', 'SiMPLEX', 'SKIDROW', 'SMACKs', 'Souldrinker', 'SPLATTER', 'SPLATTERKiNGS', 'STEAMPUNKS', 'SUXXORS', 'TDUJAM', 'TECHNiC', 'TEDOX', 'TNT', 'VACE', 'VENGEANCE', 'VENOM', 'ViTALiTY', 'VREX', 'Unleashed', 'YOUCANTNUKE', 'ZEKE'
 	],
 
 	GROUPS_APPS : [
-		'ACME', 'AMPED', 'BLiZZARD', 'BTCR', 'BTCRiSO', 'CAFE', 'CaviaR', 'CODEX', 'CORE', 'CRD', 'CYGiSO', 'DARKLEASH', 'DIGERATI', 'DVT', 'ECLiPSE', 'EMBRACE', 'EPS', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'iNTENSiON', 'ISO', 'ISOBelix', 'LAXiTY', 'LND', 'Lz0', 'Lz0PDA', 'MASCHiNE', 'MAGNiTUDE', 'MSGPDA', 'MYTH', 'NGEN', 'ORiON', 'PARADOX', 'PGC', 'rG', 'RINDVIEH', 'RLTS', 'SCOTCH', 'SONiTUS', 'TBE', 'TE', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'ViRiLiTY', 'UCF', 'XFORCE'
+		'ACME', 'AGAiN', 'AMPED', 'BLiZZARD', 'BRD', 'BTCR', 'BTCRiSO', 'CADZ', 'CAFE', 'CaviaR', 'CORE', 'CRD', 'CROSSFiRE', 'CYGiSO', 'DAMN', 'DARKLEASH', 'DIGERATI', 'DiSTiNCT', 'DSi', 'dT', 'DVT', 'ECLiPSE', 'ECU', 'ECZ', 'EMBRACE', 'ENFUSiA', 'EPS', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'HERiTAGE', 'iNFECTED', 'iNTENSiON', 'ISO', 'ISOBelix', 'LaTeX', 'LAXiTY', 'LND', 'LUCiD', 'Lz0', 'Lz0PDA', 'MAS', 'MASCHiNE', 'MAGNiTUDE', 'MIDNIGHT', 'MSGPDA', 'NGEN', 'NiTROUS', 'ORiON', 'PARADOX', 'PGC', 'PROPHECY', 'RENEGADE', 'rG', 'RINDVIEH', 'RiSE', 'RLTS', 'ROR', 'RORiSO', 'SCOTCH', 'SCRiPTMAFiA', 'SONiTUS', 'SoSISO', 'SSG', 'TBE', 'TE', 'TFTDOX', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'TZ7iSO', 'ViRiLiTY', 'UCF', 'UnderPl', 'XFORCE', 'ZWT', 'ZWTiSO'
 	],
 
 
@@ -739,7 +730,7 @@ const patterns =
 	// Sources
 	sourcesGames : [ 'Console Disc', 'Nintendo eShop', 'XBLA', 'PSN' ],
 	sourcesMovies : [ 'Bluray', 'CAM', 'DVD', 'HDCAM', 'HDTC', 'Screener', 'Telecine', 'Telesync', 'UHDBD' ],
-	sourcesMusic : [ 'AUD', 'Cable', 'CD Album', 'CD EP', 'CD Single', 'DAT Tape', 'DVDA', 'EP', 'FM', 'LP', 'Maxi CD', 'Maxi Single', 'MP3 CD', 'SBD', 'Tape', 'VLS', 'Vinyl', 'Web Single' ],
+	sourcesMusic : [ 'AUD', 'CD Album', 'CD EP', 'CD Single', 'DAT Tape', 'DVDA', 'EP', 'FM', 'LP', 'Maxi CD', 'Maxi Single', 'MP3 CD', 'SBD', 'Tape', 'VLS', 'Vinyl', 'Web Single' ],
 	sourcesMvid : [ 'DDC', 'MBluray', 'MDVDR' ],
 	sourcesTv : [ 'ATVP', 'DSR', 'EDTV', 'HDTV', 'PDTV', 'SDTV', 'UHDTV', 'ABC', 'BBC iPlayer', 'CBS', 'Comedy Central', 'DC Universe', 'Discovery Plus', 'HBO Max', 'Hulu', 'MTV Networks', 'NBC', 'TBS' ],
 }

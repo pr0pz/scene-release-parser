@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.4.1
+ * @version 1.4.2
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -1556,7 +1556,9 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 				if ( pattern.includes( '$' ) )
 				{
 					pattern = pattern.replace( '$', '' )
-					regexPattern = `/${separators}${pattern}-(?:[\\w.-]+){1,2}$/${flags}`
+					regexPattern = `/${separators}${pattern}(?:-[\\w.]+){1,2}$/${flags}`
+
+					//console.log( regexPattern )
 
 					// Check if pattern is inside release name
 					matches = releaseNameCleaned.match( regexPattern.toRegExp() )
@@ -1572,7 +1574,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 					// Check if is last keyword before group
 					if ( !matches )
 					{
-						regexPattern = `/${separators}${pattern}-(?:[\\w.-]+){1,2}$/${flags}`
+						regexPattern = `/${separators}${pattern}(?:-[\\w.]+){1,2}$/${flags}`
 						matches = releaseNameCleaned.match( regexPattern.toRegExp() )
 
 						//console.log( regexPattern )

@@ -1,3 +1,18 @@
+version 1.4.2 ( updated 23.09.2023 )
++ Added
+	- Sports: NJPW
+	- Game groups: BFHiSO, BReWErS, CLONECD, CUBiC, CXZiSO, DARKZER0, DEViANCE, DVN, DYNAMIX, gimpsRus, GMiSO, HBD, HYBRID, iMMERSiON, MYSTERY, MYTH, PiZZA, PWZ, razorcd, RiTUEL, Souldrinker, TDUJAM, TECHNiC, TNT
+	- App groups: AGAiN, BRD, CADZ, CROSSFiRE, DAMN, DiSTiNCT, DSi, dT, ECU, ECZ, ENFUSiA, HERiTAGE, iNFECTED, LaTeX, LUCiD, MAS, MIDNIGHT, NiTROUS, PROPHECY, RENEGADE, RiSE, ROR, RORiSO, SCOTCH, SCRiPTMAFiA, SoSISO, SSG, TEDOX, TFTDOX, TZ7iSO, UnderPl, ZWT, ZWTiSO
+	- Bookware: ActualTests, Fravo, Pass4sure, testking, Testnow, Skillsoft
+~ Improved
+	- Sports: Nascar, V8 Supercars, Rugby, IPL, NRL, BBL, Olympics, WWE, Boxing
+	- Multi lang
+	- Patterns at the end of release name
+	- CD EP source
+	- Saturn device pattern
+
+***
+
 version 1.4.1 ( updated 17.09.2023 )
 + Added
 	+ Sports: Fodbold (danish), Volkswagen Racing Cup, DTC (danish), V8 Supercars
