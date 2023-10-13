@@ -25,7 +25,6 @@ type releaseLanguage = {
     et?: string;
     fa?: string;
     fi?: string;
-    fi?: string;
     fr?: string;
     ga?: string;
     he?: string;
@@ -93,4 +92,4 @@ type ReleaseData = {
     type: releaseType | null;
 };
 
-export default function ReleaseParser(source: string, section = ''): Release;
+export default function ReleaseParser(source: string, section?: string): Release;}
