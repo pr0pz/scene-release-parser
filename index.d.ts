@@ -25,6 +25,7 @@ type releaseLanguage = {
     et?: string;
     fa?: string;
     fi?: string;
+    fil?: string;
     fr?: string;
     ga?: string;
     he?: string;
