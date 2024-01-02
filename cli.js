@@ -6,7 +6,7 @@ import pckg from './package.json' assert { type: 'json' }
  * CLI interface for ReleaseParser
  * 
  * @author Wellington Estevo
- * @version 1.2.1
+ * @version 1.4.3
  */
 
 // Skip first two args
@@ -25,12 +25,14 @@ else
 	{
 		// Version
 		case '-v':
+		case '-version':
 		case '--version':
 			console.log( 'v' + pckg.version )
 			break
 
 		// Help
 		case '-h':
+		case '-help':
 		case '--help':
 			console.log([
 				"",
@@ -57,7 +59,10 @@ else
 				"        version: null,",
 				"        language: { de: 'German', multi: 'Multilingual' },",
 				"        type: 'TV'",
-				"    }"
+				"    }",
+				"",
+				"  If you get errors, try enclosing the release name in parenthesis: \"Artist--Title-(Bla)-2000-Group\"",
+				"  Some shells have issues with some characters (like brackets)."
 			].join('\n'))
 			break
 		

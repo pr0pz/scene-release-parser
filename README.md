@@ -8,10 +8,10 @@
 
 _Like it? I'd appreciate the support :)_
 
-[![Follow on Twitter](https://img.shields.io/static/v1?label=Follow%20on&message=Twitter&color=1DA1F2&logo=twitter&logoColor=fff)](https://twitter.com/pr0pz)
-[![Watch on Twitch](https://img.shields.io/static/v1?label=Watch%20on&message=Twitch&color=bf94ff&logo=twitch&logoColor=fff)](https://www.twitch.tv/the_propz)
-[![Join on Discord](https://img.shields.io/static/v1?label=Join%20on&message=Discord&color=7289da&logo=discord&logoColor=fff)](https://discord.gg/d7GnhqqAXN)
-[![Donate on Ko-Fi](https://img.shields.io/static/v1?label=Donate%20on&message=Ko-Fi&color=ff5f5f&logo=kofi&logoColor=fff)](https://ko-fi.com/propz)
+[![Follow on Twitter](https://img.shields.io/static/v1?label=Follow%20on&message=Twitter&color=1DA1F2&logo=twitter&logoColor=fff)](https://propz.de/twitter/)
+[![Watch on Twitch](https://img.shields.io/static/v1?label=Watch%20on&message=Twitch&color=bf94ff&logo=twitch&logoColor=fff)](https://propz.de/twitch/)
+[![Join on Discord](https://img.shields.io/static/v1?label=Join%20on&message=Discord&color=7289da&logo=discord&logoColor=fff)](https://propz.de/discord/)
+[![Donate on Ko-Fi](https://img.shields.io/static/v1?label=Donate%20on&message=Ko-Fi&color=ff5f5f&logo=kofi&logoColor=fff)](https://propz.de/kofi/)
 
 ### __Description__
 
@@ -76,7 +76,8 @@ You're also able to use the script via the command line.
 $ npm install -g release-parser
 ```
 
-› Just pass the release name as first argument after calling the script with 'release-parser'.
+› Just pass the release name as first argument after calling the script with 'release-parser'.\
+› If you get errors, try enclosing the release name in parenthesis: "Artist--Title-(Bla)-2000-Group". Some shells have issues with some characters (like brackets).
 
 __Example:__
 ```sh

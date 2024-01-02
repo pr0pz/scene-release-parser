@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.4.2
+ * @version 1.4.3
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -750,7 +750,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		}
 		else if ( type === 'music' )
 		{
-			if ( releaseName.match( ( '/^[\\w()]+-[\\w()]+-[\\w()-]+$/i' ).toRegExp() ) )
+			if ( releaseName.match( ( '/^[\\w()]+-+[\\w()]+-+[\\w()-]+$/i' ).toRegExp() ) )
 				return true
 
 			if ( releaseName.match( ( '/^VA-/i' ).toRegExp() ) )

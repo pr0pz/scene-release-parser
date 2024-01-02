@@ -2,14 +2,14 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.4.2
+ * @version 1.4.3
  */
 
 // Reusable vars
 const regexYear = '(19\\d[\\dx]|20\\d[\\dx])'
 const regexDate = '(\\d{2}|\\d{4})[._-](\\d{2})[._-](\\d{2}|\\d{4})'
 const regexTitle = '([\\w.()-]+?)' // last ? = JS fix for ungreedy
-const regexEpisodeTv = '(?<!^)(?:(?:(?:[ST]|saison|staffel)\\d+)?[._-]?(?:ep?|o[av]+[._-]?|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
+const regexEpisodeTv = '(?<!^)(?:(?:(?:[ST]|saison|staffel|temp)[._-]?\\d+)?[._-]?(?:ep?|o[av]+[._-]?|eps[._-]?|episode[._-]?)[\\d-]+|\\d+x\\d+|[STD]\\d+)'
 const regexVersionText = '(?:v(?:ersione?)?|Updated?[._-]?v?|Build)'
 const regexVersion = regexVersionText + '[._-]?([\\d.]+[a-z\\d]{0,3}(?!.gage))'
 const regexDisc = '(?:s\\d+[._-]?)?(?:d|di[cks][cks]|cd|dvd)[._-]?(\\d+)'
@@ -43,7 +43,7 @@ const patterns =
 	// For Disc numbers: Disc1 / DVD1 / CD1 / (S01)D01
 	REGEX_DISC : regexDisc,
 	// Season pattern matches: S01E01 / 1x01 / S01D01
-	REGEX_SEASON : '/[._-](?:(?:[ST]|saison|staffel)[._-]?(\\d+)[._-]?(?:(?:ep?|eps[._-]?|episode[._-]?|f(?:olge[._-]?)|d|di[cks][cks]|cd|dvd)\\d+)?|(\\d+)(?:x\\d+))[._-]/i',
+	REGEX_SEASON : '/[._-](?:(?:[ST]|saison|staffel|temp)[._-]?(\\d+)[._-]?(?:(?:ep?|eps[._-]?|episode[._-]?|f(?:olge[._-]?)|d|di[cks][cks]|cd|dvd)\\d+)?|(\\d+)(?:x\\d+))[._-]/i',
 	// Basic title pattern
 	REGEX_TITLE : regexTitle,
 	// Good for Ebooks
@@ -85,7 +85,7 @@ const patterns =
 		// Anime
 		'Anime': 'anime',
 		// Software Sections
-		'App': [ 'app', '0day', 'pda' ],
+		'App': [ 'app', 'apps-0day', 'pda', 'mobile' ],
 		// Bookware
 		'Bookware': 'bookware',
 		// Ebook
@@ -93,7 +93,7 @@ const patterns =
 		// Font
 		'Font': 'font',
 		// Game/Console Sections
-		'Game': [ 'GAME', 'D[SC]', 'G[BC]', 'NSW', 'PS', 'XBOX', 'WII' ],
+		'Game': [ 'GAME', 'D[SC]', 'G[BC]', 'NINTENDO', 'NSW', 'PLAYSTATION', 'PS[pvx\\d]', 'XBOX', 'X360', 'WII' ],
 		// Music Sections
 		'Music': [ 'mp3', 'flac', 'music', 'ringtones' ],
 		// Music Video Sections
@@ -103,7 +103,7 @@ const patterns =
 		// Sports
 		'Sports': 'sport',
 		// XXX Sections
-		'XXX': [ 'xxx', 'imgset', 'imageset' ],
+		'XXX': [ 'xxx', 'imgset', 'imageset', 'paysite' ],
 		// Movie Sections
 		'Movie': [ 'movie', '(?!tv).*26[45]', 'bluray', 'dvdr', 'xvid', 'divx' ],
 	},
@@ -129,7 +129,7 @@ const patterns =
 		'CD EP': '\\d*cd.?ep',
 		'CD Single': [ 'cds', '(?:cd[._-]?)single' ], // CD Single
 		'Comedy Central': 'CC', // (P2P)
-		'Console Disc': [ 'xbox.*dvd[r\\d]*', 'dvd[r\\d]*.*xbox', 'cd.*xbox', 'ps2.?dvd[r\\d]*', 'ps3.?bd[r\\d]*', '(?:blue?ray).*ps3', 'xbox360.?dvd[r\\d]*', 'Wii[iu]?(.?dvd[r\\d]?)' ],
+		'Console Disc': [ 'xbox.*dvd[[:alnum:]]*', 'dvd[[:alnum:]]*.*xbox', 'cd.*xbox', 'pscd[[:alnum:]]*', 'PS2(?:.?d[vw]d[[:alnum:]]*|.?cd|.?rip)?', 'ps3.?bd[[:alnum:]]*', '(?:blue?ray).*ps3', 'xbox360.?dvd[[:alnum:]]*', 'Wii[iu]?(.?dvd[[:alnum:]]*)' ],
 		'Crave': 'CRAV', // (P2P)
 		'Crunchyroll': 'CR', // (P2P)
 		'DAB': 'dab', // Digital Audio Broadcast
@@ -353,7 +353,9 @@ const patterns =
 		'Nintendo Switch': 'NSW',
 		'NEC PC Engine': 'PCECD',
 		'Nokia N-Gage': '(?:nokia[._-])?n.?gage(?:[._-]qd)?',
-		'Playstation': 'PS[X1]?',
+		'Playstation': 'PS[X1]?(cd)?',
+		'Playstation 2': '(?:jap|\\d)?PS2(?:.?[ed][vw]d[[:alnum:]]*|.?cd[[:alnum:]]*|.?rip|.?hdd)?',
+		'Playstation 3': 'PS3(?:.?bd[[:alnum:]]*)?',
 		'Playstation 2': 'PS2(?:.?dvdr?|cd)?',
 		'Playstation 3': 'PS3(?:.?bd)?',
 		'Playstation 4': 'PS4',
@@ -515,7 +517,7 @@ const patterns =
 		'HR': 'HRp?.(%format%|%source%|%year%|%flags%)', // High resolution
 		'HSBS': 'HS(?:BS)?', // Half side-by-side (3D format)
 		'Hybrid': 'HYBRID',
-		'Imageset': [ '(?:Full[._-]?)?(?:IMA?GE?|photo|foto).?SETS?', 'pic.?xxx' ],
+		'Imageset': [ '(?:Full[._-]?)?(?:IMA?GG?E?|photo|picture|pic|foto).?SETS?', 'pic.?xxx' ],
 		'IMAX': 'IMAX',
 		'Internal': 'iNT(ERNAL)?',
 		'IVTC': 'IVTC', // Inverce telecine
@@ -625,43 +627,62 @@ const patterns =
 	SPORTS : [
 		// Football
 		'a-league',			// Australia
-		'Allsvenskan\.(U\\d+\\.)?\\d{4}', // Swedish
+		'Allsvenskan\.(U\\d+\\.)?\\d{4}', // Sweden
 		'Premier.?League',	// England (also Darts)
-		'La.?Liga.(santander.)?\\d{2,4}',			// Spain
-		'(?:fussball.\\d.|\\d.)?Bundesliga\\.\\d{4}', // Germany
+		'La.?Liga.(santander.)?\\d{2,4}',	// Spain
+		'Joan.Gamper.Trophy',				// Spain (Barcelona)
+		'Copa.del.rey',						// Spain Cup
+		'Supercopa',						// Spain
+		'(?:fussball.\\d.|\\d.)?Bundesliga\\.\\d{4}',	// Germany
 		'Fussball.Laenderspiel.\d+', // German international friendly
-		'Fussball.dfl.supercup', // German international friendly
-		'dfb.pokal.\\d{4}',	// Germany
+		'Fussball.dfl.supercup', 	// German international friendly
+		'dfb.pokal.\\d{4}',			// Germany Cup
 		'Eredivisie',		// Netherlands
-		'Ligue.?1',			// France
+		'Ligue.?1',					// France
+		'Coupe.De.France.\\d{2,4}',	// France Cup
 		'Serie.?A',			// Italy
+		'Coppa.Italia',		// Italy Cup
+		'Suppercoppa',		// Italy
 		'FA.?Cup',			// England
-		'(?:fussball.)?EPL',				// England
-		'EFL.(?:\\d{1,4}|cup|championship)', // England
-		'WSL',				// England women
+		'(?:fussball.)?EPL',					// England
+		'EFL\d?.(?:\d{1,4}|cup|championship)',	// England
+		'B?WSL',			// England women
+		'Arnold.Clark.Cup', // England women
 		'SPFL',				// Scottish
-		'Fodbold',			// Danish
+		'Viaplay.Cup',		// Scottish
+		'Scottish.cup',		// Scottish Cup
+		'Fodbold',			// Denmark
 		'MLS.\\d{4}',		// USA
 		'NWSL.\\d{4}',		// USA women
-		'CSL.\\d{4}',		// China
-		'fifa.(?:world.cup|women|fotbolls|futsal|wm|U\\d+).\\d{4}', // International
-		'(?:international.)?football.(?:australia|womens|sydney|friendly|ligue1|serie.a|uefa|conference|league)', // International
-		'(?:womens.)?UEFA.(champions|cl|cup|euro|europa|super.?cup|Bajnokok|european|pokal|futsal|el|under\\d+|u\\d+|womens|em|\\d{4})',	// European
+		'CSL.\\d+',			// China
+		'fifa.(?:world.cup|fotbolls|futsal|wm|U\\d+).\\d{4}', // International
+		'fifa.(?:world.cup.(?:U\\d+.)?)?womens.\\d{4}',		// International women
+		'(?:international.(?:friendly.)?)?football.(?:australia|womens|sydney|friendly|ligue1|serie.a|uefa|conference|league)', // International
+		'womens.international',
+		'(?:womens.)?UEFA.(champions|cl|cup|euro|europa|super.?cup|Bajnokok|european|pokal|futsal|el|under\\d+|u\\d+|womens|em|youth.league|\\d{4})', // European
 		'UCL.\\d+',			// UEFA Champions League
-		'UEL.\\d{4}',				// UEFA Europa league
+		'UEL.\\d{4}', 'Europa.league',	// UEFA Europa league
 		'concacaf',			// North and Middle America
 		'conmebol',			// South America
 		'copa.?america',
-		'caf',				// African
+		'CAF.Africa.Cup.Of.Nations', // African
+		'Saudi.pro.league', // Saudi Arabia
 		'afc.asian',		// Asian
-		'match.of.the.day',	// Misc football
+		'match.of.the.day', 'pre.season.friendly',	// Misc football
 		// Racing
-		'Formul[ae].?[1234E].\\d{4}', 'Formel.?[1234E].\\d{4}', '(?:british.)?F\\d.\\d{4}', 'Superleague.Formula', 'Nascar.(?:cup|truck|xfinity|monster|raceday|camping|america|sprint|nextel|busch|\\d{4})', 'Indycar\\.(series|racing|\\d{4})',
+		'Formul[ae].?[1234E].\\d{4}', 'Formel.?[1234E].\\d{4}', '(?:british.)?F\\d.\\d{4}.Grosser',
+		'Superleague.Formula', 'Nascar.(?:cup|truck|xfinity|monster|raceday|camping|america|sprint|nextel|busch|\\d{4})', '(?:ntt.)?Indycar\.(series|racing|\\d{4})',
 		'DTM.(\\d{2,4}|spa|lauszitzring|gp\\d+|\\d+.lauf)', // Deutsche Tourenwagen Masters
 		'DTC.\\d{4}', // Danish Touringcar Championship
-		'wrc.(?:fia|\\d{4})', // Rallye
-		'Supercars.championship', 'V8.Supercars.\\d{4}', 'Porsche.(Carrera|sprint)', 'Volkswagen.Racing.Cup', 'W.series.\\d{4}',
+		'[ew]rc[._-](?:\\d{4})', 
+		'(?:[ew]rc|rx)[._-]fia[._-](?:world|european).rally(?:cross)?.championship.\\d{4}', // Rallye
+		'Supercars.championship', 'V8.Supercars.\\d{4}', 'Porsche.(Carrera|sprint|supercup)', 'Volkswagen.Racing.Cup', 'W.series.\\d{4}',
+		'IMSA', 'Nitro[.]RX', 'Extreme[.]e',
+		// Moto racing
 		'Moto.?(GP|\\d).\\d{4}',
+		'A?SBK.(?:\\d{4}|world)', 	// Australian Superbike
+		'WSX', // Supercross
+		'FIM[.](?:ewc|superbike|speedway|cev|isde|motocross|world)', // International Moto events
 		// Cycling
 		'Cycling.(?:volta|giro|tour|strade|paris|criterium|liege|fleche|amstel|la.vuelta)', // International
 		'giro.d.italia', // Italy
@@ -669,30 +690,45 @@ const patterns =
 		'tour.de.france.(?:femmes.)?\\d{4}.stage.?\\d+', // France
 		'UCI',	// International
 		// Rugby
-		'rugby.\\d{4}',
-		'(?:Super.|international.)?rugby(.world.cup|.championship|.pacific|.aupiki|.league.(?:test.match|anzak|challenge|nsw|four|toyota|trans|state|super|womens|international|world|\\d{4}))',
+		'(?:premiership.)?rugby.(?:cup.)?\\d{4}',
+		'(?:Super.|six.?nations.)?rugby.(world.cup|championship|pacific|aupiki|league.(?:test.match|anzak|challenge|nsw|four|toyota|trans|state|super|womens|international|world|\\d{4}))',
+		'International.rugby',
 		'IPL.\\d{4}',		 // India
 		'NRL.(\\d{4}|state)', // Australasian
 		// Basketball
-		'NBA.(?:East|West|Finals)', 'WNBA.\\d{4}', 'Eurocup',
+		'NBA.(?:\\d{4}.)?(?:East|eastern|West|western|Finals|playoffs|\\d{2}.\\d{2})',
+		'WNBA.\\d{4}',	// USA women
+		'Eurocup',		// Europe
+		'Euroleague',
+		'WNBL',			// Australia women
+		'Fiba',			// International
 		// Cricket
-		'T20', 'BBL.\\d{4}',
+		'T20', 'BBL.\\d{4}', 'ICC.Cricket',
 		// American Football
-		'NFL.(?:pre.?season|super.bowl|pro.bowl|conference|divisional|wild.card|[an]fc|football|week\\d+|\\d{4})',
+		'NFL',
 		// Wrestle
-		'wwe.(?:nxt|friday|this|main|monday|wrestlemania|velocity|raw|smackdown|confidential|heat)', 'aew.(?:collision|dynamite|dark)', 'New.Japan.Pro.Wrestling', 'NJPW', 'Game.changer.wrestling',
-		// Icehockey
-		'NHL\\.(?:\\d{4}|stanley.cup|playoffs)',
-		'Elitserien', 	// Swedish icehockey
-		// Baseball
-		'MLB.(?:\\d{4}|spring|world.series|pre.?season|playoffs|ws|alcs)',
+		'wwe',
+		'aew.(?:collision|dynamite|dark|rampage)', 'New.Japan.Pro.Wrestling', 'NJPW', 'Game.changer.wrestling',
 		// Fighting
-		'(hbo.|uk.)?boxing.\\d{4}.\\d{2}.\\d{2}', 'Grand.Sumo', 'UFC.(\\d+|on.espn|fight.night)',
+		'(hbo.|uk.|frank.warren.)?boxing.\\d{4}.\\d{2}.\\d{2}', 'Grand.Sumo', 'UFC.(\\d+|on.(?:espn|abc|fo?x|fuel|versus)|fight.night)', 'showtime.championship.boxing', 'Bellator.(?:fighting|\\d{2,4})', 'KSW[._-]\\d{2,4}', 'Cage[.](?:fury|warriors)[.]\\d{2,4}', 'PFL.\\d{4}', 'Invicta.fc', 'Enfusion(?:[.]ece|[.]live)?[.]\\d{2,4}',
+		// Icehockey
+		'NHL\\.(?:\\d{4}|stanley.cup|playoffs|all.stars?|pre.?season|awards)',
+		'Elitserien', 	// Swedish icehockey
+		'IIHF', // International Icehoceky
+		// Baseball
+		'MLB.(?:\\d{4}|spring|(?:world|championship|division).series|pre.?season|playoffs|ws|alcs|wild.card)',
 		// Olympics
 		'(\\w+.)?(?:winter|summer).(paralympics|olympics)',
 		'\\w+.(paralympics|olympics)',
 		// Tennis
-		'wimbledon.(?:tennis.)?\\d{4}', 'us.open.\\d{4}', 'french.open(?:.tennis)?.\\d{4}', 'australian.open', 'WTA.\\d{4}',
+		'wimbledon.(?:tennis.)?\\d{4}', 'us.open.\\d{4}', '([aw]tp.|wta.)french.open(?:.tennis)?.\\d{4}', 'australian.open', 'WTA.\\d{4}',
+		// Pool
+		'[[:alnum:]]+.open.pool.championship.\\d{4}',
+		'world.pool.masters',
+		'mosconi.cup',
+		// MISC
+		'Biathlon.(?:\\d{4}|WC|VM|EM|Weltcup|world)',
+		'^pdc[.](?:.*darts|players.championship)', // Darts
 		// eSports
 		'LPL.PRO',
 		// World cup of whatever
@@ -702,15 +738,15 @@ const patterns =
 
 	// Bookware/elearning platforms
 	BOOKWARE : [
-		'Actualtests', 'Artstation', 'Ask.?video', 'Bassgorilla', 'Career.Academy', 'CBT.?Nuggets', 'CG.?(Circuit|workshops?|cookie)', 'Cloud.academy', 'CreativeLive', 'Digital.?tutors', 'Fravo', 'Foundation.patreon', 'Groove3', 'Gumroad', 'Infinite.?skills', 'Kelby.?Training', 'LinkedIn(?:.learning)?', 'Lynda(?:.com)?', 'MacProVideo.com', 'Mixwiththemasters', 'Mycodeteacher.com', 'ostraining', 'packt', 'Pass4sure', 'PluralSight', 'PSD.tutorials', 'Retouching.Academy', 'Skillshare', 'skillfeed', 'Skillsoft', 'Sonic.academy', 'Syngress', 'teamtreehouse', 'Testking', 'Testnow', 'Trainsignal', 'Train.?simple', 'Tutsplus', 'Video2Brain', 'Videomaker.com', 'Udemy(?:.com)?'
+		'3DMotive', 'Academy.Moz', 'A.?Cloud.?Guru', 'Actualtests', 'Addison.?Wesley', 'AppDev', 'APRESS', 'Artstation', 'Ask.?video', 'Bassgorilla', 'Career.Academy', 'CBT.?Nuggets', 'CG.?(Circuit|workshops?|cookie)?', 'Cloud.academy', 'Codeschool.com', 'CreativeLive', 'Digital.?tutors', 'EC.?COUNCIL', 'Educator', 'Egghead.?io', 'Fravo', 'Foundation.patreon', 'Fxp.?HD', 'Galileo.(press|computing|design)', 'Groove3', 'Gumroad', 'ICOLLEGE', 'INE(.com)?', 'Infinite.?skills', 'INTELLEZY', 'kelbyone', 'Kelby.?(one)?Training', 'La.?formation', 'Learnable.com', 'Learnflash(.com)?', 'Learnnowonline', 'LinkedIn(?:.learning)?', 'Linux.Academy', 'Linux.?CBT', 'Lynda(?:.com)?', 'MacProVideo.com', 'Manning', 'Masterclass', 'Mixwiththemasters', 'M.O.C', 'Mycodeteacher.com', 'Open.?Classrooms', 'OREILLY', 'ostraining', 'packt', 'Pass4sure', 'PEACHPIT', 'PEARSON(.it)?', 'PluralSight', 'Pragmatic(.?ai)?', 'PrepLogic', 'PSD.?tutorials', 'Retouching.Academy', 'RW', 'SCO', 'Sitepoint.com', 'Skillshare', 'skillfeed', 'Skillsoft', 'Skylines.?Academy', 'Sonic.academy', 'Spin.?academy', 'Stone.?River.?eLearning', 'Syngress', 'Technics.?Publications?', '(team)?treehouse', 'Testking', 'Testnow', 'The.?Gnomon.?Workshop', 'Trainsignal', 'Train.?simple', 'Total.?Training', 'Tutsplus', 'TVI', 'Video2Brain', 'Videomaker.com', 'VTC(.com)?', 'VueMastery', 'Unix.?CBT', 'Wintellect.?NOW', 'Winstructor', 'Udemy(?:.com)?'
 	],
 
 	GROUPS_GAMES : [
-		'0x0007', '0x0815', '1C', 'ABSiSO', 'ACTiVATED', 'ADDONiA', 'ALiAS', 'ANOMALY', 'AUGETY', 'AVENGED', 'BACKLASH', 'bADkARMA', 'Bamboocha', 'BAT', 'BAZOOKA', 'BFHiSO', 'BiTE', 'BLASTCiTY', 'BReWErS', 'BREWS', 'BREWZ', 'CiFE', 'CLONECD', 'CLS', 'CODEX', 'COGENT', 'CUBiC', 'CXZiSO', 'DARKSiDERS', 'DARKZER0', 'DELiGHT', 'DEViANCE', 'DINOByTES', 'DOGE', 'DVN', 'DVNiSO', 'DYNAMIX', 'ENiGMA', 'FANiSO', 'FAS', 'FASiSO', 'FASDOX', 'FCKDRM', 'FLT', 'FLTDOX', 'GENESIS', 'gimpsRus', 'GMiSO', 'GOW', 'GREENPEACE', 'HATRED', 'HBD', 'HEiST', 'HI2U', 'HOODLUM', 'HR', 'HYBRID', 'I_KnoW', 'iMMERSiON', 'iNLAWS', 'iTWINS', 'JAGDOX', 'JAGUAR', 'LiGHTFORCE', 'LUMA', 'MONEV', 'MYSTERY', 'MYTH', 'NiiNTENDO', 'NNSSWW', 'OUTLAWS', 'PiKMiN', 'PiMoCK', 'PiZZA', 'PiZZADOX', 'PLAZA', 'POSTMORTEM', 'PRELUDE', 'PROPHET', 'PS5B', 'PUSSYCAT', 'PWZ', 'TENOKE', 'TENOKE1', 'THG', 'TiNYiSO', 'TRSi', 'TSC', 'RELOADED', 'RAZOR', 'Razor1911', 'RAZORCD', 'RazorDOX', 'ReVOLVeR', 'RiTUEL', 'RUNE', 'SCRUBS', 'SiLENTGATE', 'SiMPLEX', 'SKIDROW', 'SMACKs', 'Souldrinker', 'SPLATTER', 'SPLATTERKiNGS', 'STEAMPUNKS', 'SUXXORS', 'TDUJAM', 'TECHNiC', 'TEDOX', 'TNT', 'VACE', 'VENGEANCE', 'VENOM', 'ViTALiTY', 'VREX', 'Unleashed', 'YOUCANTNUKE', 'ZEKE'
+		'0x0007', '0x0815', '1C', 'ABSiSO', 'ACTiVATED', 'ADDONiA', 'ALiAS', 'ANOMALY', 'AUGETY', 'AVENGED', 'BACKLASH', 'bADkARMA', 'Bamboocha', 'BAT', 'BAZOOKA', 'BFHiSO', 'BiTE', 'BLASTCiTY', 'BReWErS', 'BREWS', 'BREWZ', 'CiFE', 'CLONECD', 'CLS', 'CODEX', 'COGENT', 'CUBiC', 'CXZiSO', 'DARKSiDERS', 'DARKZER0', 'DELiGHT', 'DEViANCE', 'DINOByTES', 'DOGE', 'DVN', 'DVNiSO', 'DYNAMIX', 'ENiGMA', 'FANiSO', 'FAS', 'FASiSO', 'FASDOX', 'FCKDRM', 'FLT', 'FLTDOX', 'GENESIS', 'gimpsRus', 'GMiSO', 'GOW', 'GREENPEACE', 'HATRED', 'HBD', 'HEiST', 'HI2U', 'HOODLUM', 'HR', 'HYBRID', 'I_KnoW', 'iMMERSiON', 'iNLAWS', 'iTWINS', 'JAGDOX', 'JAGUAR', 'LiGHTFORCE', 'LUMA', 'MONEV', 'MYSTERY', 'MYTH', 'NiiNTENDO', 'NNSSWW', 'OUTLAWS', 'PiKMiN', 'PiMoCK', 'PiZZA', 'PiZZADOX', 'PLAZA', 'POSTMORTEM', 'PRELUDE', 'PROPHET', 'PS5B', 'PUSSYCAT', 'PWZ', 'TENOKE', 'TENOKE1', 'THG', 'TiNYiSO', 'TRSi', 'TSC', 'RELOADED', 'RAZOR', 'Razor1911', 'RAZORCD', 'RazorDOX', 'ReVOLVeR', 'RiTUEL', 'RUNE', 'SCRUBS', 'SiLENTGATE', 'SiMPLEX', 'SKIDROW', 'SMACKs', 'Souldrinker', 'SPLATTER', 'SPLATTERKiNGS', 'STEAMPUNKS', 'STRANGE', 'SUXXORS', 'TDUJAM', 'TECHNiC', 'TEDOX', 'TNT', 'VACE', 'VENGEANCE', 'VENOM', 'ViTALiTY', 'VREX', 'Unleashed', 'YOUCANTNUKE', 'ZEKE'
 	],
 
 	GROUPS_APPS : [
-		'ACME', 'AGAiN', 'AMPED', 'BLiZZARD', 'BRD', 'BTCR', 'BTCRiSO', 'CADZ', 'CAFE', 'CaviaR', 'CORE', 'CRD', 'CROSSFiRE', 'CYGiSO', 'DAMN', 'DARKLEASH', 'DIGERATI', 'DiSTiNCT', 'DSi', 'dT', 'DVT', 'ECLiPSE', 'ECU', 'ECZ', 'EMBRACE', 'ENFUSiA', 'EPS', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'HERiTAGE', 'iNFECTED', 'iNTENSiON', 'ISO', 'ISOBelix', 'LaTeX', 'LAXiTY', 'LND', 'LUCiD', 'Lz0', 'Lz0PDA', 'MAS', 'MASCHiNE', 'MAGNiTUDE', 'MIDNIGHT', 'MSGPDA', 'NGEN', 'NiTROUS', 'ORiON', 'PARADOX', 'PGC', 'PROPHECY', 'RENEGADE', 'rG', 'RINDVIEH', 'RiSE', 'RLTS', 'ROR', 'RORiSO', 'SCOTCH', 'SCRiPTMAFiA', 'SONiTUS', 'SoSISO', 'SSG', 'TBE', 'TE', 'TFTDOX', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'TZ7iSO', 'ViRiLiTY', 'UCF', 'UnderPl', 'XFORCE', 'ZWT', 'ZWTiSO'
+		'ACME', 'AGAiN', 'AMPED', 'BEAN', 'BLiZZARD', 'BLZiSO', 'BRD', 'BTCR', 'BTCRiSO', 'CADZ', 'CAFE', 'CaviaR', 'CORE', 'CRD', 'CROSSFiRE', 'CYGiSO', 'DAMN', 'DARKLEASH', 'DIGERATI', 'DiSTiNCT', 'DSi', 'dT', 'DVT', 'DVTiSO', 'EAT', 'ECLiPSE', 'ECU', 'ECZ', 'EMBRACE', 'ENFUSiA', 'EPS', 'EQUiNOX', 'EXPANSION', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'HERiTAGE', 'HOTiSO', 'iNDiSO', 'iNFECTED', 'iNTENSiON', 'ISO', 'ISOBelix', 'iSOTOPE', 'LaTeX', 'LAXiTY', 'LND', 'LUCiD', 'Lz0', 'Lz0PDA', 'MAS', 'MASCHiNE', 'MAGNETiC', 'MAGNiTUDE', 'MESMERiZE', 'MIDNIGHT', 'MSGPDA', 'NGEN', 'NiTROUS', 'ORiON', 'PARADOX', 'PFT', 'PGC', 'PH', 'PROPHECY', 'RENEGADE', 'rG', 'RINDVIEH', 'RiSE', 'RLTS', 'ROR', 'RORiSO', 'SCOTCH', 'SCRiPTMAFiA', 'SONiTUS', 'SoSISO', 'SSG', 'SUBSTANCE', 'TBE', 'TE', 'TFTDOX', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'TZ7iSO', 'ViRiLiTY', 'UCF', 'UnderPl', 'XFORCE', 'XiSO', 'ZWT', 'ZWTiSO', 'ZZGiSO'
 	],
 
 

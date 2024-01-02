@@ -1,3 +1,20 @@
+version 1.4.3 ( updated 02.01.2024 )
++ Added
+	- Bookware: A.Cloud.Guru, Technics.Publications, Stone.River.eLearning, VTC.com, OREILLY, Masterclass, Manning, PEARSON, APRESS, EC-COUNCIL, Skylines.Academy, WintellectNOW, Egghead.io, Linux.Academy, Addison.Wesley, Sitepoint.com, VueMastery, INTELLEZY, ICOLLEGE, PEACHPIT, Learnable.com, OpenClassrooms, Learnnowonline, FxpHD, RW, TVI, SCO, CG, 3DMotive, Educator, SpinAcademy, Total Training, The.Gnomon.Workshop, PrepLogic, M.O.C., Learnflash, Winstructor, Galileo, LinuxCBT, UnixCBT, La Formation
+	- App groups: HOTiSO, EAT, BEAN, MESMERiZE, ZZGiSO, XiSO, iNDiSO, EQUiNOX, SUBSTANCE, MAGNETiC, BLZiSO, PFT
+	- Game groups: STRANGE
+	- Sports: MLB Championship/Division Series, MLB Wild Card, AEW Rampage (Wrestling), Saudi Pro League, ICC Cricket, BWSL, Coppa Italia, Viaplay Cup, WNBL, Suppercoppa, Arnold Clark Cup, Showtime Championship Boxing, UEFA Youth League, Biathlon, Porsche Supercup, Bellator (MMA), UFC on ABC/Fox/Fuel, SBK (Racing), KSW (MMA), Cage Warriors/Fury, PFL (MMA), Open Pool CHampionship, Mosconi Cup (Pool), World Pool Masters, Invicta FC (MMA), IMSA (Racing), Enfusion (Kickboxing), WSX (Supercross), FIM (Motocross), IIHF (Icehockey), Extreme E, Frank Warren Boxing, PDC (Darts), Joan Gamper Trophy (Football), Coupe de France, Scottish Cup, Copa del rey, SUpercopa de espanya
+~ Improved
+	- PS1 pattern
+	- PS2 pattern
+	- Rugby pattern
+	- WRC Rally pattern
+	- WWE Pattern
+	- Indycar pattern
+	- Music pattern
+
+***
+
 version 1.4.2 ( updated 23.09.2023 )
 + Added
 	- Sports: NJPW
