@@ -6,22 +6,23 @@ import pckg from './package.json' assert { type: 'json' }
  * CLI interface for ReleaseParser
  * 
  * @author Wellington Estevo
- * @version 1.4.3
+ * @version 1.4.4
  */
 
 // Skip first two args
 // https://nodejs.org/en/knowledge/command-line/how-to-parse-command-line-arguments/
-var args = process.argv.slice(2)
+var releaseName = process.argv[2] !== '' ? process.argv[2] : ''
+var section = process.argv[3] !== '' ? process.argv[3] : ''
 
 // No release name given?
-if ( !args[0] )
+if ( typeof releaseName !== 'string' || releaseName === '' )
 {
-	console.error( 'Please enter a release name.' )
+	console.error( 'Please enter a proper release name.' )
 }
 else
 {
 	// Check for commands or parse release
-	switch ( args[0] )
+	switch ( releaseName )
 	{
 		// Version
 		case '-v':
@@ -39,7 +40,7 @@ else
 				"  " + pckg.description,
 				"",
 				"  Example:",
-				"   release-parser 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed",
+				"   release-parser 24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed tv",
 				"",
 				"    => {",
 				"        release: '24.S02E02.9.00.Uhr.bis.10.00.Uhr.German.DL.TV.Dubbed.DVDRip.SVCD.READ.NFO-c0nFuSed',",
@@ -68,7 +69,7 @@ else
 		
 		// Default parse
 		default:
-			console.log( ReleaseParser( args[0] ).data )
+			console.log( ReleaseParser( releaseName, section ).data )
 	}
 }
 

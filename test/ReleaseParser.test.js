@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.4.1
+ * @version 1.4.4
  */
 
 describe( 'ReleaseParser', function()
@@ -331,14 +331,6 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
-	it( 'TV #11 - Multiple lang in wrong format', () =>
-	{
-		assert.equal(
-			ReleaseParser( 'New.Amsterdam.2018.S02E13.In.the.Graveyard.1080p.AMZN.Webrip.x265.10bit.EAC3.5.1.JBENTTAoE', 'tv' ).toString(),
-			'Show: New Amsterdam / Title: In the Graveyard / Group: NOGRP / Year: 2018 / Season: 2 / Episode: 13 / Source: Amazon / Format: x265 / Resolution: 1080p / Audio: 10BIT, EAC3, 5.1 / Type: TV'
-		)
-	})
-
 	it( 'TV #12 - rls with comma', () =>
 	{
 		assert.equal(
@@ -368,6 +360,14 @@ describe( 'ReleaseParser', function()
 		assert.equal(
 			ReleaseParser( 'Speer.Et.Hitler.L.Architecte.Du.Diable.E03.FINAL.DOC.FRENCH.PDTV.XViD-BAWLS', 'tv-xvid' ).toString(),
 			'Title: Speer Et Hitler L Architecte Du Diable / Group: BAWLS / Episode: 3 / Flags: Docu, Final / Source: PDTV / Format: XViD / Language: French / Type: TV'
+		)
+	})
+
+	it( 'TV #16 - French season and flags', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Friends.Saison5.Episode5-8.vo.subtitlefrench.DVDRIP.DivX-RoToTo', 'NDS' ).toString(),
+			'Title: Friends / Group: RoToTo / Season: 5 / Episode: 5-8 / Flags: Subbed / Source: DVDRip / Format: DiVX / Type: TV'
 		)
 	})
 

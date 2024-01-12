@@ -2,7 +2,7 @@
  * ReleasePatterns - All needed patterns for properly parsing releases.
  * 
  * @author Wellington Estevo
- * @version 1.4.3
+ * @version 1.4.4
  */
 
 // Reusable vars
@@ -746,7 +746,7 @@ const patterns =
 	],
 
 	GROUPS_APPS : [
-		'ACME', 'AGAiN', 'AMPED', 'BEAN', 'BLiZZARD', 'BLZiSO', 'BRD', 'BTCR', 'BTCRiSO', 'CADZ', 'CAFE', 'CaviaR', 'CORE', 'CRD', 'CROSSFiRE', 'CYGiSO', 'DAMN', 'DARKLEASH', 'DIGERATI', 'DiSTiNCT', 'DSi', 'dT', 'DVT', 'DVTiSO', 'EAT', 'ECLiPSE', 'ECU', 'ECZ', 'EMBRACE', 'ENFUSiA', 'EPS', 'EQUiNOX', 'EXPANSION', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'HERiTAGE', 'HOTiSO', 'iNDiSO', 'iNFECTED', 'iNTENSiON', 'ISO', 'ISOBelix', 'iSOTOPE', 'LaTeX', 'LAXiTY', 'LND', 'LUCiD', 'Lz0', 'Lz0PDA', 'MAS', 'MASCHiNE', 'MAGNETiC', 'MAGNiTUDE', 'MESMERiZE', 'MIDNIGHT', 'MSGPDA', 'NGEN', 'NiTROUS', 'ORiON', 'PARADOX', 'PFT', 'PGC', 'PH', 'PROPHECY', 'RENEGADE', 'rG', 'RINDVIEH', 'RiSE', 'RLTS', 'ROR', 'RORiSO', 'SCOTCH', 'SCRiPTMAFiA', 'SONiTUS', 'SoSISO', 'SSG', 'SUBSTANCE', 'TBE', 'TE', 'TFTDOX', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'TZ7iSO', 'ViRiLiTY', 'UCF', 'UnderPl', 'XFORCE', 'XiSO', 'ZWT', 'ZWTiSO', 'ZZGiSO'
+		'ACME', 'AGAiN', 'AMPED', 'BEAN', 'BLiZZARD', 'BLZiSO', 'BRD', 'BTCR', 'BTCRiSO', 'CADZ', 'CAFE', 'CaviaR', 'CNC', 'CORE', 'CRD', 'CROSSFiRE', 'CYGiSO', 'DAMN', 'DARKLEASH', 'DIGERATI', 'DiSTiNCT', 'DSi', 'dT', 'DVT', 'DVTiSO', 'EAT', 'ECLiPSE', 'ECU', 'ECZ', 'EMBRACE', 'ENFUSiA', 'EPS', 'EQUiNOX', 'EXPANSION', 'EXPLOSiON', 'F4CG', 'FALLEN', 'FCN', 'HERiTAGE', 'HOTiSO', 'iNDiSO', 'iNFECTED', 'iNTENSiON', 'ISO', 'ISOBelix', 'iSOTOPE', 'LaTeX', 'LAXiTY', 'LND', 'LUCiD', 'Lz0', 'Lz0PDA', 'MAS', 'MASCHiNE', 'MAGNETiC', 'MAGNiTUDE', 'MESMERiZE', 'MIDNIGHT', 'MSGPDA', 'NGEN', 'NiTROUS', 'ORiON', 'PARADOX', 'PFT', 'PGC', 'PH', 'PROPHECY', 'RENEGADE', 'rG', 'RINDVIEH', 'RiSE', 'RLTS', 'ROR', 'RORiSO', 'SCOTCH', 'SCRiPTMAFiA', 'SONiTUS', 'SoSISO', 'SSG', 'SUBSTANCE', 'TBE', 'TE', 'TFTDOX', 'TFTISO', 'TMG', 'TNO', 'TSZ', 'TZ7iSO', 'ViRiLiTY', 'UCF', 'UnderPl', 'XFORCE', 'XiSO', 'ZWT', 'ZWTiSO', 'ZZGiSO'
 	],
 
 
