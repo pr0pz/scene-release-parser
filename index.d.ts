@@ -3,7 +3,7 @@
  * Thanks to OFfriend for the initial pull request.
  * 
  * @author Wellington Estevo
- * @version 1.4.4
+ * @version 1.5.0
  */
 
 // Flags
@@ -22,7 +22,7 @@ type releaseResolution = '480p' | '576p' | '720p' | '1080i' | '1080p' | '1920p' 
 type releaseAudio = '10BIT' | '16BIT' | '24BIT' | '44K' | '48K' | '96K' | '160K' | '176K' | '192K' | 'AAC' | 'AC3' | 'AC3D' | 'EAC3' | 'EAC3D' | 'Dolby Atmos' | 'Dolby Digital' | 'Dolby Digital Plus' | 'Dolby Digital Plus, Dolby Atmos' | 'Dolby trueHD' | 'DTS' | 'DTS-ES' | 'DTS-HD' | 'DTS-HD MA' | 'DTS|X' | 'OGG' | '2.0' | '2.1' | '3.1' | '5.1' | '7.1' | '7.2' | '9.1' | 'Dual Audio' | 'Tripple Audio';
 
 // Device
-type releaseDevice = '3DO' | 'Bandai WonderSwan' | 'Bandai WonderSwan Color' | 'Commodore Amiga' | 'Commodore Amiga CD32' | 'Commodore C64' | 'Commodore C264' | 'Nintendo Entertainment System' | 'Super Nintendo Entertainment System' | 'Nintendo GameBoy' | 'Nintendo GameBoy Color' | 'Nintendo GameBoy Advanced' | 'Nintendo Gamecube' | 'Nintendo iQue Player' | 'Nintendo Switch' | 'NEC PC Engine' | 'Nokia N-Gage' | 'Playstation' | 'Playstation 2' | 'Playstation 3' | 'Playstation 4' | 'Playstation 5' | 'Playstation Portable' | 'Playstation Vita' | 'Pocket PC' | 'Sega Dreamcast' | 'Sega Mega CD' | 'Sega Mega Drive' | 'Sega Saturn' | 'Tiger Telematics Gizmondo' | 'VTech V.Flash' | 'Microsoft Xbox' | 'Microsoft Xbox One' | 'Microsoft Xbox360' | 'Nintendo DS' | 'Nintendo 3DS' | 'Nintendo WII' | 'Nintendo WII-U';
+type releaseDevice = '3DO' | 'Analogue Pocket' | 'Atari Jaguar' | 'Bandai WonderSwan' | 'Bandai WonderSwan Color' | 'Commodore Amiga' | 'Commodore Amiga CD32' | 'Commodore C64' | 'Commodore C264' | 'Nintendo Entertainment System' | 'Super Nintendo Entertainment System' | 'Nintendo GameBoy' | 'Nintendo GameBoy Color' | 'Nintendo GameBoy Advanced' | 'Nintendo Gamecube' | 'Nintendo iQue Player' | 'Nintendo Switch' | 'NEC PC Engine' | 'Nokia N-Gage' | 'Playstation' | 'Playstation 2' | 'Playstation 3' | 'Playstation 4' | 'Playstation 5' | 'Playstation Portable' | 'Playstation Vita' | 'Pocket PC' | 'Sega Dreamcast' | 'Sega Mega CD' | 'Sega Mega Drive' | 'Sega Saturn' | 'Tiger Telematics Gizmondo' | 'VTech V.Flash' | 'Microsoft Xbox' | 'Microsoft Xbox One' | 'Microsoft Xbox360' | 'Nintendo DS' | 'Nintendo 3DS' | 'Nintendo WII' | 'Nintendo WII-U';
 
 // OS
 type releaseOS = 'IBM AIX' | 'Android' | 'BlackBerry' | 'BSD' | 'HP-UX' | 'iOS' | 'Linux' | 'macOS' | 'PalmOS' | 'Solaris' | 'SunOS' | 'Symbian' | 'Ubuntu' | 'Unix' | 'WebOS' | 'Windows' | 'Windows CE' | 'Windows Mobile';
@@ -112,6 +112,7 @@ type ReleaseData = {
 	os: releaseOS | null;
 	version: string | null;
 	language: releaseLanguage | null;
+	country: string | null;
 	type: releaseType | null;
 };
 

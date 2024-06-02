@@ -4,7 +4,7 @@ import patterns from './ReleasePatterns.js'
  * ReleaseParser - A library for parsing scene release names.
  * 
  * @author Wellington Estevo
- * @version 1.4.4
+ * @version 1.5.0
  * 
  * @module ReleaseParser
  * @param {string} releaseName - Original release name.
@@ -37,6 +37,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 		'os'			: null, // For Software/Game rls
 		'version'		: null, // For Software/Game rls
 		'language'		: null, // Object with language code as key and name as value (in english)
+		'country'		: null, // Release country
 		'type'			: null
 	}
 
@@ -710,6 +711,34 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 
 	/**
+	 * Parses Release country and strips it from title.
+	 * 
+	 * @private
+	 * @return {void}
+	 */
+	const parseCountry = () =>
+	{
+		if ( !get( 'type' ).toLowerCase() === 'tv' ) return
+
+		const titleWords = get( 'title' ).split( ' ' )
+		const lastElement = -1;
+		const countries = '/^(US|UK|NZ|AU|CA|BE)$/i'
+		const invalidWordsBefore = '/^(the|of|with|and|between|to)$/i'
+
+		if ( !titleWords.at( lastElement - 1 ) ) return
+
+		if (
+			titleWords.at( lastElement ).match( countries.toRegExp() ) &&
+			!titleWords.at( lastElement - 1 ).match( invalidWordsBefore.toRegExp() )
+		)
+		{
+			set( 'title', titleWords.slice( 0, lastElement ).join(' ') )
+			set( 'country', titleWords.at( lastElement ) )
+		}
+	}
+
+
+	/**
 	 * Check if release is of specific type.
 	 *
 	 * @private
@@ -938,6 +967,14 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 			if ( releaseName.match( patterns.REGEX_DATE_MUSIC.toRegExp() ) )
 			{
 				type = 'MusicVideo'
+			}
+			// Probably movie if not episode and season given
+			else if (
+				!get( 'episode') &&
+				!get( 'season')
+			)
+			{
+				type = 'Movie';
 			}
 		}
 		// Description with date inside brackets is nearly always music or musicvideo
@@ -2086,7 +2123,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 
 	/**
-	 * Remove unneeded attributes that were falsely parsed.
+	 * Remove or fix attributes that were falsely parsed.
 	 *
 	 * @private
 	 */
@@ -2094,9 +2131,11 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 	{
 		let type = get( 'type' ).toLowerCase()
 		let flags = get( 'flags' )
+		let title = get( 'title' )
 
 		if ( type === 'movie' || type === 'tv' )
 		{
+			// Cleanup when source = format
 			if (
 				get( 'source' ) &&
 				get( 'format' ) &&
@@ -2344,6 +2383,7 @@ const ReleaseParser = /** @lends module:ReleaseParser */ ( releaseName, section 
 
 	parseType( section )
 	parseTitle()			// Title and extra title
+	parseCountry()			// Parse country
 	cleanupAttributes()
 
 	return {

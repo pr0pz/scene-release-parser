@@ -6,7 +6,7 @@ import assert from 'assert'
  * This are hand selected, at some point 'more complex' releases that need to pass the test.
  * 
  * @author Wellington Estevo
- * @version 1.4.4
+ * @version 1.5.0
  */
 
 describe( 'ReleaseParser', function()
@@ -241,6 +241,30 @@ describe( 'ReleaseParser', function()
 		)
 	})
 
+	it( 'Movies #13 - Special char in title', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Hansel.&.Gretel.Witch.Hunters..2013.DiRFiX.NTSC.MULTi.DVDR-FUTiL', 'PRE' ).toString(),
+			'Title: Hansel & Gretel Witch Hunters / Group: FUTiL / Year: 2013 / Flags: DIRFiX / Format: DVDR / Resolution: NTSC / Language: Multilingual / Type: Movie'
+		)
+	})
+
+	it( 'Movies #14 - Don\'t falsely parse season', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'V.H.S.94.2021.BluRay.1080p.DTS-HD.MA.5.1.AVC-GROUPNAME', 'PRE' ).toString(),
+			'Title: V H S 94 / Group: GROUPNAME / Year: 2021 / Source: Bluray / Format: AVC / Resolution: 1080p / Audio: DTS-HD MA, 5.1 / Type: Movie'
+		)
+	})
+
+	it( 'Movies #15 - Don\'t falsely parse movie as tv show + special group chars', () =>
+	{
+		assert.equal(
+			ReleaseParser( 'Pay.the.Ghost.2015.1080p.HULU.WEB-DL.DDP.5.1.H.264-PiRaTeS[TGx]', 'PRE' ).toString(),
+			'Title: Pay the Ghost / Group: PiRaTeS[TGx] / Year: 2015 / Source: Hulu / Resolution: 1080p / Audio: Dolby Digital Plus, 5.1 / Type: Movie'
+		)
+	})
+
 
 	// TV
 	it( 'TV #1 - Multiple episodes: 01-02', () =>
@@ -295,7 +319,7 @@ describe( 'ReleaseParser', function()
 	{
 		assert.equal(
 			ReleaseParser( 'Riverdale.US.S05.PROPER.FRENCH.WEB.x264-STRINGERBELL', 'tv' ).toString(),
-			'Title: Riverdale US / Group: STRINGERBELL / Season: 5 / Flags: Proper / Source: WEB / Format: x264 / Language: French / Type: TV'
+			'Title: Riverdale / Group: STRINGERBELL / Season: 5 / Flags: Proper / Source: WEB / Format: x264 / Language: French / Country: US / Type: TV'
 		)
 	})
 
